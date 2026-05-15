@@ -1,0 +1,11 @@
+vendor/
+var/cache/
+var/log/
+var/sessions/
+.env.local
+.env.*.local
+.git/
+.github/
+tests/
+*.md
+phpunit.dist.xml

@@ -1,0 +1,111 @@
+# Symfony
+
+### Repository vs Service — data access layer
+
+All SQL queries, DQL, QueryBuilder calls, and any Doctrine interaction belong in the **repository**, not the service.
+
+- Repositories: sole responsibility is querying and returning entities.
+- Services: contain business logic, call repositories, receive clean results.
+- Never `createQueryBuilder`, `findBy`, raw SQL, or `getRepository` inside a service.
+- **Always inject repositories via constructor** — never `$this->em->getRepository(Foo::class)`.
+- `persist()` and `flush()` stay in the service — transaction orchestration, not data queries.
+
+```php
+// ❌ wrong
+class OrderService
+{
+    public function __construct(private EntityManagerInterface $em) {}
+
+    public function getPendingOrders(): array
+    {
+        return $this->em->getRepository(Order::class)->findBy(['status' => 'pending']);
+    }
+}
+
+// ✅ correct
+class OrderService
+{
+    public function __construct(private OrderRepository $orderRepository) {}
+
+    public function getPendingOrders(): array
+    {
+        return $this->orderRepository->findPending();
+    }
+}
+```
+
+```php
+// ❌ wrong — query in the service
+class OrderService
+{
+    public function getPendingOrders(): array
+    {
+        return $this->em->createQueryBuilder()
+            ->select('o')
+            ->from(Order::class, 'o')
+            ->where('o.status = :status')
+            ->setParameter('status', 'pending')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+}
+
+// ✅ correct — query in the repository
+class OrderRepository extends ServiceEntityRepository
+{
+    public function findPending(): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.status = :status')
+            ->setParameter('status', 'pending')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+}
+```
+
+### Service naming
+
+Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions — no `*Client`, `*Manager`, `*Handler`.
+
+### Email sending — always via EmailService
+
+All emails must be sent through `EmailService`, never directly via `MailerInterface`, `SesClient`, or any other transport. Add a dedicated method for each new email type, with its own Twig template in `templates/emails/`.
+
+```php
+// ❌ wrong
+$this->mailer->send($email);
+
+// ✅ correct
+$this->emailService->sendBackupError($subject, $detail);
+```
+
+### Entity conventions
+
+- **Money**: all money values stored as **integers (cents)**.
+- **Timestamps**: `createdAt` / `updatedAt` on all entities — set via `#[ORM\PrePersist]` and `#[ORM\PreUpdate]`; the entity class **must** carry `#[ORM\HasLifecycleCallbacks]`.
+
+### Twig Templates
+
+- **Indentation**: use tabs, not spaces.
+
+---
+
+## Testing
+
+- **PHPUnit** for unit and functional tests. Tests in `/backend/tests/`.
+- Unit tests for **services** and **domain logic**.
+- Functional tests for **API endpoints**.
+- ✅ Test: services, complex domain logic. ❌ Skip: simple CRUD, config files.
+
+---
+
+## Quick Reference
+
+| You're about to... | Instead |
+|---|---|
+| Query the DB from a service | Put the query in the repository |
+| `$this->em->getRepository(Foo::class)` | Inject the repository via constructor |
+| Name a class `*Client` or `*Manager` in `src/Service/` | Rename to `*Service` |
