@@ -1,0 +1,50 @@
+version: 2
+updates:
+  # Frontend — npm/pnpm packages
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    assignees:
+      - "the-blue-coder"
+    labels:
+      - "dependencies"
+      - "frontend"
+    ignore:
+      # Major versions only manually — too many breaking changes
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@tanstack/react-query"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+
+  # Backend — Composer packages
+  - package-ecosystem: "composer"
+    directory: "/backend"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    assignees:
+      - "the-blue-coder"
+    labels:
+      - "dependencies"
+      - "backend"
+    ignore:
+      # Major versions only manually
+      - dependency-name: "symfony/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "api-platform/*"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    assignees:
+      - "the-blue-coder"
+    labels:
+      - "dependencies"
+      - "ci"
