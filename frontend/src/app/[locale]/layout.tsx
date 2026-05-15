@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
+import GoogleAnalytics from "@/components/tracking/GoogleAnalytics";
+import MicrosoftClarity from "@/components/tracking/MicrosoftClarity";
+import { GA_MEASUREMENT_ID, CLARITY_PROJECT_ID } from "@/constants/app";
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -40,6 +43,8 @@ const RootLayout = async ({ children, params }: Props) => {
 					<NextIntlClientProvider messages={messages}>
 						<QueryProvider>{children}</QueryProvider>
 					</NextIntlClientProvider>
+					{GA_MEASUREMENT_ID && <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />}
+					{CLARITY_PROJECT_ID && <MicrosoftClarity projectId={CLARITY_PROJECT_ID} />}
 				</body>
 			</html>
 		</ClerkProvider>

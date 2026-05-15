@@ -48,11 +48,15 @@ Before touching any file, collect:
 12. **Internationalization (i18n)** - does this project need multi-language support? (default: **yes** - next-intl is included in the boilerplate)
     - **Use i18n when**: the app targets multiple locales, has a language switcher, or content needs to be translated.
     - **Skip i18n when**: the app is single-language only and localization is not planned.
-13. **Mailer sender address (`MAILER_FROM`)** - the address all transactional emails will be sent from (default: `contact@madainsight.com`).
+13. **Google Analytics** - does this project need Google Analytics? (default: **no**)
+    - If yes: go to [analytics.google.com](https://analytics.google.com), create a property, and copy the Measurement ID (format: `G-XXXXXXXXXX`).
+14. **Microsoft Clarity** - does this project need Microsoft Clarity (heatmaps + session recordings)? (default: **no**)
+    - If yes: go to [clarity.microsoft.com](https://clarity.microsoft.com), create a project, and copy the Project ID.
+15. **Mailer sender address (`MAILER_FROM`)** - the address all transactional emails will be sent from (default: `contact@madainsight.com`).
     > ⚠️ Before proceeding, make sure this address is:
     > 1. **Verified in AWS SES** as a sender identity (Identities → verify the exact address or its domain).
     > 2. **Configured as a mailbox in cPanel** (the email panel dedicated to this project) so the address can actually receive replies.
-14. **UI design** - five sub-questions:
+16. **UI design** - five sub-questions:
     - **Theme mode**: dark only / light only / light + dark (system preference)?
     - **Primary accent color**: hex value or description (e.g. `#6366f1` indigo, `#0ea5e9` sky blue). If unsure, say so - defaults will be used.
     - **Typography**: font(s) to use. Either provide a URL to extract fonts from, or name them directly (e.g. `Inter`, `Geist Sans + Geist Mono`). If unsure, Geist defaults will be kept.
@@ -124,7 +128,7 @@ Update their contents with the real domains and prod ports.
 
 **Update `.context/infra.md`** with the real domains, ports, and deploy path.
 
-**Fill in `.context/ui-context.md`** using §A1.14:
+**Fill in `.context/ui-context.md`** using §A1.16:
 - **Theme**: chosen mode (dark only / light only / light + dark).
 - **Typography**: if §A1.13 provides a URL → fetch it and extract the font stack. If fonts are named directly → use them. Otherwise keep Geist defaults.
 - **Layout Patterns**: describe the layout from §A1.13.
@@ -133,8 +137,8 @@ Update their contents with the real domains and prod ports.
 > `ui-context.md` is for design context only - layout patterns, typography, visual language. Color tokens belong in `.context/coding-conventions/tailwind.md` (see below), not here.
 
 **Fill in `.context/coding-conventions/tailwind.md`** - color tokens:
-- If the user provided reference site URL(s) in §A1.14 → fetch each URL, extract the dominant colors (background, text, primary accent, secondary accents), and use them to populate the token table.
-- Otherwise → fill `--accent-primary` from §A1.14; leave other tokens as reasonable defaults.
+- If the user provided reference site URL(s) in §A1.16 → fetch each URL, extract the dominant colors (background, text, primary accent, secondary accents), and use them to populate the token table.
+- Otherwise → fill `--accent-primary` from §A1.16; leave other tokens as reasonable defaults.
 
 **Update `README.md`**: replace title and description with project name, slug, and objective. Keep the stack, features, and usage sections.
 
@@ -158,6 +162,14 @@ Update their contents with the real domains and prod ports.
   - Delete `frontend/src/i18n/` (routing config, request config).
   - Delete `frontend/messages/` (locale JSON files).
   - In all pages and layouts under `frontend/src/app/`, remove `locale` params, `useTranslations`, `getTranslations`, and any locale-prefixed route segments (`[locale]/`).
+
+**Google Analytics (§A1.13)**:
+- **No** → delete `frontend/src/components/tracking/GoogleAnalytics.tsx`, remove its import and `{GA_MEASUREMENT_ID && <GoogleAnalytics ... />}` from `frontend/src/app/[locale]/layout.tsx`, remove `GA_MEASUREMENT_ID` from `frontend/src/constants/app.ts`, and remove `NEXT_PUBLIC_GA_MEASUREMENT_ID` from `frontend/.env` and `frontend/.env.example`.
+- **Yes** → fill `NEXT_PUBLIC_GA_MEASUREMENT_ID=<G-XXXXXXXXXX>` in `frontend/.env`.
+
+**Microsoft Clarity (§A1.14)**:
+- **No** → delete `frontend/src/components/tracking/MicrosoftClarity.tsx`, remove its import and `{CLARITY_PROJECT_ID && <MicrosoftClarity ... />}` from `frontend/src/app/[locale]/layout.tsx`, remove `CLARITY_PROJECT_ID` from `frontend/src/constants/app.ts`, and remove `NEXT_PUBLIC_CLARITY_PROJECT_ID` from `frontend/.env` and `frontend/.env.example`.
+- **Yes** → fill `NEXT_PUBLIC_CLARITY_PROJECT_ID=<project-id>` in `frontend/.env`.
 
 **SEO indexing (§A1.8)**:
 - `frontend/src/app/layout.tsx` → set `robots`: `{ index: true, follow: true }` or `{ index: false, follow: false }`.
@@ -217,7 +229,7 @@ Ask the user to provide values for the following - these require manual setup ou
 1. **S3 backup user** - ask for the full S3 URI of the backup folder (e.g. `s3://bizinfo/backups/db/<project-slug>/`). Do not guess - it must already exist in AWS.
    - Parse: bucket = everything between `s3://` and the first `/`; prefix = the rest.
    - Fill `backend/.env`: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BACKUP_BUCKET` (format: `bucket/prefix`).
-2. **SES mailer user** - fill `backend/.env`: `MAILER_FROM` (from §A1.12), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
+2. **SES mailer user** - fill `backend/.env`: `MAILER_FROM` (from §A1.15), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
 
 **Remaining `backend/.env` values:**
 - `CORS_ALLOW_ORIGIN`
@@ -322,8 +334,10 @@ Ask only for what the codebase doesn't already reveal:
 10. **Google Sign-In** - is it used? (check existing OAuth code - ask only if ambiguous).
 11. **API Platform** - is it used? (check `composer.json` and entities - ask only if ambiguous).
 12. **i18n / next-intl** - is it used? (check `package.json` for `next-intl` and presence of `frontend/messages/` - ask only if ambiguous).
-13. **Mailer sender address** - if `MAILER_FROM` is not already set.
-14. **UI design** (only if `.context/ui-context.md` doesn't already exist with real values):
+13. **Google Analytics** - is it used? (check `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env` and presence of `GoogleAnalytics.tsx` - ask only if ambiguous).
+14. **Microsoft Clarity** - is it used? (check `NEXT_PUBLIC_CLARITY_PROJECT_ID` in `.env` and presence of `MicrosoftClarity.tsx` - ask only if ambiguous).
+15. **Mailer sender address** - if `MAILER_FROM` is not already set.
+16. **UI design** (only if `.context/ui-context.md` doesn't already exist with real values):
     - Theme mode, primary accent color, typography (URL or font names), top-level layout.
 
 Skip any question whose answer is already clear from the code.
