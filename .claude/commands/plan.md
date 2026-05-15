@@ -1,5 +1,5 @@
----
-description: "Interactive feature planning — clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
+﻿---
+description: "Interactive feature planning - clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
 argument-hint: "<feature description>"
 allowed-tools:
   - Read

@@ -1,4 +1,4 @@
----
+﻿---
 description: "Enforces the spec-driven development pipeline for this project"
 ---
 
@@ -6,15 +6,15 @@ description: "Enforces the spec-driven development pipeline for this project"
 
 Two paths depending on scope:
 
-## Quick path — small fixes, bugs, debug, typos
+## Quick path - small fixes, bugs, debug, typos
 
 Write code directly. No spec required. Qualifies if **all** of the following are true:
 - Touches ≤ 3 files
 - No new feature, no API contract change, no DB migration
 - Can be described in one sentence
-- **No spec is currently `status: in-progress`** — if one exists, run `/verify` first
+- **No spec is currently `status: in-progress`** - if one exists, run `/verify` first
 
-## Feature path — anything consequent
+## Feature path - anything consequent
 
 ```
 /plan → /dev → /verify

@@ -1,10 +1,10 @@
-# UI Context
+﻿# UI Context
 
 ## Theme
 
-[Describe the overall visual language — e.g. Dark only.
+[Describe the overall visual language - e.g. Dark only.
 No light mode. The design language is a dark technical
-workspace — near-black backgrounds, layered surfaces,
+workspace - near-black backgrounds, layered surfaces,
 and vivid accent colors for interactive elements.]
 
 ## Typography
@@ -30,11 +30,11 @@ rather than writing from scratch.]
 
 ## Layout Patterns
 
-- [Pattern — e.g. Editor: full-viewport split with
+- [Pattern - e.g. Editor: full-viewport split with
   left sidebar, center canvas, right sidebar]
-- [Pattern — e.g. Sidebars: fixed width with border separator]
-- [Pattern — e.g. Modals: centered overlay with backdrop blur]
-- [Pattern — e.g. Navbar: top bar with bottom border]
+- [Pattern - e.g. Sidebars: fixed width with border separator]
+- [Pattern - e.g. Modals: centered overlay with backdrop blur]
+- [Pattern - e.g. Navbar: top bar with bottom border]
 
 ## Icons
 

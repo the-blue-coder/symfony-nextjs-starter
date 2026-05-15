@@ -1,29 +1,29 @@
-# Infrastructure & Deployment
+﻿# Infrastructure & Deployment
 
 ## Overview
 
 - **Server**: Contabo VPS, Ubuntu
 - **Web server**: nginx + certbot (SSL)
-- **Backend**: Docker (PHP-FPM + nginx) — `b.[project].domain.com` on port [XXXX]
-- **Frontend**: PM2, Next.js — `[project].domain.com` on port [XXXX]; PM2 process name: `[project-slug]-frontend`
+- **Backend**: Docker (PHP-FPM + nginx) - `b.[project].domain.com` on port [XXXX]
+- **Frontend**: PM2, Next.js - `[project].domain.com` on port [XXXX]; PM2 process name: `[project-slug]-frontend`
 - **Deploy path**: `/home/www/[project-name]`
 
 ## Docker (backend only)
 
-- `backend/docker-compose.yml` — **local only** — postgres + redis + backend (PHP-FPM + nginx).
-- `backend/docker-compose.prod.yml` — **prod only** — production overrides (env, volumes, restart policies).
+- `backend/docker-compose.yml` - **local only** - postgres + redis + backend (PHP-FPM + nginx).
+- `backend/docker-compose.prod.yml` - **prod only** - production overrides (env, volumes, restart policies).
 - Backend API exposed on **port 8000** locally (http://localhost:8000).
-- `vendor/` **must** be in `backend/.dockerignore` — never copy Composer dependencies into the build context.
+- `vendor/` **must** be in `backend/.dockerignore` - never copy Composer dependencies into the build context.
 - Frontend runs locally with `pnpm dev` (no Docker).
 
 **Local dev:**
 
 ```bash
 cd backend
-docker compose up    # postgres + redis + backend — API at http://localhost:8000
+docker compose up    # postgres + redis + backend - API at http://localhost:8000
 ```
 
-**Production** — `infra/deploy.sh` uses both compose files:
+**Production** - `infra/deploy.sh` uses both compose files:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.prod.yml
@@ -40,23 +40,23 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml
 ## Nginx
 
 - Configs named after the domain:
-  - `infra/nginx/[project].domain.com` — frontend
-  - `infra/nginx/b.[project].domain.com` — backend
-- Setup script: `infra/nginx/setup.sh` — installs config + runs certbot.
+  - `infra/nginx/[project].domain.com` - frontend
+  - `infra/nginx/b.[project].domain.com` - backend
+- Setup script: `infra/nginx/setup.sh` - installs config + runs certbot.
 
 ## Deploy Scripts
 
-- `infra/deploy.sh` — triggered via GitHub Actions on push to `main`.
-- `infra/first-deploy.sh` — run **once** on the server to set up the environment (clone repo if not already present, install deps, configure PM2, etc.); the git clone must be conditional: `[ ! -d ".git" ] && git clone ...`.
+- `infra/deploy.sh` - triggered via GitHub Actions on push to `main`.
+- `infra/first-deploy.sh` - run **once** on the server to set up the environment (clone repo if not already present, install deps, configure PM2, etc.); the git clone must be conditional: `[ ! -d ".git" ] && git clone ...`.
 
 ## GitHub Actions
 
 - **Secrets**: `CONTABO_HOST`, `CONTABO_USER`, `CONTABO_SSH_PRIVATE_KEY`.
-- **Naming convention**: workflow name is `Deploy to Contabo` — never `Deploy on Contabo`. Applies to `name:` (top-level), `jobs.<job>.name:`, and `steps.- name:`.
+- **Naming convention**: workflow name is `Deploy to Contabo` - never `Deploy on Contabo`. Applies to `name:` (top-level), `jobs.<job>.name:`, and `steps.- name:`.
 
 ## Known Gotchas
 
-### Nginx + Certbot — proxy headers stripped on renewal
+### Nginx + Certbot - proxy headers stripped on renewal
 
 The certbot renewal config uses `installer = nginx`, which rewrites the `location /` block on every `certbot renew` and strips all `proxy_set_header` directives.
 
@@ -77,7 +77,7 @@ Consequence: `X-Forwarded-For` missing → `$request->getClientIp()` returns the
 
 2. Create `/etc/letsencrypt/renewal-hooks/deploy/restore-nginx-proxy-headers.sh` that re-applies these headers if missing, then reloads nginx.
 
-## Test Commands (reference only — do not run automatically)
+## Test Commands (reference only - do not run automatically)
 
 **Backend:**
 

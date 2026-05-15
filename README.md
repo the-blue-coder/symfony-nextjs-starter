@@ -1,4 +1,4 @@
-> **To initialize a project from this boilerplate, clone the repo and run:**
+﻿> **To initialize a project from this boilerplate, clone the repo and run:**
 >
 > ```
 > /init-project
@@ -18,15 +18,15 @@ Symfony 7 + API Platform backend, Next.js 16 frontend, full auth, Docker, CI/CD.
 ## What's included
 
 ### Auth
-- Clerk: email + password, Google OAuth, magic links — configured in the Clerk dashboard
+- Clerk: email + password, Google OAuth, magic links - configured in the Clerk dashboard
 - Webhook sync (user.created / user.updated / user.deleted) → Symfony User entity
 - JWT guard on Symfony side (JWKS from Clerk)
 
 ### Frontend
 - Auth pages: login, register (Clerk hosted UI via `<SignIn />` / `<SignUp />`)
 - Dashboard layout with sidebar and active nav detection
-- `useUIStore` (Zustand) — auth state handled by Clerk hooks
-- `src/middleware.ts` — Clerk auth guard + next-intl i18n routing
+- `useUIStore` (Zustand) - auth state handled by Clerk hooks
+- `src/middleware.ts` - Clerk auth guard + next-intl i18n routing
 - `useMercure` hook for real-time SSE subscriptions
 - next-intl i18n: `[locale]` App Router segment, `en` + `fr` locales
 - Homepage placeholder (hero, features, nav, footer)
@@ -72,7 +72,7 @@ See [NEW_PROJECT_GUIDELINES.md](./NEW_PROJECT_GUIDELINES.md) for the full checkl
 
 ```bash
 cd backend
-docker compose up -d    # starts postgres + redis + backend — API at http://localhost:8000
+docker compose up -d    # starts postgres + redis + backend - API at http://localhost:8000
 ```
 
 ### Frontend
@@ -86,11 +86,11 @@ pnpm dev                # http://localhost:3000
 
 ## AI Development
 
-This starter uses **Spec-Driven Development (SDD)**. Context and conventions live in `.context/` — start there.
+This starter uses **Spec-Driven Development (SDD)**. Context and conventions live in `.context/` - start there.
 
 ### Two paths
 
-**Quick fixes** (bugs, typos, small corrections — ≤ 3 files, no new feature): write code directly, no pipeline needed.
+**Quick fixes** (bugs, typos, small corrections - ≤ 3 files, no new feature): write code directly, no pipeline needed.
 
 **Features**: follow the pipeline:
 

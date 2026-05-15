@@ -1,9 +1,9 @@
-# [Project Name]
+﻿# [Project Name]
 
 ## Project Identity
 
-- **App Name**: [Project Name] — replace with the actual display name when creating a new project from this boilerplate.
-- **Frontend**: `NEXT_PUBLIC_APP_NAME` in `frontend/.env` → `APP_NAME` constant exported from `src/lib/constants.ts`. Import and use everywhere — never hardcode the app name in source files.
+- **App Name**: [Project Name] - replace with the actual display name when creating a new project from this boilerplate.
+- **Frontend**: `NEXT_PUBLIC_APP_NAME` in `frontend/.env` → `APP_NAME` constant exported from `src/lib/constants.ts`. Import and use everywhere - never hardcode the app name in source files.
 - **Backend**: `APP_NAME` in `backend/.env` → `app.name` parameter in `config/services.yaml` → injected as `$appName` into services that need it.
 
 ## Overview
@@ -13,13 +13,13 @@ who it's for, and what problem it solves.]
 
 ## Goals
 
-1. [Goal one — specific and measurable]
+1. [Goal one - specific and measurable]
 2. [Goal two]
 3. [Goal three]
 
 ## Core User Flow
 
-1. [Step one — e.g. User signs in]
+1. [Step one - e.g. User signs in]
 2. [Step two]
 3. [Step three]
 4. [Continue until the core flow is complete]
@@ -50,7 +50,7 @@ who it's for, and what problem it solves.]
 
 ## Success Criteria
 
-1. [Specific, verifiable condition — e.g. A signed-in
+1. [Specific, verifiable condition - e.g. A signed-in
    user can create and open a project]
 2. [Condition two]
 3. [Condition three]
@@ -59,6 +59,6 @@ who it's for, and what problem it solves.]
 
 <!-- Define your project's domain language here -->
 <!-- Example:
-- **User** — an authenticated user
-- **Workspace** — a multi-user isolated environment
+- **User** - an authenticated user
+- **Workspace** - a multi-user isolated environment
 -->

@@ -1,4 +1,4 @@
-# Progress Tracker
+﻿# Progress Tracker
 
 Update this file after every meaningful implementation
 change.
@@ -30,7 +30,7 @@ change.
 ## Architecture Decisions
 
 - [Decisions made that affect the system design or
-  data model — include why the decision was made]
+  data model - include why the decision was made]
 
 ## Session Notes
 

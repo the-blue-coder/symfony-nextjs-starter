@@ -1,14 +1,14 @@
-# Symfony
+﻿# Symfony
 
-### Repository vs Service — data access layer
+### Repository vs Service - data access layer
 
 All SQL queries, DQL, QueryBuilder calls, and any Doctrine interaction belong in the **repository**, not the service.
 
 - Repositories: sole responsibility is querying and returning entities.
 - Services: contain business logic, call repositories, receive clean results.
 - Never `createQueryBuilder`, `findBy`, raw SQL, or `getRepository` inside a service.
-- **Always inject repositories via constructor** — never `$this->em->getRepository(Foo::class)`.
-- `persist()` and `flush()` stay in the service — transaction orchestration, not data queries.
+- **Always inject repositories via constructor** - never `$this->em->getRepository(Foo::class)`.
+- `persist()` and `flush()` stay in the service - transaction orchestration, not data queries.
 
 ```php
 // ❌ wrong
@@ -35,7 +35,7 @@ class OrderService
 ```
 
 ```php
-// ❌ wrong — query in the service
+// ❌ wrong - query in the service
 class OrderService
 {
     public function getPendingOrders(): array
@@ -51,7 +51,7 @@ class OrderService
     }
 }
 
-// ✅ correct — query in the repository
+// ✅ correct - query in the repository
 class OrderRepository extends ServiceEntityRepository
 {
     public function findPending(): array
@@ -68,9 +68,9 @@ class OrderRepository extends ServiceEntityRepository
 
 ### Service naming
 
-Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions — no `*Client`, `*Manager`, `*Handler`.
+Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions - no `*Client`, `*Manager`, `*Handler`.
 
-### Email sending — always via EmailService
+### Email sending - always via EmailService
 
 All emails must be sent through `EmailService`, never directly via `MailerInterface`, `SesClient`, or any other transport. Add a dedicated method for each new email type, with its own Twig template in `templates/emails/`.
 
@@ -85,7 +85,7 @@ $this->emailService->sendBackupError($subject, $detail);
 ### Entity conventions
 
 - **Money**: all money values stored as **integers (cents)**.
-- **Timestamps**: `createdAt` / `updatedAt` on all entities — set via `#[ORM\PrePersist]` and `#[ORM\PreUpdate]`; the entity class **must** carry `#[ORM\HasLifecycleCallbacks]`.
+- **Timestamps**: `createdAt` / `updatedAt` on all entities - set via `#[ORM\PrePersist]` and `#[ORM\PreUpdate]`; the entity class **must** carry `#[ORM\HasLifecycleCallbacks]`.
 
 ### Twig Templates
 

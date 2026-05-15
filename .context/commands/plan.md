@@ -1,5 +1,5 @@
----
-description: "Interactive feature planning — clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
+﻿---
+description: "Interactive feature planning - clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
 argument-hint: "<feature description>"
 ---
 
@@ -9,7 +9,7 @@ Feature or task: `$ARGS`
 
 ---
 
-## Phase 1 — Load project context (silent)
+## Phase 1 - Load project context (silent)
 
 Before asking anything, read:
 - `.context/project-overview.md`
@@ -21,14 +21,14 @@ Also check `.context/feature-specs/` (list files if the directory exists) to und
 
 ---
 
-## Phase 2 — Discovery conversation
+## Phase 2 - Discovery conversation
 
 Ask the user the minimum questions needed to fully understand the feature. Aim for 4–6 questions. Skip any whose answer is obvious from `$ARGS` or from the project context you just read.
 
 Good questions to draw from (pick only the relevant ones):
 
 - **Goal**: What problem does this solve? Who benefits and how?
-- **Happy path**: Walk me through the core flow step by step — what does the user do, what happens, what do they see at the end?
+- **Happy path**: Walk me through the core flow step by step - what does the user do, what happens, what do they see at the end?
 - **Data**: What new data is introduced? What existing entities are involved?
 - **API**: New endpoints needed, or extending existing ones?
 - **UI**: New page(s) or extending an existing one? Any specific interactions (modals, inline edits, real-time updates)?
@@ -40,18 +40,18 @@ Wait for the user's answers before continuing.
 
 ---
 
-## Phase 3 — Codebase exploration (silent)
+## Phase 3 - Codebase exploration (silent)
 
 Once the feature is clear, explore the codebase to ground the spec:
 
-1. Find the closest existing feature as an analog — read its entity, repository, service, API resource, page, and hook.
+1. Find the closest existing feature as an analog - read its entity, repository, service, API resource, page, and hook.
 2. Identify which existing files will be modified vs. which new files are needed.
 3. Check existing Zod schemas, Zustand stores, and API contracts that are relevant.
 4. Note any invariants from `architecture.md` that apply (UUID IDs, `middleware.ts` Clerk auth guard, API Platform conventions, etc.).
 
 ---
 
-## Phase 4 — Write the feature spec
+## Phase 4 - Write the feature spec
 
 Determine the spec file path:
 - List existing files in `.context/feature-specs/`.
@@ -67,7 +67,7 @@ Write the spec file using this structure:
 status: todo
 ---
 
-# NNN — Feature Name
+# NNN - Feature Name
 
 ## Goal
 
@@ -80,7 +80,7 @@ One sentence. What this feature delivers and for whom.
 
 ## Acceptance Criteria
 
-- [ ] Criterion one — specific and verifiable.
+- [ ] Criterion one - specific and verifiable.
 - [ ] Criterion two.
 - (cover the happy path + key edge cases)
 
@@ -94,12 +94,12 @@ List new or modified entities, fields, and types. Reference existing entities wh
 
 ## API Contract
 
-List new or modified endpoints. Be precise — `/dev` treats this table as a strict contract.
+List new or modified endpoints. Be precise - `/dev` treats this table as a strict contract.
 
 | Method | Route | Request body | Success response | Error responses | Auth |
 | --- | --- | --- | --- | --- | --- |
 | POST | /api/foos | `{ bar: string (required, max 255) }` | `201 { id: uuid, bar: string, createdAt: string }` | `400 { message }`, `401 { message }` | ROLE_USER |
-| GET | /api/foos/{id} | — | `200 { id: uuid, bar: string }` | `404 { message }`, `401 { message }` | ROLE_USER |
+| GET | /api/foos/{id} | - | `200 { id: uuid, bar: string }` | `404 { message }`, `401 { message }` | ROLE_USER |
 
 ## UI / UX
 
@@ -114,7 +114,7 @@ Who can see and use this feature. Any ownership rules (e.g. a user can only edit
 
 ## Constraints & Edge Cases
 
-- [Constraint or edge case — what happens and how to handle it]
+- [Constraint or edge case - what happens and how to handle it]
 
 ## Out of Scope
 
@@ -126,7 +126,7 @@ The closest existing feature is `[name]`. Follow the same patterns for [entity /
 
 ## Open Questions
 
-- [ ] [Unresolved decision — who needs to answer it]
+- [ ] [Unresolved decision - who needs to answer it]
 
 ## Implementation Notes
 
@@ -137,29 +137,29 @@ After writing the file, tell the user the path and show a brief summary (goal + 
 
 ---
 
-## Phase 5 — Update project overview (if needed)
+## Phase 5 - Update project overview (if needed)
 
 Read `.context/project-overview.md`.
 
-Compare the new feature's **Goal** and **User Stories** against what is already described there. Update the file only if the feature introduces something genuinely new — a user-facing capability, a new section of the app, a new role, or a new integration that isn't mentioned yet.
+Compare the new feature's **Goal** and **User Stories** against what is already described there. Update the file only if the feature introduces something genuinely new - a user-facing capability, a new section of the app, a new role, or a new integration that isn't mentioned yet.
 
 Do **not** update if the feature is:
 - A refinement or extension of already-described functionality
 - An internal technical change with no user-facing impact
 - Already implied by existing descriptions
 
-If an update is needed, make the minimal addition — add a bullet, extend a sentence, or add a short paragraph to the relevant section. Do not rewrite existing content.
+If an update is needed, make the minimal addition - add a bullet, extend a sentence, or add a short paragraph to the relevant section. Do not rewrite existing content.
 
 If no update is needed, skip silently.
 
 ---
 
-## Phase 6 — Update progress tracker
+## Phase 6 - Update progress tracker
 
 Open `.context/progress-tracker.md` and add the new feature under **Next Up** (or **In Progress** if the user confirms they're starting immediately):
 
 ```markdown
-- [NNN — Feature Name](.context/feature-specs/NNN-feature-slug.md) — one-line summary
+- [NNN - Feature Name](.context/feature-specs/NNN-feature-slug.md) - one-line summary
 ```
 
 If the current phase or goal in the tracker needs updating based on this new feature, update those sections too.
