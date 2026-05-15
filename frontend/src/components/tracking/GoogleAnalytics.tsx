@@ -1,9 +1,5 @@
 import Script from "next/script";
 
-type TGoogleAnalyticsProps = {
-	measurementId: string;
-};
-
 const GoogleAnalytics: React.FC<TGoogleAnalyticsProps> = ({ measurementId }) => {
 	return (
 		<>
@@ -13,6 +9,10 @@ const GoogleAnalytics: React.FC<TGoogleAnalyticsProps> = ({ measurementId }) => 
 			</Script>
 		</>
 	);
+};
+
+type TGoogleAnalyticsProps = {
+	measurementId: string;
 };
 
 export default GoogleAnalytics;
