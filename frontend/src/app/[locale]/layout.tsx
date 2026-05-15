@@ -15,12 +15,7 @@ export const metadata: Metadata = {
 	description: "[Project description]",
 };
 
-type Props = {
-	children: React.ReactNode;
-	params: Promise<{ locale: string }>;
-};
-
-const RootLayout = async ({ children, params }: Props) => {
+const RootLayout = async ({ children, params }: TRootLayoutProps) => {
 	const { locale } = await params;
 
 	if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
@@ -49,6 +44,11 @@ const RootLayout = async ({ children, params }: Props) => {
 			</html>
 		</ClerkProvider>
 	);
+};
+
+type TRootLayoutProps = {
+	children: React.ReactNode;
+	params: Promise<{ locale: string }>;
 };
 
 export default RootLayout;
