@@ -13,6 +13,8 @@ import { routing } from "@/i18n/routing";
 export const metadata: Metadata = {
 	title: "[Project Name]",
 	description: "[Project description]",
+	manifest: "/manifest.webmanifest",
+	themeColor: "#6366f1",
 };
 
 const RootLayout = async ({ children, params }: TRootLayoutProps) => {

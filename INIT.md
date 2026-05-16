@@ -199,6 +199,30 @@ Note: dots in the domain must be escaped as `\.`.
 - `frontend/src/app/layout.tsx` → set `robots`: `{ index: true, follow: true }` or `{ index: false, follow: false }`.
 - `frontend/public/robots.txt` → `Allow: /` or `Disallow: /`.
 
+**App icon and PWA manifest**:
+
+Generate a custom icon based on the project's purpose and accent color (§A1.16):
+
+1. **`frontend/src/app/icon.svg`** — design an SVG icon (512×512 viewBox) that fits the app's purpose. Use the accent color as background, white foreground. Next.js serves this automatically as the favicon for modern browsers.
+2. **`frontend/public/manifest.webmanifest`** — fill in real values (name, short_name, description, theme_color from accent color):
+   ```json
+   {
+     "name": "<Project Name>",
+     "short_name": "<Project Name>",
+     "description": "<one-line description>",
+     "start_url": "/",
+     "display": "standalone",
+     "background_color": "#ffffff",
+     "theme_color": "<accent-primary hex>",
+     "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+   }
+   ```
+3. **`frontend/src/app/[locale]/layout.tsx`** → add to `metadata`:
+   ```ts
+   manifest: "/manifest.webmanifest",
+   themeColor: "<accent-primary hex>",
+   ```
+
 ---
 
 ## A4. Generate secrets
