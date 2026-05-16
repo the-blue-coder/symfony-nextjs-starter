@@ -222,6 +222,13 @@ Generate a custom icon based on the project's purpose and accent color (§A1.16)
    manifest: "/manifest.webmanifest",
    themeColor: "<accent-primary hex>",
    ```
+4. **`frontend/src/app/[locale]/page.tsx`** → update the homepage nav to show the icon alongside the app name:
+   ```tsx
+   <div className="flex items-center gap-2">
+     <img src="/icon.svg" alt={APP_NAME} className="h-7 w-7 rounded-md" />
+     <span className="font-semibold">{APP_NAME}</span>
+   </div>
+   ```
 
 ---
 
