@@ -144,7 +144,7 @@ Update their contents with the real domains and prod ports.
 **Update `README.md`**: replace title and description with project name, slug, and objective. Keep the stack, features, and usage sections.
 
 **Set `CORS_ALLOW_ORIGIN` in `backend/.env` and `backend/.env.example`**:
-Build the regex from the frontend domain (§A1.4) — allows both localhost (dev) and the production frontend:
+Build the regex from the frontend domain (§A1.4) - allows both localhost (dev) and the production frontend:
 ```
 ^(https?://(localhost|127\.0\.0\.1)(:[0-9]+)?|https://<frontend-domain>)$
 ```
@@ -203,8 +203,8 @@ Note: dots in the domain must be escaped as `\.`.
 
 Generate a custom icon based on the project's purpose and accent color (§A1.16):
 
-1. **`frontend/src/app/icon.svg`** — design an SVG icon (512×512 viewBox) that fits the app's purpose. Use the accent color as background, white foreground. Next.js serves this automatically as the favicon for modern browsers.
-2. **`frontend/public/manifest.webmanifest`** — fill in real values (name, short_name, description, theme_color from accent color):
+1. **`frontend/src/app/icon.svg`** - design an SVG icon (512×512 viewBox) that fits the app's purpose. Use the accent color as background, white foreground. Next.js serves this automatically as the favicon for modern browsers.
+2. **`frontend/public/manifest.webmanifest`** - fill in real values (name, short_name, description, theme_color from accent color):
    ```json
    {
      "name": "<Project Name>",
