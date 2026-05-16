@@ -231,6 +231,8 @@ The user must:
 
 ## A5. Install dependencies
 
+Run these commands automatically - do not ask the user:
+
 ```bash
 # Backend
 cd backend
