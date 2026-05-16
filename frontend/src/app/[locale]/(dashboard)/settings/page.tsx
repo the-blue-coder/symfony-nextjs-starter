@@ -1,7 +1,12 @@
-import { redirect } from "@/lib/i18n";
+import { redirect } from "next/navigation";
 
-const SettingsPage = () => {
-	redirect("/settings/language");
+const SettingsPage = async ({ params }: TSettingsPageProps) => {
+	const { locale } = await params;
+	redirect(`/${locale}/settings/language`);
+};
+
+type TSettingsPageProps = {
+	params: Promise<{ locale: string }>;
 };
 
 export default SettingsPage;
