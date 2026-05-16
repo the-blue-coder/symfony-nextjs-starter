@@ -1,1 +1,13 @@
-{}
+{
+	"nav": {
+		"language": "Language"
+	},
+	"settings": {
+		"language": {
+			"title": "Language",
+			"label": "Display language",
+			"save": "Save",
+			"saved": "Saved"
+		}
+	}
+}

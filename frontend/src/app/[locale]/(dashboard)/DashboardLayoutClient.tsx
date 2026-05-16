@@ -8,7 +8,7 @@ import useDashboardLayout from "./hooks/useDashboardLayout";
 
 const navItems = [
 	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-	{ href: "/dashboard/settings", label: "Settings", icon: Settings },
+	{ href: "/settings", label: "Settings", icon: Settings },
 ];
 
 const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialCollapsed, children }) => {
