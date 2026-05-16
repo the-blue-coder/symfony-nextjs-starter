@@ -26,7 +26,10 @@ const RootPage = async ({ params }: Props) => {
 			{/* Nav */}
 			<header className="border-b">
 				<div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-					<span className="font-semibold">[Project Name]</span>
+					<div className="flex items-center gap-2">
+						<img src="/icon.svg" alt="[Project Name]" className="h-7 w-7 rounded-md" />
+						<span className="font-semibold">[Project Name]</span>
+					</div>
 					<div className="flex items-center gap-3">
 						<Link href={`/${locale}/login`}>
 							<Button variant="ghost" size="sm" className="cursor-pointer">
