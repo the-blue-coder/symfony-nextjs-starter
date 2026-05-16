@@ -185,6 +185,8 @@ Note: dots in the domain must be escaped as `\.`.
   - `frontend/middleware.ts` → remove the i18n routing logic (or delete the file if it only contained that).
   - Delete `frontend/src/i18n/` (routing config, request config).
   - Delete `frontend/messages/` (locale JSON files).
+  - Delete `frontend/src/app/[locale]/(dashboard)/settings/` - the settings section only contains the language switcher; without i18n there is nothing to configure there.
+  - `frontend/src/app/[locale]/(dashboard)/DashboardLayoutClient.tsx` → remove the `{ href: "/settings", label: "Settings", icon: Settings }` entry from `navItems` and remove the `Settings` import from `lucide-react` if it is no longer used.
   - In all pages and layouts under `frontend/src/app/`, remove `locale` params, `useTranslations`, `getTranslations`, and any locale-prefixed route segments (`[locale]/`).
 
 **Google Analytics (§A1.13)**:
