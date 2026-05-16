@@ -1,7 +1,7 @@
 "use client";
 
 import useDashboardLayout from "./hooks/useDashboardLayout";
-import { Link } from "@/i18n/navigation";
+import { Link } from "@/lib/i18n";
 import { LayoutDashboard, Settings, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
