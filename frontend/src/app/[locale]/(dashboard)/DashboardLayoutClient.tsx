@@ -26,14 +26,16 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 				{/* Header */}
 				{!showExpanded ? (
 					<div className="h-16 shrink-0 flex items-center justify-center border-b">
-						<img src="/icon.svg" alt={APP_NAME} className="h-8 w-8 rounded-md" />
+						<Link href={navItems[0].href}>
+							<img src="/icon.svg" alt={APP_NAME} className="h-8 w-8 rounded-md" />
+						</Link>
 					</div>
 				) : (
 					<div className="h-16 shrink-0 border-b flex items-center px-4">
-						<div className="flex items-center gap-2 flex-1 min-w-0">
+						<Link href={navItems[0].href} className="flex items-center gap-2 flex-1 min-w-0">
 							<img src="/icon.svg" alt={APP_NAME} className="h-7 w-7 rounded-md shrink-0" />
 							<span className="font-semibold text-sm truncate">{APP_NAME}</span>
-						</div>
+						</Link>
 						<button
 							onClick={toggleSidebar}
 							title="Collapse sidebar"
@@ -113,10 +115,10 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 					>
 						<Menu size={20} />
 					</button>
-					<div className="flex items-center gap-2">
+					<Link href={navItems[0].href} className="flex items-center gap-2">
 						<img src="/icon.svg" alt={APP_NAME} className="h-6 w-6 rounded-md" />
 						<span className="font-semibold text-sm">{APP_NAME}</span>
-					</div>
+					</Link>
 				</div>
 				<div className="p-6">{children}</div>
 			</main>
