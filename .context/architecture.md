@@ -69,11 +69,11 @@ src/
 │   └── [domain].ts          # Domain-specific constants (e.g. operators.ts)
 ├── hooks/                   # Reusable hooks (client)
 ├── i18n/
-│   ├── routing.ts           # defineRouting - locales, defaultLocale
-│   ├── request.ts           # getRequestConfig - server-side locale + message loading
-│   └── navigation.ts        # createNavigation - locale-aware Link, usePathname, useRouter, redirect
+│   ├── en.json              # English translations
+│   └── fr.json              # French translations (add more locales here)
 ├── lib/
 │   ├── api.ts               # Fetch wrapper - JWT injection, 401 redirect
+│   ├── i18n.ts              # next-intl config: routing, navigation, getRequestConfig
 │   └── utils.ts             # Pure helpers (cn, formatAmount…) - NO utils/ subfolder
 ├── schemas/                 # Zod schemas + inferred form types
 ├── services/                # Reusable services (server)
@@ -112,7 +112,7 @@ src/
 - The `<main>` landmark lives **only** in route group layouts - never in individual pages or client components.
 - The backend defines all API routes - frontend never invents routes.
 - All entity IDs are UUIDs (strings) - never cast to number.
-- Auth guard lives in `src/middleware.ts` (Clerk) - never implement a custom auth guard.
+- Auth guard lives in `src/proxy.ts` (Clerk) - never implement a custom auth guard.
 
 ## System Boundaries
 
@@ -129,7 +129,7 @@ src/
 ## Auth and Access Model
 
 - **Clerk** handles auth, JWT, and OAuth - never implement custom auth flows.
-- Auth guard in `src/middleware.ts` protects the `(dashboard)` route group via `clerkMiddleware`.
+- Auth guard in `src/proxy.ts` protects the `(dashboard)` route group via `clerkMiddleware`.
 - [Define ownership and access rules here once known for the project.]
 
 ## Project-Specific Invariants

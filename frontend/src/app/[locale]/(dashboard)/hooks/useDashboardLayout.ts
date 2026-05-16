@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/lib/i18n";
 import { useClerk } from "@clerk/nextjs";
 import useUIStore from "@/store/useUIStore";
 
