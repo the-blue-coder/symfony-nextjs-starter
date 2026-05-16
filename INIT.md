@@ -288,6 +288,8 @@ git push origin main
 
 ```bash
 ssh root@207.180.238.155
+git clone https://github.com/<owner>/<project-slug>.git /home/www/<project-slug>
+cd /home/www/<project-slug>
 bash infra/first-deploy.sh
 bash infra/nginx/setup.sh
 ```
