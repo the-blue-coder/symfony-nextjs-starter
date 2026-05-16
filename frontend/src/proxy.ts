@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import createIntlMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
+import { routing } from "./lib/i18n";
 import type { NextRequest } from "next/server";
 
 const intlMiddleware = createIntlMiddleware(routing);
