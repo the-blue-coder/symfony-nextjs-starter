@@ -2,23 +2,47 @@
 
 import { usePathname } from "@/lib/i18n";
 import { useClerk } from "@clerk/nextjs";
-import useUIStore from "@/store/useUIStore";
+import { useCallback, useEffect, useState } from "react";
 
-const useDashboardLayout = () => {
+const useDashboardLayout = (initialCollapsed: boolean) => {
 	const pathname = usePathname();
 	const { signOut } = useClerk();
-	const { isSidebarOpen, toggleSidebar } = useUIStore();
 
-	const isNavActive = (href: string) => {
-		if (href === "/dashboard") return pathname === "/dashboard";
-		return pathname.startsWith(href);
-	};
+	const [isSidebarCollapsed, setIsSidebarCollapsedLocal] = useState(initialCollapsed);
+	const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-	const handleSignOut = async () => {
+	const showExpanded = !isSidebarCollapsed || isMobileOpen;
+
+	const setIsSidebarCollapsed = useCallback((val: boolean) => {
+		document.cookie = `sidebar-collapsed=${val ? "1" : ""}; path=/; max-age=${60 * 60 * 24 * 365}`;
+		setIsSidebarCollapsedLocal(val);
+	}, []);
+
+	const toggleSidebar = useCallback(() => {
+		setIsSidebarCollapsed(!isSidebarCollapsed);
+	}, [isSidebarCollapsed, setIsSidebarCollapsed]);
+
+	const toggleMobileSidebar = useCallback(() => {
+		setIsMobileOpen((prev) => !prev);
+	}, []);
+
+	useEffect(() => {
+		setIsMobileOpen(false);
+	}, [pathname]);
+
+	const isNavActive = useCallback(
+		(href: string) => {
+			if (href === "/dashboard") return pathname === "/dashboard";
+			return pathname === href || pathname.startsWith(href + "/");
+		},
+		[pathname]
+	);
+
+	const handleSignOut = useCallback(async () => {
 		await signOut({ redirectUrl: "/" });
-	};
+	}, [signOut]);
 
-	return { isNavActive, isSidebarOpen, handleSignOut, toggleSidebar };
+	return { isSidebarCollapsed, isMobileOpen, showExpanded, isNavActive, handleSignOut, toggleSidebar, toggleMobileSidebar };
 };
 
 export default useDashboardLayout;
