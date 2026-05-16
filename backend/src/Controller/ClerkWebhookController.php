@@ -29,7 +29,9 @@ class ClerkWebhookController extends AbstractController
     public function webhook(Request $request): JsonResponse
     {
         if (!$this->verifySignature($request)) {
-            return $this->json(['message' => 'Invalid signature.'], Response::HTTP_UNAUTHORIZED);
+            return $this->json([
+                'message' => 'Invalid signature.',
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         $payload = json_decode($request->getContent(), true);
@@ -43,7 +45,9 @@ class ClerkWebhookController extends AbstractController
             default => null,
         };
 
-        return $this->json(['message' => 'OK']);
+        return $this->json([
+            'message' => 'OK',
+        ]);
     }
 
     private function handleUserCreated(array $data): void

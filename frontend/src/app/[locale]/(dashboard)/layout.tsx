@@ -1,17 +1,12 @@
 "use client";
 
 import useDashboardLayout from "./hooks/useDashboardLayout";
-import { Link } from "@/lib/i18n";
+import { Link } from "@/i18n/navigation";
 import { LayoutDashboard, Settings, LogOut, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
-	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-	{ href: "/dashboard/settings", label: "Settings", icon: Settings },
-];
-
-const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const { isSidebarOpen, isNavActive, toggleSidebar, handleSignOut } = useDashboardLayout();
+const DashboardLayout: React.FC<TDashboardLayoutProps> = ({ children }) => {
+	const { isNavActive, isSidebarOpen, handleSignOut, toggleSidebar } = useDashboardLayout();
 
 	return (
 		<div className="flex h-screen overflow-hidden">
@@ -56,6 +51,15 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 			</div>
 		</div>
 	);
+};
+
+const navItems = [
+	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+	{ href: "/dashboard/settings", label: "Settings", icon: Settings },
+];
+
+type TDashboardLayoutProps = {
+	children: React.ReactNode;
 };
 
 export default DashboardLayout;

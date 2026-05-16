@@ -1,4 +1,4 @@
-﻿> **To initialize a project from this boilerplate, clone the repo and run:**
+> **To initialize a project from this boilerplate, clone the repo and run:**
 >
 > ```
 > /init-project
@@ -95,12 +95,12 @@ This starter uses **Spec-Driven Development (SDD)**. Context and conventions liv
 **Features**: follow the pipeline:
 
 ```
-/plan → /dev → /verify
+/planify → /dev → /verify
 ```
 
 | Command | What it does |
 | --- | --- |
-| `/plan` | Clarifies requirements, writes a spec in `.context/feature-specs/` |
+| `/planify` | Clarifies requirements, writes a spec in `.context/feature-specs/` |
 | `/dev` | Implements a spec, checks off acceptance criteria |
 | `/verify` | Verifies every criterion against the code, marks the spec done |
 

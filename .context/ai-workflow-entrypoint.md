@@ -1,4 +1,4 @@
-﻿# AI Workflow Entrypoint
+# AI Workflow Entrypoint
 
 Start here. Read the files below in order before writing any code.
 
@@ -59,20 +59,20 @@ Just write the fix. No spec required.
 ### Feature path - anything consequent
 
 ```
-/plan → /dev → /verify
+/planify → /dev → /verify
 ```
 
 | Rule | Detail |
 | --- | --- |
-| No code without a spec | Never write feature code without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/plan` first. |
+| No code without a spec | Never write feature code without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/planify` first. |
 | No `/dev` with pending `/verify` | Before starting `/dev` on any spec, check `.context/feature-specs/` for specs with `status: in-progress` that have unchecked acceptance criteria (`- [ ]`). If any exist, run `/verify` on them first. |
 | `/verify` owns `done` | Only `/verify` may set `status: done` on a spec. `/dev` never marks a spec done. |
-| `/plan` is always allowed | You may run `/plan` at any time regardless of pipeline state. |
+| `/planify` is always allowed | You may run `/planify` at any time regardless of pipeline state. |
 
 **Before writing feature code**, check the current pipeline state:
 1. List all specs in `.context/feature-specs/`.
 2. If any spec is `status: in-progress` with unchecked criteria → tell the user and suggest `/verify` before proceeding.
-3. If no spec covers the requested change → tell the user and suggest `/plan` first.
+3. If no spec covers the requested change → tell the user and suggest `/planify` first.
 
 ---
 

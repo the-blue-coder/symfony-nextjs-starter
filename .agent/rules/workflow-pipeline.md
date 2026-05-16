@@ -1,4 +1,4 @@
-﻿---
+---
 description: "Enforces the spec-driven development pipeline for this project"
 ---
 
@@ -20,10 +20,10 @@ Write code directly. No spec required. Qualifies if **all** of the following are
 /plan → /dev → /verify
 ```
 
-- **No code without a spec.** Never write feature code in `frontend/` or `backend/` without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/plan` first.
+- **No code without a spec.** Never write feature code in `frontend/` or `backend/` without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/planify` first.
 - **No `/dev` with pending `/verify`.** Before starting `/dev` on any spec, check `.context/feature-specs/` for specs with `status: in-progress` that have unchecked acceptance criteria (`- [ ]`). If any exist, run `/verify` on them first.
 - **Only `/verify` marks specs done.** Never set `status: done` on a spec during `/dev`. Only `/verify` may do this.
-- **`/plan` is always allowed.** You may run `/plan` at any time regardless of pipeline state.
+- **`/planify` is always allowed.** You may run `/planify` at any time regardless of pipeline state.
 
 ## How to check before writing feature code
 
