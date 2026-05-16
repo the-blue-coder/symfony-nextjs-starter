@@ -1,24 +1,12 @@
-import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/link";
+import { Link, redirect } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 
-const features = [
-	{ title: "Feature one", description: "Short description of what this feature does for the user." },
-	{ title: "Feature two", description: "Short description of what this feature does for the user." },
-	{ title: "Feature three", description: "Short description of what this feature does for the user." },
-];
-
-type Props = {
-	params: Promise<{ locale: string }>;
-};
-
-const RootPage = async ({ params }: Props) => {
-	const { locale } = await params;
+const RootPage: React.FC = async () => {
 	const { userId } = await auth();
 
 	if (userId) {
-		redirect(`/${locale}/dashboard`);
+		redirect("/dashboard");
 	}
 
 	return (
@@ -31,12 +19,12 @@ const RootPage = async ({ params }: Props) => {
 						<span className="font-semibold">[Project Name]</span>
 					</div>
 					<div className="flex items-center gap-3">
-						<Link href={`/${locale}/login`}>
+						<Link href="/login">
 							<Button variant="ghost" size="sm" className="cursor-pointer">
 								Sign in
 							</Button>
 						</Link>
-						<Link href={`/${locale}/register`}>
+						<Link href="/register">
 							<Button size="sm" className="cursor-pointer">
 								Get started
 							</Button>
@@ -50,12 +38,12 @@ const RootPage = async ({ params }: Props) => {
 				<h1 className="text-4xl sm:text-5xl font-bold tracking-tight max-w-2xl">[Your tagline goes here]</h1>
 				<p className="text-muted-foreground text-lg max-w-xl">[Short description of the product — one or two sentences explaining what it does and who it&apos;s for.]</p>
 				<div className="flex gap-3">
-					<Link href={`/${locale}/register`}>
+					<Link href="/register">
 						<Button size="lg" className="cursor-pointer">
 							Get started free
 						</Button>
 					</Link>
-					<Link href={`/${locale}/login`}>
+					<Link href="/login">
 						<Button size="lg" variant="outline" className="cursor-pointer">
 							Sign in
 						</Button>
@@ -83,5 +71,11 @@ const RootPage = async ({ params }: Props) => {
 		</div>
 	);
 };
+
+const features = [
+	{ title: "Feature one", description: "Short description of what this feature does for the user." },
+	{ title: "Feature two", description: "Short description of what this feature does for the user." },
+	{ title: "Feature three", description: "Short description of what this feature does for the user." },
+];
 
 export default RootPage;

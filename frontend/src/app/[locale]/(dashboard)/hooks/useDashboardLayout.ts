@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "@/lib/i18n";
+import { usePathname } from "@/i18n/navigation";
 import { useClerk } from "@clerk/nextjs";
 import useUIStore from "@/store/useUIStore";
 
@@ -18,7 +18,7 @@ const useDashboardLayout = () => {
 		await signOut({ redirectUrl: "/" });
 	};
 
-	return { isSidebarOpen, isNavActive, toggleSidebar, handleSignOut };
+	return { isNavActive, isSidebarOpen, handleSignOut, toggleSidebar };
 };
 
 export default useDashboardLayout;
