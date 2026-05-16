@@ -84,20 +84,34 @@ See `.context/ai-workflow-rules.md` - scoping rules, protected files, doc sync p
 
 ## 7. Maintaining commands and hooks
 
+**All commands and hooks must be agent-agnostic**: the logic lives in `.context/` and is mirrored to every tool directory. Never add logic only to one tool's folder.
+
 Command logic lives in `.context/commands/` - that is the single source of truth.
 
 Each tool has thin wrapper files that delegate to the shared source:
 
-| Tool | Commands | Hook |
+| Tool | Commands | Hooks / Rules |
 | --- | --- | --- |
 | Claude Code | `.claude/commands/` | `.claude/settings.json` + `.claude/hooks/` |
 | opencode | `.opencode/commands/` | - |
-| Antigravity | `.agent/skills/` | `.agent/rules/workflow-pipeline.md` |
+| Antigravity | `.agent/skills/` | `.agent/rules/` |
 
-**When the user asks you to modify a command or hook**, you MUST propagate the change to all tool directories in the same operation. Never leave them out of sync.
+Hook equivalents across tools:
+
+| Logic | Claude Code | Antigravity |
+| --- | --- | --- |
+| Spec pipeline gate | `.claude/hooks/enforce-spec-pipeline.sh` | `.agent/rules/workflow-pipeline.md` |
+| Request scope reminder | `.claude/hooks/check-request-scope.sh` | `.agent/rules/request-scope.md` |
+
+**When the user asks you to modify a command**, you MUST propagate the change to all tool directories in the same operation:
 
 - Edit the source in `.context/commands/` first
 - Mirror to `.claude/commands/` (add `allowed-tools` frontmatter if needed)
 - Mirror to `.opencode/commands/`
 - Mirror to `.agent/skills/`
-- For hook changes: update `.claude/hooks/enforce-spec-pipeline.sh` AND `.agent/rules/workflow-pipeline.md`
+
+**When the user asks you to modify a hook**, propagate to all equivalents:
+
+- Update `.claude/hooks/<hook>.sh` (Claude Code)
+- Update the corresponding `.agent/rules/<rule>.md` (Antigravity)
+- If the hook is new: create both files and add a row to the table above
