@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Copy nginx configs and obtain SSL certificates via certbot.
 # Run once after first-deploy.sh.
 #

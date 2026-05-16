@@ -1,4 +1,4 @@
-﻿#!/bin/bash
+#!/bin/bash
 # Injects a planning reminder for substantial requests.
 # Heuristic only - searches the raw JSON payload for strong signals.
 
