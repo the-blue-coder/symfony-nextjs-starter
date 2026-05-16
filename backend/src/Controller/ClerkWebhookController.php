@@ -22,8 +22,7 @@ class ClerkWebhookController extends AbstractController
         private EntityManagerInterface $em,
         #[Autowire(env: 'CLERK_WEBHOOK_SECRET')]
         private string $webhookSecret,
-    ) {
-    }
+    ) {}
 
     #[Route('/webhook', methods: ['POST'])]
     public function webhook(Request $request): JsonResponse
