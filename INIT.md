@@ -40,8 +40,9 @@ Before touching any file, collect:
    - Prod: frontend & backend
 8. **Search engine indexing** - should the app be publicly indexed? (yes / no - sets `robots` meta tag and `robots.txt`)
 9. **Mercure** - does this project need real-time push features? (default: **yes** - included in the boilerplate)
-10. **Google Sign-In** - does this project need Google OAuth login? (yes / no)
-    > Clerk handles Google Sign-In natively - no code changes required. If yes, enable it in the Clerk dashboard (User & Authentication → Social connections → Google). If no, simply leave it disabled there.
+10. **Authentication mode** - how is this project secured?
+    - **Clerk** (default) - full user-facing auth: sign-in, sign-up, OAuth, webhooks, JWT guard. Keep everything as-is and proceed to §A4b.
+    - **Admin secrets only** - no public user auth; the backend is protected by a static API key or HTTP Basic Auth. All Clerk code will be stripped (see §A3).
 11. **API Platform** - does this project need API Platform? (default: **yes** - included in the boilerplate)
     - **Use API Platform when**: you're building a public or partner-facing REST/GraphQL API, you need automatic OpenAPI docs, or external clients consume your backend.
     - **Skip API Platform when**: the backend only serves this one frontend (no external consumers), you prefer full control over controllers and serialization, or the project is simple enough that API Platform's overhead isn't worth it.
@@ -153,8 +154,20 @@ CORS_ALLOW_ORIGIN=^(https?://(localhost|127\.0\.0\.1)(:[0-9]+)?|https://laoka\.m
 ```
 Note: dots in the domain must be escaped as `\.`.
 
-**Google Sign-In (§A1.10)**:
-- Handled entirely in the Clerk dashboard - no code changes required in either direction. Enable or disable Google under User & Authentication → Social connections → Google.
+**Authentication mode (§A1.10)**:
+- **Clerk** → leave as-is; proceed to §A4b for Clerk setup instructions.
+- **Admin secrets only** → strip all Clerk code:
+  - **Frontend**:
+    - `frontend/src/app/[locale]/layout.tsx` → remove `<ClerkProvider>` wrapper and its import.
+    - `frontend/src/middleware.ts` → remove `clerkMiddleware` and Clerk imports (or delete the file if it only contained Clerk logic).
+    - Delete `frontend/src/app/[locale]/(auth)/login/` and `frontend/src/app/[locale]/(auth)/register/`.
+    - `frontend/.env` + `frontend/.env.example` → remove all `NEXT_PUBLIC_CLERK_*` and `CLERK_*` vars.
+    - `frontend/package.json` → remove `@clerk/nextjs`, then run `pnpm install`.
+  - **Backend**:
+    - Delete `backend/src/Security/ClerkAuthenticator.php`.
+    - Delete `backend/src/Controller/ClerkWebhookController.php`.
+    - `backend/config/packages/security.yaml` → remove the Clerk JWT firewall and replace with your chosen auth mechanism (API key header check, HTTP Basic, etc.).
+    - `backend/.env` + `backend/.env.example` → remove `CLERK_JWKS_URI` and `CLERK_WEBHOOK_SECRET`.
 
 **API Platform (§A1.11)**:
 - **Yes** → leave as-is.
@@ -198,7 +211,9 @@ openssl rand -hex 32      # → APP_SECRET in backend/.env
 
 ## A4b. Clerk setup
 
-Authentication is handled by Clerk. The user must:
+> **Skip this step if §A1.10 = Admin secrets only.**
+
+The user must:
 
 1. Create a Clerk application at **https://dashboard.clerk.com** → "Add application".
 2. Copy keys into `frontend/.env`:
@@ -211,7 +226,6 @@ Authentication is handled by Clerk. The user must:
    - URL: `https://<backend-domain>/api/clerk/webhook`
    - Events to subscribe: `user.created`, `user.updated`, `user.deleted`
    - Copy the **Signing Secret** into `backend/.env` as `CLERK_WEBHOOK_SECRET`.
-5. Enable social logins (if §A1.10 = yes): User & Authentication → Social connections → Google.
 
 ---
 
@@ -242,10 +256,10 @@ Ask the user to provide values for the following - these require manual setup ou
    - Fill `backend/.env`: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BACKUP_BUCKET` (format: `bucket/prefix`).
 2. **SES mailer user** - fill `backend/.env`: `MAILER_FROM` (from §A1.15), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
 
-**Remaining `backend/.env` values:**
+**Remaining `backend/.env` values (if §A1.10 = Clerk):**
 - `CLERK_JWKS_URI`, `CLERK_WEBHOOK_SECRET` - from §A4b (Clerk setup)
 
-**Remaining `frontend/.env` values:**
+**Remaining `frontend/.env` values (if §A1.10 = Clerk):**
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` - from §A4b (Clerk setup)
 
 **Mercure (§A1.9)**:
@@ -341,7 +355,7 @@ Ask only for what the codebase doesn't already reveal:
 7. **GitHub repo URL** - to verify or set the remote.
 8. **Search engine indexing** - yes / no, if `robots.txt` and `layout.tsx` metadata are not already set.
 9. **Mercure** - is it used? (check existing `MERCURE_*` env vars - ask only if ambiguous).
-10. **Google Sign-In** - is it used? (check existing OAuth code - ask only if ambiguous).
+10. **Authentication mode** - is it Clerk (check for `@clerk/nextjs` in `package.json`, `ClerkProvider` in layout, Clerk env vars) or admin secrets only? Ask only if ambiguous.
 11. **API Platform** - is it used? (check `composer.json` and entities - ask only if ambiguous).
 12. **i18n / next-intl** - is it used? (check `package.json` for `next-intl` and presence of `frontend/messages/` - ask only if ambiguous).
 13. **Google Analytics** - is it used? (check `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env` and presence of `GoogleAnalytics.tsx` - ask only if ambiguous).
@@ -408,7 +422,7 @@ openssl rand -hex 32      # APP_SECRET
 **Remaining env values** - ask the user for any that are blank:
 - `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BACKUP_BUCKET` (S3 backup user)
 - `MAILER_FROM` and SES credentials
-- `CORS_ALLOW_ORIGIN`
+- `CORS_ALLOW_ORIGIN` - build from the frontend domain: `^(https?://(localhost|127\.0\.0\.1)(:[0-9]+)?|https://<frontend-domain>)$`
 
 **`.env.example`** - verify it's up to date with all vars present in `.env` (values redacted).
 
