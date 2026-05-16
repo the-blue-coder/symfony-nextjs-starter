@@ -247,12 +247,13 @@ openssl rand -hex 32      # → APP_SECRET in backend/.env
 The user must:
 
 1. Create a Clerk application at **https://dashboard.clerk.com** → "Add application".
-2. Copy keys into `frontend/.env`:
-   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - from API Keys page.
-   - `CLERK_SECRET_KEY` - from API Keys page.
-3. Copy the JWKS URL into `backend/.env` as `CLERK_JWKS_URI`:
+2. **Switch to the Production instance** before copying any keys - in the Clerk dashboard, use the environment toggle to switch from Development to Production. Using development keys (`pk_test_`) shows a "Development mode" badge on the sign-in page.
+3. Copy **production** keys into `frontend/.env`:
+   - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - must start with `pk_live_`.
+   - `CLERK_SECRET_KEY` - must start with `sk_live_`.
+4. Copy the JWKS URL into `backend/.env` as `CLERK_JWKS_URI`:
    - In Clerk dashboard → API Keys → **Advanced** → copy the JWKS endpoint (format: `https://<your-clerk-domain>/.well-known/jwks.json`).
-4. Create a webhook for user sync:
+5. Create a webhook for user sync:
    - Clerk dashboard → Webhooks → Add endpoint.
    - URL: `https://<backend-domain>/api/clerk/webhook`
    - Events to subscribe: `user.created`, `user.updated`, `user.deleted`
