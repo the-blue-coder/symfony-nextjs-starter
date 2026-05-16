@@ -16,6 +16,7 @@
 ## Formatting
 
 - **Indentation**: tabs only, no spaces - tab width = 4 spaces. Applies to all files (PHP, Twig, JS, TS, CSS, etc.).
+- **Punctuation**: use `-` (hyphen), never `—` (em dash) in code, comments, strings, and docs.
 
 ---
 
