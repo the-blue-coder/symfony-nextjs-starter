@@ -8,7 +8,7 @@ const intlMiddleware = createIntlMiddleware(routing);
 const isProtectedRoute = createRouteMatcher(["/:locale/dashboard(.*)"]);
 const isAuthRoute = createRouteMatcher(["/:locale/login(.*)", "/:locale/register(.*)"]);
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+export const proxy = clerkMiddleware(async (auth, req: NextRequest) => {
 	if (isProtectedRoute(req)) {
 		await auth.protect();
 	}
