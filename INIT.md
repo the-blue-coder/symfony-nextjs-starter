@@ -101,7 +101,7 @@ Use the answers from §A1 to replace every placeholder across the repo.
 | Placeholder | Replace with |
 |---|---|
 | `[Project Name]` | Display name - in `.context/project-overview.md` (title + `App Name`), `frontend/src/app/layout.tsx`, `frontend/src/app/page.tsx`, `frontend/src/app/(dashboard)/layout.tsx` |
-| `[project-name]` | Slug - in `.context/infra.md` (deploy path), `infra/deploy.sh`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
+| `[project-name]` | Slug - in `.context/infra.md` (deploy path), `.github/workflows/deploy.yml`, `infra/deploy.sh`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
 | `[project-slug]` | Slug - in `.context/infra.md` (PM2 process name), `backend/docker-compose.yml` and `backend/docker-compose.prod.yml` (`name:` field) |
 | `[project].domain.com` | Frontend domain - in `.context/infra.md`, `backend/.env`, `backend/.env.example`, `infra/nginx/setup.sh` |
 | `b.[project].domain.com` | Backend domain - same files as above |
