@@ -313,6 +313,7 @@ Remove boilerplate-only files and the initialization notice from `README.md`:
 ```bash
 rm INIT.md
 rm VERSIONS.md
+rm .github/dependabot.yml
 ```
 
 In `README.md`, remove the opening block:
