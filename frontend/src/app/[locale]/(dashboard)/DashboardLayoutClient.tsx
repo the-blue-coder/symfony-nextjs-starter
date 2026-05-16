@@ -25,18 +25,19 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 			>
 				{/* Header */}
 				{!showExpanded ? (
-					<div className="shrink-0 flex flex-col items-center py-3 border-b">
-						<button onClick={toggleSidebar} title="Expand sidebar" className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer transition-colors">
-							<ChevronRight size={16} />
-						</button>
+					<div className="h-16 shrink-0 flex items-center justify-center border-b">
+						<img src="/icon.svg" alt={APP_NAME} className="h-8 w-8 rounded-md" />
 					</div>
 				) : (
 					<div className="h-16 shrink-0 border-b flex items-center px-4">
-						<span className="flex-1 font-semibold text-sm truncate">{APP_NAME}</span>
+						<div className="flex items-center gap-2 flex-1 min-w-0">
+							<img src="/icon.svg" alt={APP_NAME} className="h-7 w-7 rounded-md shrink-0" />
+							<span className="font-semibold text-sm truncate">{APP_NAME}</span>
+						</div>
 						<button
 							onClick={toggleSidebar}
 							title="Collapse sidebar"
-							className="hidden lg:flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer transition-colors shrink-0 ml-auto"
+							className="hidden lg:flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer transition-colors shrink-0 ml-2"
 						>
 							<ChevronLeft size={15} />
 						</button>
@@ -61,6 +62,13 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 					</nav>
 				) : (
 					<nav className="flex-1 flex flex-col items-center py-3 gap-1">
+						<button
+							onClick={toggleSidebar}
+							title="Expand sidebar"
+							className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer transition-colors"
+						>
+							<ChevronRight size={16} />
+						</button>
 						{navItems.map(({ href, label, icon: Icon }) => (
 							<Link
 								key={href}
@@ -105,9 +113,12 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 					>
 						<Menu size={20} />
 					</button>
-					<span className="font-semibold text-sm">{APP_NAME}</span>
+					<div className="flex items-center gap-2">
+						<img src="/icon.svg" alt={APP_NAME} className="h-6 w-6 rounded-md" />
+						<span className="font-semibold text-sm">{APP_NAME}</span>
+					</div>
 				</div>
-				{children}
+				<div className="p-6">{children}</div>
 			</main>
 		</div>
 	);
