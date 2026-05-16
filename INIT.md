@@ -142,6 +142,17 @@ Update their contents with the real domains and prod ports.
 
 **Update `README.md`**: replace title and description with project name, slug, and objective. Keep the stack, features, and usage sections.
 
+**Set `CORS_ALLOW_ORIGIN` in `backend/.env` and `backend/.env.example`**:
+Build the regex from the frontend domain (§A1.4) — allows both localhost (dev) and the production frontend:
+```
+^(https?://(localhost|127\.0\.0\.1)(:[0-9]+)?|https://<frontend-domain>)$
+```
+Example for `laoka.madainsight.com`:
+```
+CORS_ALLOW_ORIGIN=^(https?://(localhost|127\.0\.0\.1)(:[0-9]+)?|https://laoka\.madainsight\.com)$
+```
+Note: dots in the domain must be escaped as `\.`.
+
 **Google Sign-In (§A1.10)**:
 - Handled entirely in the Clerk dashboard - no code changes required in either direction. Enable or disable Google under User & Authentication → Social connections → Google.
 
@@ -232,7 +243,6 @@ Ask the user to provide values for the following - these require manual setup ou
 2. **SES mailer user** - fill `backend/.env`: `MAILER_FROM` (from §A1.15), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
 
 **Remaining `backend/.env` values:**
-- `CORS_ALLOW_ORIGIN`
 - `CLERK_JWKS_URI`, `CLERK_WEBHOOK_SECRET` - from §A4b (Clerk setup)
 
 **Remaining `frontend/.env` values:**
