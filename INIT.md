@@ -71,7 +71,7 @@ Before touching any file, collect:
 Wire up the remote:
 
 ```bash
-git remote set-url origin git@github.com:<owner>/<project-slug>.git
+git remote set-url origin https://github.com/<owner>/<project-slug>.git
 ```
 
 Then in the repo settings → **Secrets and variables → Actions**, add:
@@ -406,7 +406,7 @@ Check each item - only act on what's missing or incorrect:
 ```bash
 git remote -v
 ```
-If wrong or missing: `git remote set-url origin git@github.com:<owner>/<slug>.git`
+If wrong or missing: `git remote set-url origin https://github.com/<owner>/<slug>.git`
 
 **GitHub Actions secrets** - verify in repo settings → Secrets and variables → Actions:
 
