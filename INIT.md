@@ -1,4 +1,4 @@
-﻿# Project Initialization
+# Project Initialization
 
 > **For the AI assistant**: Read this file fully before asking anything. Determine the path (A or B) from the first question below, then follow only that path. Do not skip steps.
 >
