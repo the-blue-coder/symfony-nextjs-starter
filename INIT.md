@@ -256,11 +256,13 @@ The user must:
 4. For **local development**, switch to the **Development** instance in the Clerk dashboard and copy the development keys (`pk_test_` / `sk_test_`) into `frontend/.env.local` (gitignored - overrides `.env` locally). Production keys are domain-locked to the production domain and will fail on `localhost`.
 5. Copy the JWKS URL into `backend/.env` as `CLERK_JWKS_URI`:
    - In Clerk dashboard → API Keys → **Advanced** → copy the JWKS endpoint (format: `https://<your-clerk-domain>/.well-known/jwks.json`).
+   - **Critical for local dev**: the backend must also use the **Development** instance JWKS URL, otherwise it will reject tokens issued by the dev Clerk instance with 401. Copy the **Development** JWKS URL into `backend/.env.local` as `CLERK_JWKS_URI` (overrides the prod value locally).
 6. Create a webhook for user sync:
    - Clerk dashboard → Webhooks → Add endpoint.
    - URL: `https://<backend-domain>/api/clerk/webhook`
    - Events to subscribe: `user.created`, `user.updated`, `user.deleted`
    - Copy the **Signing Secret** into `backend/.env` as `CLERK_WEBHOOK_SECRET`.
+   - For **local development**, also copy the **Development** webhook signing secret into `backend/.env.local` as `CLERK_WEBHOOK_SECRET`.
 
 ---
 
