@@ -1,5 +1,5 @@
----
-description: "Verify that the implemented code matches its feature spec — checks every acceptance criterion, data model, and API contract"
+﻿---
+description: "Verify that the implemented code matches its feature spec - checks every acceptance criterion, data model, and API contract"
 argument-hint: "<spec number or name fragment>"
 allowed-tools:
   - Read

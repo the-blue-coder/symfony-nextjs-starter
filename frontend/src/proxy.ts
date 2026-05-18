@@ -1,6 +1,6 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import createIntlMiddleware from "next-intl/middleware";
-import { routing } from "./i18n/routing";
+import { routing } from "./lib/i18n";
 import type { NextRequest } from "next/server";
 
 const intlMiddleware = createIntlMiddleware(routing);
@@ -8,7 +8,7 @@ const intlMiddleware = createIntlMiddleware(routing);
 const isProtectedRoute = createRouteMatcher(["/:locale/dashboard(.*)"]);
 const isAuthRoute = createRouteMatcher(["/:locale/login(.*)", "/:locale/register(.*)"]);
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+export const proxy = clerkMiddleware(async (auth, req: NextRequest) => {
 	if (isProtectedRoute(req)) {
 		await auth.protect();
 	}

@@ -2,7 +2,7 @@
 # Run once on the server to bootstrap the environment before CI/CD takes over.
 set -e
 
-REPO_URL="git@github.com:[owner]/[repo].git"
+REPO_URL="https://github.com/[owner]/[repo].git"
 DEPLOY_PATH="/home/www/[project-name]"
 PROJECT_NAME="[project-name]"
 FRONTEND_PORT="[FRONTEND_PORT]"

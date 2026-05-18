@@ -1,0 +1,13 @@
+{
+	"nav": {
+		"language": "Langue"
+	},
+	"settings": {
+		"language": {
+			"title": "Langue",
+			"label": "Langue d'affichage",
+			"save": "Enregistrer",
+			"saved": "Enregistré"
+		}
+	}
+}

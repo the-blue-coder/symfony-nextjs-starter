@@ -1,4 +1,4 @@
-# Stack Versions
+﻿# Stack Versions
 
 Last updated: March 2026
 
@@ -21,7 +21,7 @@ Last updated: March 2026
 
 ## Breaking Changes Log
 
-### 2026-03 — Initial release
+### 2026-03 - Initial release
 
 - Next.js 16: proxy.ts replaces middleware.ts
 - Tailwind v4: CSS-first config, no tailwind.config.ts

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Injects a planning reminder for substantial requests.
-# Heuristic only — searches the raw JSON payload for strong signals.
+# Heuristic only - searches the raw JSON payload for strong signals.
 
 input=$(cat)
 
@@ -17,7 +17,7 @@ if echo "$input" | grep -iE '"message"[^}]*\b(implement|implémenter|new (page|f
         exit 0
     fi
 
-    printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"PLANNING REMINDER: This request looks substantial. Before implementing, ask the user: '\''This looks like a non-trivial change — do you want to go through /plan first to spec it out, or should I just go ahead?'\''"}}'
+    printf '{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"PLANNING REMINDER: This request looks substantial. Before implementing, ask the user: '\''This looks like a non-trivial change - do you want to go through /planify first to spec it out, or should I just go ahead?'\''"}}'
 fi
 
 exit 0

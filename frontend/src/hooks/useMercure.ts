@@ -1,22 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-type TUseMercureReturn<T> = {
-	data: T | null;
-	isConnected: boolean;
-};
+import { MERCURE_URL } from "@/constants/app";
 
 const useMercure = <T = unknown>(topic: string): TUseMercureReturn<T> => {
 	const [data, setData] = useState<T | null>(null);
 	const [isConnected, setIsConnected] = useState(false);
 	const eventSourceRef = useRef<EventSource | null>(null);
 
+	// Subscribe to the Mercure hub for the given topic and update data on each message
 	useEffect(() => {
-		const hubUrl = process.env.NEXT_PUBLIC_MERCURE_URL;
-		if (!hubUrl) return;
+		if (!MERCURE_URL) {
+			return;
+		}
 
-		const url = new URL(hubUrl);
+		const url = new URL(MERCURE_URL);
 		url.searchParams.append("topic", topic);
 
 		const eventSource = new EventSource(url.toString(), { withCredentials: true });
@@ -41,6 +39,11 @@ const useMercure = <T = unknown>(topic: string): TUseMercureReturn<T> => {
 	}, [topic]);
 
 	return { data, isConnected };
+};
+
+type TUseMercureReturn<T> = {
+	data: T | null;
+	isConnected: boolean;
 };
 
 export default useMercure;

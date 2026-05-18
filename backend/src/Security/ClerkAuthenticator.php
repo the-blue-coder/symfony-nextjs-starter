@@ -93,7 +93,9 @@ class ClerkAuthenticator extends AbstractAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        return new JsonResponse(['message' => $exception->getMessage()], Response::HTTP_UNAUTHORIZED);
+        return new JsonResponse([
+            'message' => $exception->getMessage(),
+        ], Response::HTTP_UNAUTHORIZED);
     }
 
     private function fetchJwks(): array

@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
+import GoogleAnalytics from "@/components/tracking/GoogleAnalytics";
+import MicrosoftClarity from "@/components/tracking/MicrosoftClarity";
+import { GA_MEASUREMENT_ID, CLARITY_PROJECT_ID } from "@/constants/app";
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
+import { routing } from "@/lib/i18n";
 
 export const metadata: Metadata = {
 	title: "[Project Name]",
 	description: "[Project description]",
+	manifest: "/manifest.webmanifest",
+	themeColor: "#6366f1",
 };
 
-type Props = {
-	children: React.ReactNode;
-	params: Promise<{ locale: string }>;
-};
-
-const RootLayout = async ({ children, params }: Props) => {
+const RootLayout = async ({ children, params }: TRootLayoutProps) => {
 	const { locale } = await params;
 
 	if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
@@ -40,10 +40,17 @@ const RootLayout = async ({ children, params }: Props) => {
 					<NextIntlClientProvider messages={messages}>
 						<QueryProvider>{children}</QueryProvider>
 					</NextIntlClientProvider>
+					{GA_MEASUREMENT_ID && <GoogleAnalytics measurementId={GA_MEASUREMENT_ID} />}
+					{CLARITY_PROJECT_ID && <MicrosoftClarity projectId={CLARITY_PROJECT_ID} />}
 				</body>
 			</html>
 		</ClerkProvider>
 	);
+};
+
+type TRootLayoutProps = {
+	children: React.ReactNode;
+	params: Promise<{ locale: string }>;
 };
 
 export default RootLayout;

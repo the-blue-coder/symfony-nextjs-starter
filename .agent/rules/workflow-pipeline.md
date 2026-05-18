@@ -6,24 +6,24 @@ description: "Enforces the spec-driven development pipeline for this project"
 
 Two paths depending on scope:
 
-## Quick path — small fixes, bugs, debug, typos
+## Quick path - small fixes, bugs, debug, typos
 
 Write code directly. No spec required. Qualifies if **all** of the following are true:
 - Touches ≤ 3 files
 - No new feature, no API contract change, no DB migration
 - Can be described in one sentence
-- **No spec is currently `status: in-progress`** — if one exists, run `/verify` first
+- **No spec is currently `status: in-progress`** - if one exists, run `/verify` first
 
-## Feature path — anything consequent
+## Feature path - anything consequent
 
 ```
 /plan → /dev → /verify
 ```
 
-- **No code without a spec.** Never write feature code in `frontend/` or `backend/` without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/plan` first.
+- **No code without a spec.** Never write feature code in `frontend/` or `backend/` without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/planify` first.
 - **No `/dev` with pending `/verify`.** Before starting `/dev` on any spec, check `.context/feature-specs/` for specs with `status: in-progress` that have unchecked acceptance criteria (`- [ ]`). If any exist, run `/verify` on them first.
 - **Only `/verify` marks specs done.** Never set `status: done` on a spec during `/dev`. Only `/verify` may do this.
-- **`/plan` is always allowed.** You may run `/plan` at any time regardless of pipeline state.
+- **`/planify` is always allowed.** You may run `/planify` at any time regardless of pipeline state.
 
 ## How to check before writing feature code
 

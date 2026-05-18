@@ -1,5 +1,7 @@
 "use client";
 
+"use client";
+
 import useDeleteModal from "./hooks/useDeleteModal";
 import LoadingSpinner from "./LoadingSpinner";
 import { Button } from "./button";

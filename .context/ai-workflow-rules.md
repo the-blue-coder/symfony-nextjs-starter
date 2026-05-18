@@ -1,4 +1,4 @@
-# AI Workflow Rules
+﻿# AI Workflow Rules
 
 > Context loading order and file index: `.context/ai-workflow-entrypoint.md`.
 
@@ -20,7 +20,7 @@ Build incrementally against the specs defined in `.context/`. Never infer or inv
 - Multiple unrelated API routes
 - Behavior not defined in the context files
 
-If a change cannot be verified end-to-end quickly, the scope is too broad — split it.
+If a change cannot be verified end-to-end quickly, the scope is too broad - split it.
 
 ---
 
@@ -36,9 +36,9 @@ If a change cannot be verified end-to-end quickly, the scope is too broad — sp
 
 Do not modify unless explicitly instructed:
 
-- `src/components/ui/*` — shadcn/ui primitives (edit only to match design system)
-- `src/middleware.ts` — auth guard (Clerk) + i18n routing
-- `src/lib/api.ts` — fetch wrapper
+- `src/components/ui/*` - shadcn/ui primitives (edit only to match design system)
+- `src/middleware.ts` - auth guard (Clerk) + i18n routing
+- `src/lib/api.ts` - fetch wrapper
 
 ---
 

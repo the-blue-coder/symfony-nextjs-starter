@@ -1,6 +1,6 @@
-# Tailwind
+﻿# Tailwind
 
-### v4 — CSS variable syntax
+### v4 - CSS variable syntax
 
 Use the shorthand `(--var-name)` instead of `[var(--var-name)]`:
 
@@ -9,11 +9,11 @@ Use the shorthand `(--var-name)` instead of `[var(--var-name)]`:
 // ✅ correct (v4):   border-(--border-default)
 ```
 
-Always use the v4 shorthand — the `[var(...)]` form triggers a deprecation warning.
+Always use the v4 shorthand - the `[var(...)]` form triggers a deprecation warning.
 
-### Brand tokens — never hardcode hex values
+### Brand tokens - never hardcode hex values
 
-Always use brand token classes — no raw hex values in templates or CSS.
+Always use brand token classes - no raw hex values in templates or CSS.
 
 | Role | Tailwind class / CSS variable | Value |
 | --- | --- | --- |

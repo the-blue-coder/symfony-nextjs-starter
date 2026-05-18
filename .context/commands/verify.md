@@ -1,5 +1,5 @@
----
-description: "Verify that the implemented code matches its feature spec — checks every acceptance criterion, data model, and API contract"
+﻿---
+description: "Verify that the implemented code matches its feature spec - checks every acceptance criterion, data model, and API contract"
 argument-hint: "<spec number or name fragment>"
 ---
 
@@ -9,7 +9,7 @@ Spec to verify: `$ARGS`
 
 ---
 
-## Step 1 — Find the spec
+## Step 1 - Find the spec
 
 List files in `.context/feature-specs/`.
 
@@ -21,7 +21,7 @@ Read the full spec file.
 
 ---
 
-## Step 2 — Load context (silent)
+## Step 2 - Load context (silent)
 
 Read:
 - `.context/architecture.md`
@@ -31,14 +31,14 @@ Read:
 
 ---
 
-## Step 3 — Verify each acceptance criterion
+## Step 3 - Verify each acceptance criterion
 
 For each `- [x] criterion` (checked) and `- [ ] criterion` (unchecked) in the spec, find the code that satisfies it.
 
 **How to verify each criterion:**
 
 - Search for the relevant entity, route, component, hook, or service that implements it.
-- Read the actual implementation — don't assume it exists because the box is checked.
+- Read the actual implementation - don't assume it exists because the box is checked.
 - Confirm the behavior matches the criterion exactly (field names, HTTP method, response shape, access rules, edge case handling).
 
 Assign one of three verdicts per criterion:
@@ -51,7 +51,7 @@ Assign one of three verdicts per criterion:
 
 ---
 
-## Step 4 — Verify the data model
+## Step 4 - Verify the data model
 
 For each entity and field listed in the spec's **Data Model** table:
 
@@ -63,7 +63,7 @@ Verdict: ✅ / ⚠️ / ❌ per entity.
 
 ---
 
-## Step 5 — Verify the API contract
+## Step 5 - Verify the API contract
 
 For each route in the spec's **API Contract** table:
 
@@ -75,11 +75,11 @@ Verdict: ✅ / ⚠️ / ❌ per route.
 
 ---
 
-## Step 6 — Report
+## Step 6 - Report
 
 Output a structured report:
 
-### Verification report — NNN Feature Name
+### Verification report - NNN Feature Name
 
 **Acceptance Criteria**
 
@@ -93,7 +93,7 @@ Output a structured report:
 
 | Entity | Verdict | Notes |
 | --- | --- | --- |
-| Foo | ✅ | — |
+| Foo | ✅ | - |
 
 **API Contract**
 
@@ -108,23 +108,23 @@ Output a structured report:
 
 ---
 
-## Step 7 — Convention review
+## Step 7 - Convention review
 
-Run `/review-changes` on the files changed by this feature (scope = `frontend`, `backend`, or `all` depending on what the spec touched). This checks coding conventions — hook/component split, braces, prop type naming, repo injection, etc.
+Run `/review-changes` on the files changed by this feature (scope = `frontend`, `backend`, or `all` depending on what the spec touched). This checks coding conventions - hook/component split, braces, prop type naming, repo injection, etc.
 
 Fix all violations before proceeding to Step 8.
 
 ---
 
-## Step 8 — Fix or flag
+## Step 8 - Fix or flag
 
 **If all spec verdicts are ✅ and conventions are clean:**
 - Update any unchecked `- [ ]` criteria in the spec to `- [x]`.
 - Update `status` to `done` and update `.context/progress-tracker.md` accordingly.
-- Tell the user: "Spec fully verified and conventions clean — marking as done."
+- Tell the user: "Spec fully verified and conventions clean - marking as done."
 
 **If any spec verdict is ⚠️ or ❌:**
 - Do NOT mark the spec as done.
 - For each gap, ask the user: "Do you want me to fix this now, or log it as an open question in the spec?"
   - Fix now → implement the missing piece inline, then re-verify that criterion.
-  - Log it → add to the spec's **Open Questions** section: `- [ ] [criterion text] — not yet implemented`.
+  - Log it → add to the spec's **Open Questions** section: `- [ ] [criterion text] - not yet implemented`.
