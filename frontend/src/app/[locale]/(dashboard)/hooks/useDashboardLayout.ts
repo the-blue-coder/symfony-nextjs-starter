@@ -2,7 +2,7 @@
 
 import { usePathname } from "@/lib/i18n";
 import { useClerk } from "@clerk/nextjs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const useDashboardLayout = (initialCollapsed: boolean) => {
 	const pathname = usePathname();
@@ -22,17 +22,19 @@ const useDashboardLayout = (initialCollapsed: boolean) => {
 		setIsSidebarCollapsed(!isSidebarCollapsed);
 	}, [isSidebarCollapsed, setIsSidebarCollapsed]);
 
+	const resetMobileOpen = useCallback(() => {
+		setIsMobileOpen(false);
+	}, []);
+
 	const toggleMobileSidebar = useCallback(() => {
 		setIsMobileOpen((prev) => !prev);
 	}, []);
 
-	useEffect(() => {
-		setIsMobileOpen(false);
-	}, [pathname]);
-
 	const isNavActive = useCallback(
 		(href: string) => {
-			if (href === "/dashboard") return pathname === "/dashboard";
+			if (href === "/dashboard") {
+				return pathname === "/dashboard";
+			}
 			return pathname === href || pathname.startsWith(href + "/");
 		},
 		[pathname]
@@ -42,7 +44,17 @@ const useDashboardLayout = (initialCollapsed: boolean) => {
 		await signOut({ redirectUrl: "/" });
 	}, [signOut]);
 
-	return { isSidebarCollapsed, isMobileOpen, showExpanded, isNavActive, handleSignOut, toggleSidebar, toggleMobileSidebar };
+	return {
+		isMobileOpen,
+		isSidebarCollapsed,
+		pathname,
+		showExpanded,
+		handleSignOut,
+		isNavActive,
+		resetMobileOpen,
+		toggleMobileSidebar,
+		toggleSidebar,
+	};
 };
 
 export default useDashboardLayout;

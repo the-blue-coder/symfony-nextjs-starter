@@ -1,19 +1,29 @@
 "use client";
 
+import { useEffect } from "react";
 import { ChevronLeft, ChevronRight, LayoutDashboard, LogOut, Menu, Settings } from "lucide-react";
 import { Link } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/constants/app";
 import useDashboardLayout from "./hooks/useDashboardLayout";
 
-const navItems = [
-	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-	{ href: "/settings", label: "Settings", icon: Settings },
-];
-
 const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialCollapsed, children }) => {
-	const { isSidebarCollapsed, isMobileOpen, showExpanded, isNavActive, handleSignOut, toggleSidebar, toggleMobileSidebar } =
-		useDashboardLayout(initialCollapsed);
+	const {
+		isMobileOpen,
+		isSidebarCollapsed,
+		pathname,
+		showExpanded,
+		handleSignOut,
+		isNavActive,
+		resetMobileOpen,
+		toggleMobileSidebar,
+		toggleSidebar,
+	} = useDashboardLayout(initialCollapsed);
+
+	// close mobile sidebar on route change
+	useEffect(() => {
+		resetMobileOpen();
+	}, [pathname, resetMobileOpen]);
 
 	return (
 		<div className="flex min-h-screen bg-background">
@@ -125,6 +135,11 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 		</div>
 	);
 };
+
+const navItems = [
+	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+	{ href: "/settings", label: "Settings", icon: Settings },
+];
 
 type TDashboardLayoutClientProps = {
 	initialCollapsed: boolean;
