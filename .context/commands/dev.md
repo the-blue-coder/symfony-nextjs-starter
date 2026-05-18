@@ -1,15 +1,15 @@
----
+﻿---
 description: "Implement a feature from its spec in .context/feature-specs/"
 argument-hint: "<spec number or name fragment>"
 ---
 
 Pick up and implement a feature from its spec.
 
-Spec to work on (optional — skip to show the menu): `$ARGS`
+Spec to work on (optional - skip to show the menu): `$ARGS`
 
 ---
 
-## Step 1 — Load project context (silent)
+## Step 1 - Load project context (silent)
 
 Read:
 - `.context/ai-workflow-entrypoint.md`
@@ -19,7 +19,7 @@ Read:
 
 ---
 
-## Step 2 — Find specs
+## Step 2 - Find specs
 
 List all files in `.context/feature-specs/` and read the `status:` frontmatter field from each.
 
@@ -33,11 +33,11 @@ Stop.
 
 ```
 ▶ In progress
-  1. 002 — Feature name
+  1. 002 - Feature name
 
 ◦ Todo
-  2. 001 — Feature name
-  3. 003 — Feature name
+  2. 001 - Feature name
+  3. 003 - Feature name
 ```
 
 Ask: **Which feature do you want to implement? (enter a number)**
@@ -45,7 +45,7 @@ Wait for the answer.
 
 ---
 
-## Step 3 — Show the spec summary
+## Step 3 - Show the spec summary
 
 Read the chosen spec file. Display:
 - Title and goal
@@ -57,7 +57,7 @@ Wait for confirmation.
 
 ---
 
-## Step 4 — Mark in progress
+## Step 4 - Mark in progress
 
 Update the spec file's frontmatter: `status: todo` → `status: in-progress`.
 
@@ -65,7 +65,7 @@ Also update `.context/progress-tracker.md`: move the feature from **Next Up** to
 
 ---
 
-## Step 5 — Load layer-specific context (silent)
+## Step 5 - Load layer-specific context (silent)
 
 Based on the spec's scope:
 - Touches `frontend/` → read `.context/coding-conventions/typescript.md`, `.context/coding-conventions/nextjs.md`, `.context/coding-conventions/tailwind.md`, `.context/coding-conventions/ui.md`, and `.context/ui-context.md`
@@ -78,9 +78,9 @@ Then explore the codebase silently:
 
 ---
 
-## Step 6 — Implement
+## Step 6 - Implement
 
-The spec's **API Contract** table is a strict contract — implement exactly what's specified: method, route, request body fields (names, types, constraints), success status code, response shape, error responses, and auth. Do not add, remove, or rename fields.
+The spec's **API Contract** table is a strict contract - implement exactly what's specified: method, route, request body fields (names, types, constraints), success status code, response shape, error responses, and auth. Do not add, remove, or rename fields.
 
 Work through the spec systematically, in dependency order:
 **backend entities → repositories → services → migrations → API → frontend schemas → hooks → components → pages**
@@ -95,7 +95,7 @@ Do not cut corners. Implement completely and correctly before moving on.
 
 ---
 
-## Step 7 — Verify
+## Step 7 - Verify
 
 Quick sanity check:
 - **Backend**: no PHP syntax issues, no inline FQN (`new \Foo()` → use `use`), no EntityManager queries in services, no `*Client`/`*Manager` class names in `src/Service/`
@@ -103,15 +103,15 @@ Quick sanity check:
 
 ---
 
-## Step 8 — Update CHANGELOG.md
+## Step 8 - Update CHANGELOG.md
 
 Add one bullet under `## [Unreleased]` (create it if missing) following Keep a Changelog format (`Added` / `Changed` / `Fixed`). Describe the user-facing outcome, not the files touched.
 
 ---
 
-## Step 9 — Hand off
+## Step 9 - Hand off
 
-Do NOT mark the spec as done yet — that's `/verify`'s job.
+Do NOT mark the spec as done yet - that's `/verify`'s job.
 
 Tell the user:
 - What was implemented (files created/modified).
@@ -127,6 +127,6 @@ Then:
 ## Rules
 
 - Never mark a spec done before all acceptance criteria are checked off.
-- Never invent behavior not described in the spec — add open questions instead.
+- Never invent behavior not described in the spec - add open questions instead.
 - The user manages Git. Never commit unless explicitly asked.
 - Follow all conventions from `.context/coding-conventions/`. When in doubt, re-read them.

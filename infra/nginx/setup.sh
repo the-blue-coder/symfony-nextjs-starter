@@ -47,7 +47,7 @@ echo "==> Obtaining SSL certificates (separate cert per domain)..."
 # Each domain gets its OWN certificate. Do NOT pass both domains to a single
 # certbot --nginx call: that would create a SAN cert under a single
 # /etc/letsencrypt/live/<first-domain>/ directory, and the second domain's
-# nginx config — which references /etc/letsencrypt/live/<backend-domain>/ —
+# nginx config - which references /etc/letsencrypt/live/<backend-domain>/ -
 # would fail to load.
 certbot --nginx -d "$DOMAIN" --cert-name "$DOMAIN" --non-interactive --agree-tos --email "$LE_EMAIL" --redirect
 certbot --nginx -d "$BACKEND_DOMAIN" --cert-name "$BACKEND_DOMAIN" --non-interactive --agree-tos --email "$LE_EMAIL" --redirect
