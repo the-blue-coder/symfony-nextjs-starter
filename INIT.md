@@ -246,6 +246,14 @@ openssl rand -hex 32      # → APP_SECRET in backend/.env
 
 > **Skip this step if §A1.10 = Admin secrets only.**
 
+First, create `backend/.env.local` from the template:
+
+```bash
+cp backend/.env.local.example backend/.env.local
+```
+
+This file is gitignored and overrides `backend/.env` for local development. You will fill in the Clerk dev values in the steps below.
+
 The user must:
 
 1. Create a Clerk application at **https://dashboard.clerk.com** → "Add application".
