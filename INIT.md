@@ -106,7 +106,6 @@ Use the answers from §A1 to replace every placeholder across the repo.
 | `[project].domain.com` | Frontend domain - in `.context/infra.md`, `backend/.env`, `backend/.env.example`, `infra/nginx/setup.sh` |
 | `b.[project].domain.com` | Backend domain - same files as above |
 | `[FRONTEND_PORT]` | Prod frontend port - in `.context/infra.md`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
-| `[BACKEND_PORT]` | Local backend port - in `frontend/.env.example` |
 | `[PROD_BACKEND_PORT]` | Prod backend port - in `.context/infra.md`, `backend/docker-compose.prod.yml`, `infra/nginx/setup.sh`, AND in `infra/nginx/b.<domain>` (`proxy_pass http://localhost:<port>;`) |
 | `[owner]/[repo]` | GitHub repo - in `infra/first-deploy.sh` |
 
@@ -246,13 +245,14 @@ openssl rand -hex 32      # → APP_SECRET in backend/.env
 
 > **Skip this step if §A1.10 = Admin secrets only.**
 
-First, create `backend/.env.local` from the template:
+First, create the `.env.local` files from their templates:
 
 ```bash
 cp backend/.env.local.example backend/.env.local
+cp frontend/.env.local.example frontend/.env.local
 ```
 
-This file is gitignored and overrides `backend/.env` for local development. You will fill in the Clerk dev values in the steps below.
+These files are gitignored and override their respective `.env` for local development. You will fill in the Clerk dev values in the steps below.
 
 The user must:
 
