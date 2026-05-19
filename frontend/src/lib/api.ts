@@ -23,11 +23,6 @@ const request = async <T>(path: string, options: TRequestOptions = {}): Promise<
 
 	const data = await response.json().catch(() => ({}));
 
-	if (response.status === 401 && typeof window !== "undefined") {
-		window.location.href = "/login";
-		return {} as T;
-	}
-
 	if (!response.ok) {
 		const message = data.message ?? data.detail ?? data.error ?? "An unexpected error occurred.";
 		throw new Error(message);

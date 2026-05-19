@@ -32,25 +32,11 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      APP_ENV: ${APP_ENV:-dev}
-      APP_SECRET: ${APP_SECRET}
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY}
-      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
-      JWT_TOKEN_TTL: ${JWT_TOKEN_TTL:-900}
-      JWT_REFRESH_TOKEN_TTL: ${JWT_REFRESH_TOKEN_TTL:-2592000}
-      MAILER_DSN: ${MAILER_DSN}
-      MAILER_FROM: ${MAILER_FROM}
-      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-2}
-      FRONTEND_URL: ${FRONTEND_URL}
-      MERCURE_URL: ${MERCURE_URL}
-      MERCURE_PUBLIC_URL: ${MERCURE_PUBLIC_URL}
-      MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
-      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
       MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
-      DEFAULT_URI: ${DEFAULT_URI:-http://localhost}
     volumes:
       - .:/var/www/html
       - /var/www/html/vendor
