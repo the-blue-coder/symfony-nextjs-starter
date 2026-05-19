@@ -66,6 +66,32 @@ class OrderRepository extends ServiceEntityRepository
 }
 ```
 
+### Controllers — thin, no business logic
+
+Controllers must only: call service methods, pass data to templates, and handle HTTP concerns (redirects, 404s).
+
+Never put data transformation, URL building, or any multi-step logic in a controller action — move it to a dedicated service.
+
+```php
+// ❌ wrong — business logic in the controller
+public function list(ProductRepository $repo, ImageManager $im): Response
+{
+    $products = $repo->findAllActive();
+    $data = [];
+    foreach ($products as $product) {
+        // ... image URL building, data assembly ...
+        $data[] = $productData;
+    }
+    return $this->render('...', ['products' => $data]);
+}
+
+// ✅ correct — delegate to a service
+public function list(ProductService $service): Response
+{
+    return $this->render('...', ['products' => $service->buildListData()]);
+}
+```
+
 ### Service naming
 
 Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions - no `*Client`, `*Manager`, `*Handler`.
