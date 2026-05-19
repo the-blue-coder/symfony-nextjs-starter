@@ -109,6 +109,25 @@ Inject a **blocking inline** `<script>` in `src/app/layout.tsx` inside `<head>`,
 
 ---
 
+### Pure helper functions
+
+Pure functions with no state or hook dependencies do NOT belong in a hook or a component file. Put them in `src/lib/utils.ts`.
+
+- **Reusable across the app** → `src/lib/utils.ts` (exported).
+- **Used only in one file** → still `src/lib/utils.ts` if it has no dependencies; moving it inline adds noise.
+- **Never** define a stateless pure helper inside a hook body or at the bottom of a component file.
+
+```ts
+// ❌ wrong - pure helper inside a hook file
+const useMyHook = () => { ... };
+const formatDate = (d: string) => moment(d).format("MMM D"); // no state, no deps
+
+// ✅ correct - in src/lib/utils.ts
+export const formatDate = (d: string) => moment(d).format("MMM D");
+```
+
+---
+
 ## Quick Reference
 
 | You're about to... | Instead |
@@ -117,3 +136,4 @@ Inject a **blocking inline** `<script>` in `src/app/layout.tsx` inside `<head>`,
 | Hardcode a user-facing string | Route through `next-intl` |
 | Config values (locales…) in `lib/` | `src/i18n/routing.ts` |
 | Random constant above a server component | Only Next.js framework exports allowed above the component |
+| Pure helper at the bottom of a hook/component file | `src/lib/utils.ts` |
