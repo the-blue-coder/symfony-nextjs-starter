@@ -165,4 +165,4 @@ Open `.context/progress-tracker.md` and add the new feature under **Next Up** (o
 If the current phase or goal in the tracker needs updating based on this new feature, update those sections too.
 
 Then tell the user:
-> Spec written. Workflow: `/dev` to implement → `/verify` to validate against the spec.
+> Spec written. Workflow: `/dev` to implement → `/review-spec-implementation` to validate against the spec.

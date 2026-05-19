@@ -111,7 +111,7 @@ Add one bullet under `## [Unreleased]` (create it if missing) following Keep a C
 
 ## Step 9 - Hand off
 
-Do NOT mark the spec as done yet - that's `/verify`'s job.
+Do NOT mark the spec as done yet - that's `/review-spec-implementation`'s job.
 
 Tell the user:
 - What was implemented (files created/modified).
@@ -119,8 +119,8 @@ Tell the user:
 - Whether there are open questions left in the spec.
 
 Then:
-> Run `/verify` to check every acceptance criterion, data model, and API contract against the code before marking this spec done.
-> If context is getting long, start a fresh session before running `/verify`.
+> Run `/review-spec-implementation` to check every acceptance criterion, data model, and API contract against the code before marking this spec done.
+> If context is getting long, start a fresh session before running `/review-spec-implementation`.
 
 ---
 

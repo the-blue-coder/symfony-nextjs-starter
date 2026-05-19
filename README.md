@@ -95,14 +95,14 @@ This starter uses **Spec-Driven Development (SDD)**. Context and conventions liv
 **Features**: follow the pipeline:
 
 ```
-/planify → /dev → /verify
+/planify → /dev → /review-spec-implementation
 ```
 
 | Command | What it does |
 | --- | --- |
 | `/planify` | Clarifies requirements, writes a spec in `.context/feature-specs/` |
 | `/dev` | Implements a spec, checks off acceptance criteria |
-| `/verify` | Verifies every criterion against the code, marks the spec done |
+| `/review-spec-implementation` | Verifies every criterion against the code, marks the spec done |
 
 Specs live in `.context/feature-specs/` as markdown files with `status: todo / in-progress / done`.
 
