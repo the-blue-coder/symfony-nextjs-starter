@@ -3,6 +3,7 @@
 .env*
 !.env
 !.env.example
+!.env.local.example
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
