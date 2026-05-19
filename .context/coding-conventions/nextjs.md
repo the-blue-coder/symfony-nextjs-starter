@@ -26,6 +26,33 @@ Never add `"use client"` preemptively. Start server-side; only opt into client w
 - Auth guard lives in `src/middleware.ts` - Clerk middleware protects routes and handles redirects.
 - **Clerk** handles auth, JWT, and OAuth providers - never implement custom auth flows.
 
+### Loading gates - prevent content flash
+
+**Screens must never render content until all async dependencies are fully resolved.** Rendering with partial/empty data causes a visible flash followed by a loading state, which is worse than showing a spinner from the start.
+
+**The Clerk trap**: `isSignedIn` starts as `undefined` while Clerk initialises. Queries guarded by `enabled: !!isSignedIn` will have `isLoading: false` during that window (the query hasn't started yet), so `isLoading` is deceptively false and the screen renders empty.
+
+**Rule**: every authenticated screen must include `!isLoaded` (Clerk) in its loading gate.
+
+```ts
+const { getToken, isLoaded, isSignedIn } = useAuth();
+
+const { isLoading: isLoadingA } = useQuery({ enabled: !!isSignedIn, ... });
+const { isLoading: isLoadingB } = useQuery({ enabled: !!isSignedIn, ... });
+
+// Correct - Clerk + all queries
+const isLoading = !isLoaded || isLoadingA || isLoadingB;
+```
+
+```tsx
+// Component gate - one check, no partial renders
+if (isLoading) return <LoadingSpinner />;
+return <ActualContent />;
+```
+
+- Never render a page or card with empty/default data while real data is in flight.
+- A single top-level `if (isLoading)` guard is enough - no need for skeleton states in each sub-component.
+
 ### i18n - file locations
 
 | File / dir | Purpose |
