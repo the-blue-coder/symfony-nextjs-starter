@@ -113,6 +113,12 @@ $this->emailService->sendBackupError($subject, $detail);
 - **Money**: all money values stored as **integers (cents)**.
 - **Timestamps**: `createdAt` / `updatedAt` on all entities - set via `#[ORM\PrePersist]` and `#[ORM\PreUpdate]`; the entity class **must** carry `#[ORM\HasLifecycleCallbacks]`.
 
+### Migrations
+
+After generating a migration with `doctrine:migrations:diff`, always remove the auto-generated comments before committing:
+- The `/** Auto-generated Migration: Please modify to your needs! */` docblock on the class
+- The `// this up() migration is auto-generated, please modify it to your needs` inline comments in `up()` and `down()`
+
 ### Twig Templates
 
 - **Indentation**: use tabs, not spaces.
