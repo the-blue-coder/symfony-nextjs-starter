@@ -4,3 +4,6 @@ services:
       - "8000:80"
     env_file:
       - .env.local
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
