@@ -11,7 +11,7 @@ security:
             security: false
 
         webhook:
-            pattern: ^/api/clerk/webhook
+            pattern: ^/api/webhook
             security: false
 
         api:
@@ -21,7 +21,7 @@ security:
                 - App\Security\ClerkAuthenticator
 
     access_control:
-        - { path: ^/api/clerk/webhook, roles: PUBLIC_ACCESS }
+        - { path: ^/api/webhook, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:

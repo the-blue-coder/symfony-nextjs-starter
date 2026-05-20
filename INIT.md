@@ -256,7 +256,7 @@ The user must:
    - **Critical for local dev**: the backend must also use the **Development** instance JWKS URL, otherwise it will reject tokens issued by the dev Clerk instance with 401. Copy the **Development** JWKS URL into `backend/.env.local` as `CLERK_JWKS_URI` (overrides the prod value locally).
 6. Create a webhook for user sync:
    - Clerk dashboard → Webhooks → Add endpoint.
-   - URL: `https://<backend-domain>/api/clerk/webhook`
+   - URL: `https://<backend-domain>/api/webhook/clerk`
    - Events to subscribe: `user.created`, `user.updated`, `user.deleted`
    - Copy the **Signing Secret** into `backend/.env` as `CLERK_WEBHOOK_SECRET`.
    - For **local development**, also copy the **Development** webhook signing secret into `backend/.env.local` as `CLERK_WEBHOOK_SECRET`.
@@ -340,7 +340,34 @@ From this point on, every push to `main` triggers an automatic deploy via GitHub
 
 ---
 
-## A8. Clean up
+## A8. Configure automated backup
+
+The project is now live. Set up the database backup.
+
+**Step 1 - Generate and set the webhook secret**
+
+Generate a secret and write it directly into `backend/.env`:
+
+```bash
+openssl rand -hex 32      # → AWS_S3_BACKUP_WEBHOOK_SECRET in backend/.env
+```
+
+Commit and push so the secret is deployed to the server.
+
+**Step 2 - Configure the backup workflow on n8n**
+
+Go to **n8n.madainsight.com** and create a new workflow:
+
+1. Add a **Schedule trigger** node — set the interval (e.g. daily at 02:00).
+2. Add an **HTTP Request** node:
+   - Method: `POST`
+   - URL: `https://<backend-domain>/api/webhook/backup`
+   - Headers: `X-Backup-Secret: <AWS_S3_BACKUP_WEBHOOK_SECRET value>`
+3. Activate the workflow.
+
+---
+
+## A9. Clean up
 
 Remove boilerplate-only files and the initialization notice from `README.md`:
 
@@ -482,7 +509,34 @@ Ask the user: **Is the project already deployed and running on the server?**
 
 ---
 
-## B6. Clean up
+## B6. Configure automated backup
+
+The project is now live. Set up the database backup.
+
+**Step 1 - Generate and set the webhook secret**
+
+Generate a secret and write it directly into `backend/.env`:
+
+```bash
+openssl rand -hex 32      # → AWS_S3_BACKUP_WEBHOOK_SECRET in backend/.env
+```
+
+Commit and push so the secret is deployed to the server.
+
+**Step 2 - Configure the backup workflow on n8n**
+
+Go to **n8n.madainsight.com** and create a new workflow:
+
+1. Add a **Schedule trigger** node — set the interval (e.g. daily at 02:00).
+2. Add an **HTTP Request** node:
+   - Method: `POST`
+   - URL: `https://<backend-domain>/api/webhook/backup`
+   - Headers: `X-Backup-Secret: <AWS_S3_BACKUP_WEBHOOK_SECRET value>`
+3. Activate the workflow.
+
+---
+
+## B7. Clean up
 
 Delete any boilerplate-only files and the initialization notice from `README.md`:
 
