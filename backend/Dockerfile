@@ -2,6 +2,7 @@ FROM php:8.3-fpm-alpine AS base
 
 RUN apk add --no-cache \
     postgresql-dev \
+    postgresql-client \
     icu-dev \
     libzip-dev \
     oniguruma-dev \
