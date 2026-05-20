@@ -41,8 +41,8 @@ Before touching any file, collect:
 8. **Search engine indexing** - should the app be publicly indexed? (yes / no - sets `robots` meta tag and `robots.txt`)
 9. **Mercure** - does this project need real-time push features? (default: **yes** - included in the boilerplate)
 10. **Authentication mode** - how is this project secured?
-    - **Clerk** (default) - full user-facing auth: sign-in, sign-up, OAuth, webhooks, JWT guard. Keep everything as-is and proceed to §A4b.
-    - **Admin secrets only** - no public user auth; the backend is protected by a static API key or HTTP Basic Auth. All Clerk code will be stripped (see §A3).
+    - **Clerk** (mandatory for any app with a dashboard) - full user-facing auth: sign-in, sign-up, OAuth, webhooks, JWT guard. Keep everything as-is and proceed to §A4b. There is no alternative if the project has a user-facing dashboard.
+    - **Admin secrets only** - only for projects with **no user-facing dashboard** (e.g. a pure API or internal tool with no login UI). The backend is protected by a static API key or HTTP Basic Auth. All Clerk code will be stripped (see §A3).
 11. **API Platform** - does this project need API Platform? (default: **yes** - included in the boilerplate)
     - **Use API Platform when**: you're building a public or partner-facing REST/GraphQL API, you need automatic OpenAPI docs, or external clients consume your backend.
     - **Skip API Platform when**: the backend only serves this one frontend (no external consumers), you prefer full control over controllers and serialization, or the project is simple enough that API Platform's overhead isn't worth it.
