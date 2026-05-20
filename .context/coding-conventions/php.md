@@ -27,6 +27,36 @@ use DateTimeImmutable;
 $now = new DateTimeImmutable();
 ```
 
+### ⛔ No operator alignment - ever
+
+**Never** pad spaces to align `=` or `=>` across consecutive lines. This applies to variable assignments, array entries, and everything else. No exceptions.
+
+```php
+// ❌ wrong - looks "neat" but is NOT acceptable
+$payload   = json_decode($body, true);
+$eventType = $payload['type'] ?? '';
+$data      = $payload['data'] ?? [];
+
+$s3 = new S3Client([
+    'version'     => 'latest',
+    'region'      => $region,
+    'credentials' => $creds,
+]);
+
+// ✅ correct - natural width, nothing padded
+$payload = json_decode($body, true);
+$eventType = $payload['type'] ?? '';
+$data = $payload['data'] ?? [];
+
+$s3 = new S3Client([
+    'version' => 'latest',
+    'region' => $region,
+    'credentials' => $creds,
+]);
+```
+
+Alignment padding is noise: it breaks on rename, misleads junior readers into thinking it is enforced by the language, and makes diffs noisy. **Write every `=` and `=>` at its natural position.**
+
 ### Arrays - always multiline
 
 PHP arrays must always be written in multiline format - never inline on a single line, even with one element.
@@ -109,3 +139,4 @@ public function __construct(
 |---|---|
 | `new \DateTimeImmutable()` inline | `use DateTimeImmutable;` at top |
 | `if (!x) return;` one-liner | Always braces: `if (!x) { return; }` |
+| Pad `=` / `=>` to align multiple lines | Never - write at natural width |
