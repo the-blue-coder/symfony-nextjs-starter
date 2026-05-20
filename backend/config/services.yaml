@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
 
 parameters:
+    app.name: '%env(APP_NAME)%'
     app.frontend_url: '%env(FRONTEND_URL)%'
 
 services:
