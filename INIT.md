@@ -40,9 +40,9 @@ Before touching any file, collect:
    - Prod: frontend & backend
 8. **Search engine indexing** - should the app be publicly indexed? (yes / no - sets `robots` meta tag and `robots.txt`)
 9. **Mercure** - does this project need real-time push features? (default: **yes** - included in the boilerplate)
-10. **Authentication mode** - how is this project secured?
-    - **Clerk** (mandatory for any app with a dashboard) - full user-facing auth: sign-in, sign-up, OAuth, webhooks, JWT guard. Keep everything as-is and proceed to §A4b. There is no alternative if the project has a user-facing dashboard.
-    - **Admin secrets only** - only for projects with **no user-facing dashboard** (e.g. a pure API or internal tool with no login UI). The backend is protected by a static API key or HTTP Basic Auth. All Clerk code will be stripped (see §A3).
+10. **Authentication mode** - Clerk is the only option. Choose the registration mode:
+    - **Clerk with registration** (default) - public sign-in + sign-up. Users can create their own account.
+    - **Clerk without registration** - sign-in only. No public sign-up. Users are created via the Clerk dashboard. Delete the register route (see §A3).
 11. **API Platform** - does this project need API Platform? (default: **yes** - included in the boilerplate)
     - **Use API Platform when**: you're building a public or partner-facing REST/GraphQL API, you need automatic OpenAPI docs, or external clients consume your backend.
     - **Skip API Platform when**: the backend only serves this one frontend (no external consumers), you prefer full control over controllers and serialization, or the project is simple enough that API Platform's overhead isn't worth it.
@@ -154,19 +154,10 @@ CORS_ALLOW_ORIGIN=^(https?://(localhost|127\.0\.0\.1)(:[0-9]+)?|https://laoka\.m
 Note: dots in the domain must be escaped as `\.`.
 
 **Authentication mode (§A1.10)**:
-- **Clerk** → leave as-is; proceed to §A4b for Clerk setup instructions.
-- **Admin secrets only** → strip all Clerk code:
-  - **Frontend**:
-    - `frontend/src/app/[locale]/layout.tsx` → remove `<ClerkProvider>` wrapper and its import.
-    - `frontend/src/middleware.ts` → remove `clerkMiddleware` and Clerk imports (or delete the file if it only contained Clerk logic).
-    - Delete `frontend/src/app/[locale]/(auth)/login/` and `frontend/src/app/[locale]/(auth)/register/`.
-    - `frontend/.env` + `frontend/.env.example` → remove all `NEXT_PUBLIC_CLERK_*` and `CLERK_*` vars.
-    - `frontend/package.json` → remove `@clerk/nextjs`, then run `pnpm install`.
-  - **Backend**:
-    - Delete `backend/src/Security/ClerkAuthenticator.php`.
-    - Delete `backend/src/Controller/ClerkWebhookController.php`.
-    - `backend/config/packages/security.yaml` → remove the Clerk JWT firewall and replace with your chosen auth mechanism (API key header check, HTTP Basic, etc.).
-    - `backend/.env` + `backend/.env.example` → remove `CLERK_JWKS_URI` and `CLERK_WEBHOOK_SECRET`.
+- **Clerk with registration** → leave as-is; proceed to §A4b for Clerk setup instructions.
+- **Clerk without registration** → proceed to §A4b, then delete the register route:
+  - Delete `frontend/src/app/[locale]/(auth)/register/`.
+  - Remove any link to the register page from the login page and the homepage.
 
 **API Platform (§A1.11)**:
 - **Yes** → leave as-is.
@@ -243,8 +234,6 @@ openssl rand -hex 32      # → APP_SECRET in backend/.env
 
 ## A4b. Clerk setup
 
-> **Skip this step if §A1.10 = Admin secrets only.**
-
 First, create the `.env.local` files from their templates:
 
 ```bash
@@ -303,10 +292,10 @@ Ask the user to provide values for the following - these require manual setup ou
    - Fill `backend/.env`: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BACKUP_BUCKET` (format: `bucket/prefix`).
 2. **SES mailer user** - fill `backend/.env`: `MAILER_FROM` (from §A1.15), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
 
-**Remaining `backend/.env` values (if §A1.10 = Clerk):**
+**Remaining `backend/.env` values:**
 - `CLERK_JWKS_URI`, `CLERK_WEBHOOK_SECRET` - from §A4b (Clerk setup)
 
-**Remaining `frontend/.env` values (if §A1.10 = Clerk):**
+**Remaining `frontend/.env` values:**
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` - from §A4b (Clerk setup)
 
 **Mercure (§A1.9)**:
@@ -405,7 +394,7 @@ Ask only for what the codebase doesn't already reveal:
 7. **GitHub repo URL** - to verify or set the remote.
 8. **Search engine indexing** - yes / no, if `robots.txt` and `layout.tsx` metadata are not already set.
 9. **Mercure** - is it used? (check existing `MERCURE_*` env vars - ask only if ambiguous).
-10. **Authentication mode** - is it Clerk (check for `@clerk/nextjs` in `package.json`, `ClerkProvider` in layout, Clerk env vars) or admin secrets only? Ask only if ambiguous.
+10. **Authentication mode** - Clerk is always used. Determine the registration mode: check for a `register/` route under `(auth)/` — if present, it's **with registration**; if absent, it's **without registration**.
 11. **API Platform** - is it used? (check `composer.json` and entities - ask only if ambiguous).
 12. **i18n / next-intl** - is it used? (check `package.json` for `next-intl` and presence of `frontend/messages/` - ask only if ambiguous).
 13. **Google Analytics** - is it used? (check `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env` and presence of `GoogleAnalytics.tsx` - ask only if ambiguous).
