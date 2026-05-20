@@ -31,6 +31,9 @@ class User implements UserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[ORM\Column(length: 2)]
+    private string $locale = 'en';
+
     #[ORM\Column]
     private DateTimeImmutable $createdAt;
 
@@ -94,6 +97,18 @@ class User implements UserInterface
     public function getUpdatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
+    }
+
+    public function getLocale(): string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(string $locale): static
+    {
+        $this->locale = $locale;
+
+        return $this;
     }
 
     public function eraseCredentials(): void
