@@ -11,6 +11,15 @@ const isAuthRoute = createRouteMatcher(["/:locale/login(.*)", "/:locale/register
 export const proxy = clerkMiddleware(async (auth, req: NextRequest) => {
 	if (isProtectedRoute(req)) {
 		await auth.protect();
+
+		const dashboardLocale = req.cookies.get("DASHBOARD_LOCALE")?.value;
+		const urlLocale = req.nextUrl.pathname.split("/")[1];
+		if (dashboardLocale && (routing.locales as readonly string[]).includes(dashboardLocale) && dashboardLocale !== urlLocale) {
+			const pathWithoutLocale = req.nextUrl.pathname.slice(`/${urlLocale}`.length);
+			const redirectUrl = new URL(`/${dashboardLocale}${pathWithoutLocale}`, req.url);
+			redirectUrl.search = req.nextUrl.search;
+			return Response.redirect(redirectUrl);
+		}
 	}
 
 	if (isAuthRoute(req)) {
