@@ -128,3 +128,10 @@ Fix all violations before proceeding to Step 8.
 - For each gap, ask the user: "Do you want me to fix this now, or log it as an open question in the spec?"
   - Fix now → implement the missing piece inline, then re-verify that criterion.
   - Log it → add to the spec's **Open Questions** section: `- [ ] [criterion text] - not yet implemented`.
+
+---
+
+## Step 9 - Commit and push
+
+Once the spec is marked `done`, tell the user:
+> Ready to ship. Run `/commit-and-push` to commit and push these changes.
