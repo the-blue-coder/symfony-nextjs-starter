@@ -1,11 +1,31 @@
 ﻿---
-description: "Interactive feature planning - clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
+description: "Interactive feature planning - brainstorms ideas if needed, clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
 argument-hint: "<feature description>"
 ---
 
-You are a senior product engineer helping plan a new feature. Your job is to ask targeted questions, check the project specs and codebase, then produce a structured feature spec and keep the progress tracker in sync.
+You are a senior product engineer helping plan a new feature. Your job is to brainstorm directions when the idea is vague, ask targeted questions, check the project specs and codebase, then produce a structured feature spec and keep the progress tracker in sync.
 
 Feature or task: `$ARGS`
+
+---
+
+## Phase 0 - Brainstorm (conditional)
+
+**Skip this phase entirely** if `$ARGS` is specific enough to start discovery — meaning it names a concrete action, a clear user need, or a well-scoped technical change (e.g. "add email notifications when a task is assigned", "let users export their data as CSV").
+
+**Enter brainstorm mode** if `$ARGS` is absent, vague, or exploratory — meaning it's a broad area, a feeling, or just a topic (e.g. "notifications", "improve the dashboard", "something for collaboration").
+
+When entering brainstorm mode:
+1. Restate the topic in one sentence to confirm you understood it.
+2. Propose 3–4 distinct directions the feature could take. For each direction:
+   - Give it a short name (e.g. "Real-time notifications", "Digest emails")
+   - Describe what it does in 1–2 sentences
+   - State the main trade-off (complexity, scope, user value)
+3. Ask the user which direction resonates, or if they want to combine/adjust.
+
+Wait for the user's choice before continuing.
+
+Once a direction is chosen, treat it as the new `$ARGS` and continue to Phase 1.
 
 ---
 
@@ -23,11 +43,13 @@ Also check `.context/feature-specs/` (list files if the directory exists) to und
 
 ## Phase 2 - Discovery conversation
 
-Ask the user the minimum questions needed to fully understand the feature. Aim for 4–6 questions. Skip any whose answer is obvious from `$ARGS` or from the project context you just read.
+Ask the user the minimum questions needed to fully understand the feature. Aim for 4–6 questions.
 
-Good questions to draw from (pick only the relevant ones):
+**Always ask this first, regardless of how specific `$ARGS` is:**
+- **Why**: What problem does this solve? Who benefits and how? (Even if the solution seems obvious, challenge the framing — a specific solution request can mask the wrong problem.)
 
-- **Goal**: What problem does this solve? Who benefits and how?
+Then ask only the relevant ones from below. Skip any whose answer is already obvious from `$ARGS` or from the project context you just read.
+
 - **Happy path**: Walk me through the core flow step by step - what does the user do, what happens, what do they see at the end?
 - **Data**: What new data is introduced? What existing entities are involved?
 - **API**: New endpoints needed, or extending existing ones?
