@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from "@/lib/i18n";
 import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
+import { setDashboardLocale } from "@/lib/actions";
 
 const useLanguagePage = () => {
 	const currentLocale = useLocale();
@@ -29,8 +30,9 @@ const useLanguagePage = () => {
 		setSelectedLocale(value);
 	}, []);
 
-	const handleSave = useCallback(() => {
+	const handleSave = useCallback(async () => {
 		setSaved(true);
+		await setDashboardLocale(selectedLocale);
 		if (selectedLocale !== currentLocale) {
 			setIsNavigating(true);
 			router.replace(pathname, { locale: selectedLocale });
