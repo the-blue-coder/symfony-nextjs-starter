@@ -411,5 +411,8 @@ Tell the user:
 **Next steps:**
 
 1. Fill in the real values for `AWS_S3_BACKUP_*`, `AWS_SES_*`, `MAILER_DSN`, and `MAILER_FROM` in `backend/.env`.
-2. **Duplicate the n8n workflow** — go to https://n8n.madainsight.com/workflow/PWe4ZS7OlR3KzoDa, duplicate it, and update the HTTP request node URL and `X-Backup-Secret` header to match this project.
+2. **Duplicate the n8n workflow** — go to https://n8n.madainsight.com/workflow/PWe4ZS7OlR3KzoDa, duplicate it, then:
+   - Name it using the app name as the tag (e.g. `Database Backup [AppName]`)
+   - Move it into the project folder named after the project
+   - Update the HTTP request node URL and `X-Backup-Secret` header to match this project
 3. Redeploy the backend (`docker compose build && docker compose up -d`).
