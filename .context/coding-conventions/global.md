@@ -42,6 +42,12 @@
 
 ---
 
+## Most-violated rules - pattern-match these first
+
+- **Responsive - always mobile-first**: write the mobile layout first, layer `md:` overrides for desktop. Never assume desktop. Every component, every section, every layout.
+
+---
+
 ## Error Handling
 
 **Backend**: all errors return `{ "message": "..." }` - never `error` or `detail`. Messages must be specific and human-readable. Use semantically correct HTTP status codes.

@@ -26,6 +26,19 @@ Always use brand token classes - no raw hex values in templates or CSS.
 | Error | `--state-error` | `#[hex]` |
 | Success | `--state-success` | `#[hex]` |
 
-### Responsive
+### Responsive — CRITICAL
 
-Mobile-first using Tailwind breakpoints (`sm`, `md`, `lg`, `xl`). Never build a layout that only works on desktop.
+**Always build mobile-first.** This is non-negotiable.
+
+- Write the mobile layout first, no breakpoint prefix.
+- Layer `md:` overrides for desktop. `md:` is the primary desktop breakpoint.
+- Never write desktop-only styles and forget the mobile view.
+- Every layout, every component, every new section: think mobile first.
+
+```html
+<!-- ✅ correct: mobile base, md: override -->
+<div class="flex flex-col md:flex-row">
+
+<!-- ❌ wrong: desktop assumed, mobile broken -->
+<div class="flex flex-row">
+```
