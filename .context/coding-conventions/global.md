@@ -6,10 +6,13 @@
 
 ## Code Philosophy
 
-- KEEP CODE SIMPLE, ELEGANT, READABLE, BEAUTIFUL.
-- DRY. SOLID.
-- All code, comments, and file contents in **English**.
-- Never commit on the user's behalf - the user manages Git directly.
+> **These are the highest-priority rules. They override everything else.**
+
+- **KEEP CODE SIMPLE, ELEGANT, READABLE, AND BEAUTIFUL.** Concretely: prefer short functions with a single clear purpose, name things so the code reads like prose, avoid deeply nested conditions (early return instead), and never leave dead code, commented-out blocks, or redundant logic in place.
+- **DRY** - every piece of knowledge must have a single, unambiguous representation. No duplication, ever.
+- **SOLID** - single responsibility, open/closed, Liskov substitution, interface segregation, dependency inversion. Apply them by default.
+- **English only** - all code, comments, variable names, strings, and file contents must be in English. No exceptions.
+- **Never commit on the user's behalf** - the user owns Git. Never run `git commit`, `git push`, or any destructive Git command unless explicitly instructed.
 
 ---
 
