@@ -3,6 +3,7 @@ name: [project-slug]
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: [project-slug]_postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-app}
       POSTGRES_USER: ${POSTGRES_USER:-app}
@@ -14,19 +15,26 @@ services:
       start_period: 30s
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - [project-slug]_network
 
   redis:
     image: redis:7-alpine
+    container_name: [project-slug]_redis
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       timeout: 5s
       retries: 5
+    networks:
+      - [project-slug]_network
 
   backend:
     build:
       context: .
       dockerfile: Dockerfile
       target: dev
+    image: [project-slug]_backend
+    container_name: [project-slug]_backend
     depends_on:
       postgres:
         condition: service_healthy
@@ -37,6 +45,12 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
       MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
+    networks:
+      - [project-slug]_network
 
 volumes:
   postgres_data:
+
+networks:
+  [project-slug]_network:
+    driver: bridge

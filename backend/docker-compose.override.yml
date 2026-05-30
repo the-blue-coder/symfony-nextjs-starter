@@ -1,3 +1,5 @@
+name: [project-slug]
+
 services:
   backend:
     ports:
