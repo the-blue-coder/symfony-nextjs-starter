@@ -343,6 +343,8 @@ git push origin main
 
 > The GitHub Actions deploy workflow will trigger but fail on this first push - the server isn't set up yet. That's expected.
 
+> **Before cloning on the server**: make sure the app works correctly on local (`docker compose up`, login, main flows). Fix any issues before proceeding.
+
 **Step 2 - Bootstrap the server (run once via SSH)**
 
 ```bash
