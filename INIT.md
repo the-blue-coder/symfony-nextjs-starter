@@ -304,10 +304,18 @@ Ask the user to provide values for the following - these require manual setup ou
 
 **AWS - IAM users (S3 + SES)**
 
-1. **S3 backup user** - ask for the full S3 URI of the backup folder (e.g. `s3://bizinfo/backups/db/<project-slug>/`). Do not guess - it must already exist in AWS.
+Create both IAM users at **https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-2#/users**.
+
+1. **S3 backup user** (`s3__[project_slug]`):
+   - Create user → add to group **s3_group**.
+   - Security credentials → Create access key → description: `S3 - [Project name]`.
+   - Ask for the full S3 URI of the backup folder (e.g. `s3://bizinfo/backups/db/<project-slug>/`). Do not guess - it must already exist in AWS.
    - Parse: bucket = everything between `s3://` and the first `/`; prefix = the rest.
    - Fill `backend/.env`: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BACKUP_BUCKET` (format: `bucket/prefix`).
-2. **SES mailer user** - fill `backend/.env`: `MAILER_FROM` (from §A1.15), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
+2. **SES mailer user** (`ses__[project_slug]`):
+   - Create user → add to group **ses_group**.
+   - Security credentials → Create access key → description: `SES - [Project name]`.
+   - Fill `backend/.env`: `MAILER_FROM` (from §A1.15), `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` for SES.
 
 **Remaining `backend/.env` values:**
 - `CLERK_JWKS_URI`, `CLERK_WEBHOOK_SECRET` - from §A4b (Clerk setup)
@@ -363,11 +371,7 @@ The project is now live. Set up the database backup.
 
 **Step 1 - Generate and set the webhook secret**
 
-Generate a secret and write it directly into `backend/.env`:
-
-```bash
-openssl rand -hex 32      # → AWS_S3_BACKUP_WEBHOOK_SECRET in backend/.env
-```
+Generate a secret using the **LastPass browser extension** (Generate → 32 chars, letters + numbers) and write it directly into `backend/.env` as `AWS_S3_BACKUP_WEBHOOK_SECRET`.
 
 Commit and push so the secret is deployed to the server.
 
@@ -532,11 +536,7 @@ The project is now live. Set up the database backup.
 
 **Step 1 - Generate and set the webhook secret**
 
-Generate a secret and write it directly into `backend/.env`:
-
-```bash
-openssl rand -hex 32      # → AWS_S3_BACKUP_WEBHOOK_SECRET in backend/.env
-```
+Generate a secret using the **LastPass browser extension** (Generate → 32 chars, letters + numbers) and write it directly into `backend/.env` as `AWS_S3_BACKUP_WEBHOOK_SECRET`.
 
 Commit and push so the secret is deployed to the server.
 
