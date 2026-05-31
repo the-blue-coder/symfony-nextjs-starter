@@ -34,7 +34,7 @@ Before touching any file, collect:
 3. **Objective** - one or two sentences describing what the app does and who it's for
 4. **Frontend domain** - e.g. `my-app.example.com`
 5. **Backend domain** - e.g. `b.my-app.example.com`
-6. **GitHub repo** - Create the repo at **https://github.com/new** (use the project slug as the repo name), then paste the HTTPS clone URL (e.g. `https://github.com/acme/my-app.git`)
+6. **GitHub repo** - Create the repo at **https://github.com/new** — use the **project slug in kebab-case** as the repo name (e.g. `my-app`), then paste the HTTPS clone URL (e.g. `https://github.com/the-blue-coder/my-app.git`)
 7. **Ports**:
    - Local: frontend (default `3000`) & backend (default `8000`)
    - Prod: frontend & backend
@@ -89,7 +89,7 @@ Wire up the remote:
 git remote set-url origin https://github.com/<owner>/<project-slug>.git
 ```
 
-Then in the repo settings → **Secrets and variables → Actions**, add:
+Then add secrets at **https://github.com/the-blue-coder/[project-slug]/settings/secrets/actions/new**:
 
 | Secret | Value |
 |---|---|
@@ -489,7 +489,7 @@ git remote -v
 ```
 If wrong or missing: `git remote set-url origin https://github.com/<owner>/<slug>.git`
 
-**GitHub Actions secrets** - verify in repo settings → Secrets and variables → Actions:
+**GitHub Actions secrets** - verify at **https://github.com/the-blue-coder/[project-slug]/settings/secrets/actions/new**:
 
 | Secret | Value |
 |---|---|
