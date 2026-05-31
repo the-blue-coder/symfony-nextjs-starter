@@ -379,14 +379,14 @@ Commit and push so the secret is deployed to the server.
 
 **Step 2 - Configure the backup workflow on n8n**
 
-Go to **n8n.madainsight.com** and create a new workflow:
+Go to **https://n8n.madainsight.com/workflow/PWe4ZS7OlR3KzoDa** and duplicate the workflow, then:
 
-1. Add a **Schedule trigger** node — set the interval (e.g. daily at 02:00).
-2. Add an **HTTP Request** node:
-   - Method: `POST`
+1. Tag it with the app name (e.g. `MyApp`).
+2. Move it into the folder `Personal > [AppName]`.
+3. Update the **HTTP Request** node:
    - URL: `https://<backend-domain>/api/webhook/backup`
-   - Headers: `X-Backup-Secret: <AWS_S3_BACKUP_WEBHOOK_SECRET value>`
-3. Activate the workflow.
+   - Header `X-Backup-Secret`: the value of `AWS_S3_BACKUP_WEBHOOK_SECRET`
+4. Activate the workflow.
 
 ---
 
@@ -409,6 +409,8 @@ In `README.md`, remove the opening block:
 > Read INIT.md and follow every step in order.
 > ```
 ```
+
+> **Reminder:** Once the app is live, don't forget to set up the n8n backup workflow (§A8).
 
 ---
 
@@ -544,14 +546,14 @@ Commit and push so the secret is deployed to the server.
 
 **Step 2 - Configure the backup workflow on n8n**
 
-Go to **n8n.madainsight.com** and create a new workflow:
+Go to **https://n8n.madainsight.com/workflow/PWe4ZS7OlR3KzoDa** and duplicate the workflow, then:
 
-1. Add a **Schedule trigger** node — set the interval (e.g. daily at 02:00).
-2. Add an **HTTP Request** node:
-   - Method: `POST`
+1. Tag it with the app name (e.g. `MyApp`).
+2. Move it into the folder `Personal > [AppName]`.
+3. Update the **HTTP Request** node:
    - URL: `https://<backend-domain>/api/webhook/backup`
-   - Headers: `X-Backup-Secret: <AWS_S3_BACKUP_WEBHOOK_SECRET value>`
-3. Activate the workflow.
+   - Header `X-Backup-Secret`: the value of `AWS_S3_BACKUP_WEBHOOK_SECRET`
+4. Activate the workflow.
 
 ---
 
@@ -573,3 +575,5 @@ In `README.md`, remove the opening block:
 > Read INIT.md and follow every step in order.
 > ```
 ```
+
+> **Reminder:** Once the app is live, don't forget to set up the n8n backup workflow (§B6).
