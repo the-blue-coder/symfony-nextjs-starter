@@ -260,6 +260,8 @@ These files are gitignored and override their respective `.env` for local develo
 
 The user must:
 
+> **Note (production):** For API keys, JWKS URL, webhook configuration, and DNS domain setup, refer to the **Cashpoint** project as a reference — it is already fully configured in production.
+
 1. Create a Clerk application at **https://dashboard.clerk.com** → "Add application".
 2. **Switch to the Production instance** before copying any keys - in the Clerk dashboard, use the environment toggle to switch from Development to Production. Using development keys (`pk_test_`) shows a "Development mode" badge on the sign-in page.
 3. Copy **production** keys into `frontend/.env`:
