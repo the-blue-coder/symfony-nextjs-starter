@@ -5,7 +5,7 @@
 - **Server**: Contabo VPS, Ubuntu
 - **Web server**: nginx + certbot (SSL)
 - **Backend**: Docker (PHP-FPM + nginx) - `b.[project].domain.com` on port [XXXX]
-- **Frontend**: PM2, Next.js - `[project].domain.com` on port [XXXX]; PM2 process name: `[project-slug]-frontend`
+- **Frontend**: PM2, Next.js - `[project].domain.com` on port [XXXX]; PM2 process name: `[project_slug]_frontend`
 - **Deploy path**: `/home/www/[project-name]`
 
 ## Docker (backend only)

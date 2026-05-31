@@ -1,19 +1,19 @@
-name: [project-slug]
+name: [project_slug]
 
 services:
   postgres:
-    container_name: [project-slug]_postgres
+    container_name: [project_slug]_postgres
     restart: unless-stopped
     volumes:
       - /var/data/postgres:/var/lib/postgresql/data
 
   redis:
-    container_name: [project-slug]_redis
+    container_name: [project_slug]_redis
     restart: unless-stopped
 
   backend:
-    image: [project-slug]_backend
-    container_name: [project-slug]_backend
+    image: [project_slug]_backend
+    container_name: [project_slug]_backend
     restart: unless-stopped
     ports:
       - "[PROD_BACKEND_PORT]:80"

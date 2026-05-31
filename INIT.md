@@ -30,7 +30,7 @@ Ask the user:
 Before touching any file, collect:
 
 1. **Project name** - display name (e.g. `My App`)
-2. **Project slug** - kebab-case identifier (e.g. `my-app`)
+2. **Project slug** - snake_case identifier (e.g. `my_app`)
 3. **Objective** - one or two sentences describing what the app does and who it's for
 4. **Frontend domain** - e.g. `my-app.example.com`
 5. **Backend domain** - e.g. `b.my-app.example.com`
@@ -53,10 +53,25 @@ Before touching any file, collect:
     - If yes: go to [analytics.google.com](https://analytics.google.com), create a property, and copy the Measurement ID (format: `G-XXXXXXXXXX`).
 14. **Microsoft Clarity** - does this project need Microsoft Clarity (heatmaps + session recordings)? (default: **no**)
     - If yes: go to [clarity.microsoft.com](https://clarity.microsoft.com), create a project, and copy the Project ID.
-15. **Mailer sender address (`MAILER_FROM`)** - the address all transactional emails will be sent from (default: `contact@madainsight.com`).
-    > ⚠️ Before proceeding, make sure this address is:
-    > 1. **Verified in AWS SES** as a sender identity (Identities → verify the exact address or its domain).
-    > 2. **Configured as a mailbox in cPanel** (the email panel dedicated to this project) so the address can actually receive replies.
+15. **Mailer sender address (`MAILER_FROM`)** - the address all transactional emails will be sent from. Use `[project_slug]@madainsight.com` (e.g. `my_app@madainsight.com`).
+    > ⚠️ Before proceeding, set up the mailbox and DNS records:
+    >
+    > **Step 1 — cPanel (NTMada)**
+    > - Log in to the cPanel for `madainsight.com`.
+    > - Go to **Email Accounts** → Create a new mailbox: `[project_slug]@madainsight.com`.
+    >
+    > **Step 2 — DNS (NameSilo)**
+    > Add the following three records for `madainsight.com` (replace `[project_slug]` with the actual value, e.g. `my_app`):
+    >
+    > | Name | Type | Value | TTL |
+    > |---|---|---|---|
+    > | `mail.[project_slug]` | A | `91.204.209.49` | 3603 |
+    > | `[project_slug]` | MX | `mail.[project_slug].madainsight.com` | 3603 |
+    > | `[project_slug]` | TXT | `v=spf1 a mx ip4:91.204.209.49 ~all` | 3603 |
+    >
+    > **Step 3 — AWS SES**
+    > - Go to [SES Identities](https://us-east-2.console.aws.amazon.com/ses/home?region=us-east-2#/identities) → **Create identity** → Email address → enter `[project_slug]@madainsight.com` → click **Create identity**.
+    > - AWS sends a verification email to that address; click the link to confirm.
 16. **UI design** - five sub-questions:
     - **Theme mode**: dark only / light only / light + dark (system preference)?
     - **Primary accent color**: hex value or description (e.g. `#6366f1` indigo, `#0ea5e9` sky blue). If unsure, say so - defaults will be used.
@@ -102,7 +117,7 @@ Use the answers from §A1 to replace every placeholder across the repo.
 |---|---|
 | `[Project Name]` | Display name - in `.context/project-overview.md` (title + `App Name`), `frontend/src/app/layout.tsx`, `frontend/src/app/page.tsx`, `frontend/src/app/(dashboard)/layout.tsx` |
 | `[project-name]` | Slug - in `.context/infra.md` (deploy path), `.github/workflows/deploy.yml`, `infra/deploy.sh`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
-| `[project-slug]` | Slug - in `.context/infra.md` (PM2 process name), `backend/docker-compose.yml` and `backend/docker-compose.prod.yml` (`name:` field) |
+| `[project_slug]` | Slug - in `.context/infra.md` (PM2 process name), `backend/docker-compose.yml` and `backend/docker-compose.prod.yml` (`name:` field) |
 | `[project].domain.com` | Frontend domain - in `.context/infra.md`, `backend/.env`, `backend/.env.example`, `infra/nginx/setup.sh` |
 | `b.[project].domain.com` | Backend domain - same files as above |
 | `[FRONTEND_PORT]` | Prod frontend port - in `.context/infra.md`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
