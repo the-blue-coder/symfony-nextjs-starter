@@ -97,20 +97,42 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 				)}
 
 				{/* Footer */}
-				<div className={`border-t py-3 ${showExpanded ? "px-3" : "flex flex-col items-center"}`}>
+				<div className={`border-t py-3 ${showExpanded ? "px-3 space-y-1" : "flex flex-col items-center gap-1"}`}>
 					{showExpanded ? (
-						<Button variant="ghost" size="sm" className="w-full justify-start gap-3 cursor-pointer" onClick={handleSignOut}>
-							<LogOut size={16} />
-							Sign out
-						</Button>
+						<>
+							<Link
+								href="/settings"
+								className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${
+									isNavActive("/settings") ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+								}`}
+							>
+								<Settings size={16} />
+								Settings
+							</Link>
+							<Button variant="ghost" size="sm" className="w-full justify-start gap-3 cursor-pointer" onClick={handleSignOut}>
+								<LogOut size={16} />
+								Sign out
+							</Button>
+						</>
 					) : (
-						<button
-							title="Sign out"
-							onClick={handleSignOut}
-							className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer transition-colors"
-						>
-							<LogOut size={18} />
-						</button>
+						<>
+							<Link
+								href="/settings"
+								title="Settings"
+								className={`flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-colors ${
+									isNavActive("/settings") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"
+								}`}
+							>
+								<Settings size={18} />
+							</Link>
+							<button
+								title="Sign out"
+								onClick={handleSignOut}
+								className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent cursor-pointer transition-colors"
+							>
+								<LogOut size={18} />
+							</button>
+						</>
 					)}
 				</div>
 			</aside>
@@ -138,7 +160,6 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 
 const navItems = [
 	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-	{ href: "/settings", label: "Settings", icon: Settings },
 ];
 
 type TDashboardLayoutClientProps = {
