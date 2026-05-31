@@ -304,7 +304,7 @@ Ask the user to provide values for the following - these require manual setup ou
 
 **AWS - IAM users (S3 + SES)**
 
-Create both IAM users at **https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-2#/users**.
+Create both IAM users at **https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-2#/users/create**.
 
 1. **S3 backup user** (`s3__[project_slug]`):
    - Create user → add to group **s3_group**.
