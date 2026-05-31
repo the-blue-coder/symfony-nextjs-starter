@@ -16,6 +16,6 @@ echo "==> Deploying frontend..."
 cd "$DEPLOY_PATH/frontend"
 pnpm install --frozen-lockfile
 pnpm build
-pm2 reload [project-name] --update-env 2>/dev/null || pm2 start pnpm --name "[project-name]" -- start
+pm2 reload [project-name]-frontend --update-env 2>/dev/null || pm2 start pnpm --name "[project-name]-frontend" -- start
 
 echo "==> Done!"
