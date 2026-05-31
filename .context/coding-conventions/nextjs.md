@@ -66,6 +66,27 @@ return <ActualContent />;
 - Dynamic import path: `` `../../messages/${locale}.json` `` (from `src/i18n/request.ts`).
 - Never put message files in `public/` or `src/`.
 - Always import `Link`, `usePathname`, `useRouter`, `redirect` from `@/i18n/navigation` - never from `next/link` or `next/navigation` in components that need locale awareness.
+- **`useTranslations` belongs in the component's hook, not in the component itself.** If the component has a `useMyComponent` hook, call `useTranslations` there and return the `t` function — never call it directly inside JSX.
+
+```ts
+// ❌ wrong - useTranslations called in the component
+const MyComponent = () => {
+  const t = useTranslations("MyComponent");
+  const { data } = useMyComponent();
+  return <p>{t("title")}</p>;
+};
+
+// ✅ correct - useTranslations called in the hook
+const useMyComponent = () => {
+  const t = useTranslations("MyComponent");
+  return { t, data };
+};
+
+const MyComponent = () => {
+  const { t, data } = useMyComponent();
+  return <p>{t("title")}</p>;
+};
+```
 
 ### Third-party libraries
 
