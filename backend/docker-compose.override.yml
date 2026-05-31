@@ -1,4 +1,4 @@
-name: [project-slug]
+name: [project_slug]
 
 services:
   backend:
