@@ -18,7 +18,6 @@ fi
 echo "==> Starting backend..."
 cd "$DEPLOY_PATH/backend"
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T backend php bin/console lexik:jwt:generate-keypair --skip-if-exists
 docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
 
 echo "==> Starting frontend..."
