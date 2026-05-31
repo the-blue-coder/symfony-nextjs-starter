@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import { Link, redirect } from "@/lib/i18n";
+import { redirect } from "next/navigation";
+import { Link } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 
 const RootPage: React.FC = async () => {
