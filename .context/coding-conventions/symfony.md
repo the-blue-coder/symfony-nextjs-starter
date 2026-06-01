@@ -141,3 +141,46 @@ After generating a migration with `doctrine:migrations:diff`, always remove the 
 | Query the DB from a service | Put the query in the repository |
 | `$this->em->getRepository(Foo::class)` | Inject the repository via constructor |
 | Name a class `*Client` or `*Manager` in `src/Service/` | Rename to `*Service` |
+| Add a new user-owned resource without updating `CurrentUserExtension` | Add it to `OWNED_RESOURCES` and throw `AccessDeniedException` if no user |
+
+---
+
+### Data isolation — CurrentUserExtension
+
+**Every user-owned resource MUST be listed in `CurrentUserExtension::OWNED_RESOURCES` (or equivalent).** This is a security invariant, not a convenience.
+
+The extension scopes all collection and item queries to the current user. When the resource is in the protected list and no authenticated user is found, **throw `AccessDeniedException` — never `return` silently.** A silent return means an unauthenticated request hitting a future public route returns every row for every user with no error.
+
+```php
+// ❌ wrong — silent pass-through exposes all rows on unauthenticated access
+private function addFilter(QueryBuilder $qb, string $resourceClass): void
+{
+    if (!in_array($resourceClass, self::OWNED_RESOURCES, true)) {
+        return;
+    }
+
+    $user = $this->security->getUser();
+    if (!$user) {
+        return; // ← no user = no filter = full table exposed
+    }
+
+    $qb->andWhere('o.user = :user')->setParameter('user', $user);
+}
+
+// ✅ correct — owned resource with no user → hard fail
+private function addFilter(QueryBuilder $qb, string $resourceClass): void
+{
+    if (!in_array($resourceClass, self::OWNED_RESOURCES, true)) {
+        return;
+    }
+
+    $user = $this->security->getUser();
+    if (!$user) {
+        throw new AccessDeniedException(); // ← defense-in-depth: firewall can be misconfigured
+    }
+
+    $qb->andWhere('o.user = :user')->setParameter('user', $user);
+}
+```
+
+The `access_control` firewall is the primary guard, but it is configuration — it can be misconfigured or bypassed. The extension is the last line of defense at the data layer.

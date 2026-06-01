@@ -131,6 +131,7 @@ src/
 - **Clerk** handles auth, JWT, and OAuth - never implement custom auth flows.
 - Auth guard in `src/proxy.ts` protects the `(dashboard)` route group via `clerkMiddleware`.
 - [Define ownership and access rules here once known for the project.]
+- **Every user-owned resource MUST be listed in `CurrentUserExtension::OWNED_RESOURCES` and MUST throw `AccessDeniedException` when no authenticated user is present — never `return` silently.** A silent return exposes all rows if a route is ever made public. See `coding-conventions/symfony.md` → _Data isolation — CurrentUserExtension_.
 
 ## Project-Specific Invariants
 
