@@ -38,6 +38,7 @@ COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # --- dev stage ---
 FROM base AS dev
+COPY docker/php/opcache.dev.ini /usr/local/etc/php/conf.d/opcache.ini
 COPY composer.json composer.lock symfony.lock ./
 RUN composer install --no-scripts --no-interaction
 COPY . .
