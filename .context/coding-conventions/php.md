@@ -117,10 +117,20 @@ $email = (new Email())
     ->subject('Hello');
 ```
 
-### Empty constructor body - no space between braces
+### Constructor arguments - always one per line
+
+Always write constructor arguments in multiline format - one argument per line, even with a single argument. The empty body uses `{}` with no space.
 
 ```php
-// ❌ wrong
+// ❌ wrong - single argument on one line
+public function __construct(private PeriodRepository $periodRepository) {}
+
+// ✅ correct - one per line even with a single argument
+public function __construct(
+    private PeriodRepository $periodRepository,
+) {}
+
+// ❌ wrong - space inside empty body
 public function __construct(
     private OrderRepository $orderRepository,
 ) { }
@@ -140,3 +150,4 @@ public function __construct(
 | `new \DateTimeImmutable()` inline | `use DateTimeImmutable;` at top |
 | `if (!x) return;` one-liner | Always braces: `if (!x) { return; }` |
 | Pad `=` / `=>` to align multiple lines | Never - write at natural width |
+| Single-argument constructor on one line | Always multiline - one arg per line |
