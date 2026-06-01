@@ -9,7 +9,9 @@ use Symfony\Component\Mercure\Update;
 
 class MercureService
 {
-    public function __construct(private HubInterface $hub) {}
+    public function __construct(
+        private HubInterface $hub,
+    ) {}
 
     public function publish(string $topic, array $data): void
     {
