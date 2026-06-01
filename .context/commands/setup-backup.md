@@ -335,8 +335,8 @@ For each of these packages, check if it is already in `backend/composer.json`. A
 
 ```json
 "aws/aws-sdk-php": "^3.0",
-"symfony/amazon-mailer": "7.4.*",
-"symfony/process": "7.4.*"
+"symfony/amazon-mailer": "8.1.*",
+"symfony/process": "8.1.*"
 ```
 
 Keep `sort-packages: true` order (alphabetical within the Symfony group).
@@ -375,7 +375,7 @@ Do the same for `backend/.env.example`, using empty values or safe placeholder s
 Run from `backend/`:
 
 ```bash
-docker compose run --no-deps --rm backend composer require aws/aws-sdk-php "symfony/amazon-mailer:7.4.*" "symfony/process:7.4.*" --no-interaction
+docker compose run --no-deps --rm backend composer require aws/aws-sdk-php "symfony/amazon-mailer:8.1.*" "symfony/process:8.1.*" --no-interaction
 ```
 
 This updates `composer.lock` via the volume mount. If Docker is not running, tell the user to run this command manually before pushing.
