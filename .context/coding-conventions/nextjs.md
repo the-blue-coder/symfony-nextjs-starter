@@ -84,27 +84,6 @@ return <ActualContent />;
 - Dynamic import path: `` `../../messages/${locale}.json` `` (from `src/i18n/request.ts`).
 - Never put message files in `public/` or `src/`.
 - Always import `Link`, `usePathname`, `useRouter`, `redirect` from `@/i18n/navigation` - never from `next/link` or `next/navigation` in components that need locale awareness.
-- **`useTranslations` belongs in the component's hook, not in the component itself.** If the component has a `useMyComponent` hook, call `useTranslations` there and return the `t` function — never call it directly inside JSX.
-
-```ts
-// ❌ wrong - useTranslations called in the component
-const MyComponent = () => {
-  const t = useTranslations("MyComponent");
-  const { data } = useMyComponent();
-  return <p>{t("title")}</p>;
-};
-
-// ✅ correct - useTranslations called in the hook
-const useMyComponent = () => {
-  const t = useTranslations("MyComponent");
-  return { t, data };
-};
-
-const MyComponent = () => {
-  const { t, data } = useMyComponent();
-  return <p>{t("title")}</p>;
-};
-```
 
 ### Third-party libraries
 
@@ -145,6 +124,26 @@ Inject a **blocking inline** `<script>` in `src/app/layout.tsx` inside `<head>`,
 - Zustand `useUIStore` theme state must initialize from `localStorage` on mount (in a `useEffect`), never from SSR.
 - Tailwind: `darkMode: 'class'` (or `@variant dark` with `.dark` in Tailwind v4).
 - **Never** read `document` or `localStorage` at module level - SSR will throw.
+
+---
+
+### Derived values belong in the hook, not the component
+
+Any value derived from hook state (filtered lists, counts, booleans, formatted strings) must be computed inside the hook and returned — never derived inline in JSX or repeated across the component.
+
+```ts
+// ❌ wrong - derived inline in JSX, computed twice
+{sidebarPeriods.filter(p => p.status === "sent").length > 0 && (
+    <span>{sidebarPeriods.filter(p => p.status === "sent").length}</span>
+)}
+
+// ✅ correct - computed once in the hook, returned as a named value
+const sentPeriodsCount = sidebarPeriods.filter(p => p.status === "sent").length;
+return { ..., sentPeriodsCount };
+
+// component just reads it
+{sentPeriodsCount > 0 && <span>{sentPeriodsCount}</span>}
+```
 
 ---
 
