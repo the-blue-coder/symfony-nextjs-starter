@@ -56,6 +56,7 @@ For each changed file in scope, read the full file and check it against the load
 - No `finally` to reset loading on navigating forms.
 - Helper consts/functions above the component → move below it.
 - Named export for a component → use `export default`.
+- Unused imports → remove all unused `import` statements.
 
 **Backend checklist (if scope includes backend):**
 - Never `$this->em->getRepository(Foo::class)` - inject repository via constructor.
@@ -64,6 +65,7 @@ For each changed file in scope, read the full file and check it against the load
 - Always `use DateTimeImmutable;` at top - never `new \DateTimeImmutable()` inline.
 - Control structures always use braces - no one-liner `if`/`else`/`for`.
 - Errors return `{ "message": "..." }` - never `error` or `detail`.
+- Unused imports → remove all unused `use` statements.
 
 **Cross-cutting (always):**
 - No hardcoded env variables - always use `.env`.
