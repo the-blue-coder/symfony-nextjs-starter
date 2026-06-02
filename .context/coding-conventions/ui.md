@@ -84,6 +84,36 @@ Any non-`<button>` clickable (span, div, anchor) triggering an async action need
 
 Use `isNavActive(href)` from `useDashboardLayout` - highlights on exact match AND any sub-path. Exception: `/dashboard` uses exact match only.
 
+### Form fields — label + input spacing
+
+Always wrap a label and its input in `flex flex-col gap-1.5` — never rely on default browser spacing or `mt-*` on the input.
+
+```tsx
+// ❌ wrong
+<div>
+    <Label htmlFor="name">Name</Label>
+    <Input id="name" />
+</div>
+
+// ✅ correct
+<div className="flex flex-col gap-1.5">
+    <Label htmlFor="name">Name</Label>
+    <Input id="name" />
+</div>
+```
+
+Error messages go directly after the input — no `mt-*` needed since the gap is already set by the parent.
+
+```tsx
+<div className="flex flex-col gap-1.5">
+    <Label htmlFor="email">Email</Label>
+    <Input id="email" />
+    {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+</div>
+```
+
+---
+
 ### Numeric inputs - always use `<NumberInput>`
 
 Never use a raw `<Input type="number">`. Always use `<NumberInput>` from `src/components/ui/NumberInput.tsx`.
