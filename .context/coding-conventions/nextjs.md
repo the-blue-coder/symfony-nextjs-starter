@@ -167,17 +167,20 @@ export const formatDate = (d: string) => moment(d).format("MMM D");
 
 ---
 
-### React imports
+### Import grouping
 
-Always group all React imports into a single `import` statement.
+Never split imports from the same module across multiple lines. Always merge them into a single `import` statement — applies to every module, not just `"react"`.
 
 ```ts
-// ❌ wrong - multiple import lines from "react"
+// ❌ wrong - same module imported twice
 import { use } from "react";
 import { useEffect } from "react";
+import useFoo from "./hooks/useFoo";
+import { TFooValues } from "./hooks/useFoo";
 
-// ✅ correct - one line
+// ✅ correct - one line per module
 import { use, useEffect } from "react";
+import useFoo, { TFooValues } from "./hooks/useFoo";
 ```
 
 ---
