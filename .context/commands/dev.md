@@ -78,24 +78,6 @@ Then explore the codebase silently:
 
 ---
 
-## ⚠️ BEFORE YOU WRITE A SINGLE LINE — TANSTACK QUERY `enabled:` FLASH BUG
-
-**Every `useQuery` with `enabled: !!something` WILL flash its empty UI on first render if you use `isLoading`.**
-
-`isLoading = isPending && isFetching`. When the query is disabled (e.g. `isSignedIn` is still `undefined`), `isFetching` is `false` → `isLoading` is `false` → component sees `data = undefined` and renders the empty state for one frame.
-
-```ts
-// ❌ WRONG — flashes empty state while query is disabled
-const { data, isLoading } = useQuery({ enabled: !!isSignedIn, ... })
-
-// ✅ CORRECT — stays pending until data is actually available
-const { data, isPending: isLoading } = useQuery({ enabled: !!isSignedIn, ... })
-```
-
-**Every hook in this project that uses `enabled:` MUST alias `isPending` as `isLoading`. No exceptions.**
-
----
-
 ## Step 6 - Implement
 
 The spec's **API Contract** table is a strict contract - implement exactly what's specified: method, route, request body fields (names, types, constraints), success status code, response shape, error responses, and auth. Do not add, remove, or rename fields.
@@ -118,7 +100,6 @@ Do not cut corners. Implement completely and correctly before moving on.
 Quick sanity check:
 - **Backend**: no PHP syntax issues, no inline FQN (`new \Foo()` → use `use`), no EntityManager queries in services, no `*Client`/`*Manager` class names in `src/Service/`
 - **Frontend**: TypeScript consistent, no hardcoded strings, no swallowed errors, no `console.log`, hook/component split respected, file order correct
-- **Frontend**: every `useQuery` with `enabled:` uses `isPending` (not `isLoading`) — see the rule above Step 6
 
 ---
 
