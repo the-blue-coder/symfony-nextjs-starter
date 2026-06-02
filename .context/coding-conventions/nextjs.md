@@ -167,6 +167,21 @@ export const formatDate = (d: string) => moment(d).format("MMM D");
 
 ---
 
+### React imports
+
+Always group all React imports into a single `import` statement.
+
+```ts
+// ❌ wrong - multiple import lines from "react"
+import { use } from "react";
+import { useEffect } from "react";
+
+// ✅ correct - one line
+import { use, useEffect } from "react";
+```
+
+---
+
 ## Quick Reference
 
 | You're about to... | Instead |
