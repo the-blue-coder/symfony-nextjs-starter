@@ -11,6 +11,10 @@ Use the shorthand `(--var-name)` instead of `[var(--var-name)]`:
 
 Always use the v4 shorthand - the `[var(...)]` form triggers a deprecation warning.
 
+### Hex colors — always lowercase
+
+Write hex color values in lowercase: `#e12929`, not `#E12929`. Applies everywhere: CSS variables, Tailwind arbitrary values, design token tables.
+
 ### Brand tokens - never hardcode hex values
 
 Always use brand token classes - no raw hex values in templates or CSS.
