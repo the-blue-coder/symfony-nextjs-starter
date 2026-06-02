@@ -112,6 +112,8 @@ Output a structured report:
 
 Run `/review-changes` on the files changed by this feature (scope = `frontend`, `backend`, or `all` depending on what the spec touched). This checks coding conventions - hook/component split, braces, prop type naming, repo injection, etc.
 
+Additionally, if the spec touches the frontend, grep for `useQuery` calls with an `enabled:` option and verify that each one uses `const { data, isPending: isLoading }` — never bare `isLoading`. A query using `isLoading` while `enabled` is conditional will flash its empty state on first render.
+
 Fix all violations before proceeding to Step 8.
 
 ---
