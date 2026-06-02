@@ -30,15 +30,33 @@ Never add `"use client"` preemptively. Start server-side; only opt into client w
 
 **Screens must never render content until all async dependencies are fully resolved.** Rendering with partial/empty data causes a visible flash followed by a loading state, which is worse than showing a spinner from the start.
 
-**The Clerk trap**: `isSignedIn` starts as `undefined` while Clerk initialises. Queries guarded by `enabled: !!isSignedIn` will have `isLoading: false` during that window (the query hasn't started yet), so `isLoading` is deceptively false and the screen renders empty.
+---
+
+> ## ⛔ NEVER USE `isLoading` ON A CONDITIONAL QUERY — USE `isPending`
+>
+> `isLoading = isPending && isFetching`. When a query is disabled (e.g. while `isSignedIn` is still `undefined`), `isFetching` is `false` → **`isLoading` is `false` even though there is no data yet** → your component sees an empty array and renders the empty state for one frame before the real data arrives.
+>
+> ```ts
+> // ❌ WRONG — flashes empty state while query is disabled
+> const { data, isLoading } = useQuery({ enabled: !!isSignedIn, ... })
+>
+> // ✅ CORRECT — stays pending until data is actually available
+> const { data, isPending: isLoading } = useQuery({ enabled: !!isSignedIn, ... })
+> ```
+>
+> **Every `useQuery` with an `enabled:` condition MUST alias `isPending` as `isLoading`. No exceptions.**
+
+---
+
+**The Clerk trap**: `isSignedIn` starts as `undefined` while Clerk initialises. This makes the `enabled:` flash bug above even more likely — always combine the `isPending` fix with an `!isLoaded` gate.
 
 **Rule**: every authenticated screen must include `!isLoaded` (Clerk) in its loading gate.
 
 ```ts
 const { getToken, isLoaded, isSignedIn } = useAuth();
 
-const { isLoading: isLoadingA } = useQuery({ enabled: !!isSignedIn, ... });
-const { isLoading: isLoadingB } = useQuery({ enabled: !!isSignedIn, ... });
+const { isPending: isLoadingA } = useQuery({ enabled: !!isSignedIn, ... });
+const { isPending: isLoadingB } = useQuery({ enabled: !!isSignedIn, ... });
 
 // Correct - Clerk + all queries
 const isLoading = !isLoaded || isLoadingA || isLoadingB;

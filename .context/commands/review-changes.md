@@ -54,7 +54,6 @@ For each changed file in scope, read the full file and check it against the load
 - Entity IDs stay as strings (UUIDs) - never `Number(id)`.
 - `setIsLoading(false)` after form success+navigation → forbidden. Use `isNavigating`.
 - No `finally` to reset loading on navigating forms.
-- Every `useQuery` with `enabled:` MUST use `isPending` aliased as `isLoading` — never bare `isLoading` (flashes empty state while query is disabled).
 - Helper consts/functions above the component → move below it.
 - Named export for a component → use `export default`.
 
