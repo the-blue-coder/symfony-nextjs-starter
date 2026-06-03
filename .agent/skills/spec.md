@@ -4,4 +4,4 @@ description: "Interactive feature planning - brainstorms ideas if needed, clarif
 
 Argument: `$ARGUMENTS`
 
-Read `.context/commands/planify.md` and follow its instructions exactly, using the above as the `$ARGS` value.
+Read `.context/commands/spec.md` and follow its instructions exactly, using the above as the `$ARGS` value.

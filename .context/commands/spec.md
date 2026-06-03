@@ -1,4 +1,4 @@
-﻿---
+---
 description: "Interactive feature planning - brainstorms ideas if needed, clarifies requirements against project specs, writes a feature spec file, updates the progress tracker"
 argument-hint: "<feature description>"
 ---
