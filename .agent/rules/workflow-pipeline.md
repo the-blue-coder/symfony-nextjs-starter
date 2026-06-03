@@ -20,10 +20,10 @@ Write code directly. No spec required. Qualifies if **all** of the following are
 /plan → /dev → /review-spec-implementation
 ```
 
-- **No code without a spec.** Never write feature code in `frontend/` or `backend/` without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/planify` first.
+- **No code without a spec.** Never write feature code in `frontend/` or `backend/` without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/spec` first.
 - **No `/dev` with pending `/review-spec-implementation`.** Before starting `/dev` on any spec, check `.context/feature-specs/` for specs with `status: in-progress` that have unchecked acceptance criteria (`- [ ]`). If any exist, run `/review-spec-implementation` on them first.
 - **Only `/review-spec-implementation` marks specs done.** Never set `status: done` on a spec during `/dev`. Only `/review-spec-implementation` may do this.
-- **`/planify` is always allowed.** You may run `/planify` at any time regardless of pipeline state.
+- **`/spec` is always allowed.** You may run `/spec` at any time regardless of pipeline state.
 
 ## How to check before writing feature code
 
