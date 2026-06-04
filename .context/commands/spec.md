@@ -73,6 +73,19 @@ Once the feature is clear, explore the codebase to ground the spec:
 
 ---
 
+## Phase 3.5 - Web research (silent)
+
+Based on the feature and codebase findings, run targeted web searches to inform the spec before writing it.
+
+Search for:
+1. **Best practices & patterns** — how similar features are typically designed (UX flows, data models, API design)
+2. **Libraries & tools** — any existing packages that could simplify implementation; compare their trade-offs briefly
+3. **Known pitfalls** — common edge cases, security concerns, or performance issues with this type of feature
+
+Use findings to enrich **Implementation Notes**, **Constraints & Edge Cases**, and any library recommendations in the spec. Do not surface raw search results to the user — silently fold insights into the spec.
+
+---
+
 ## Phase 4 - Write the feature spec
 
 Determine the spec file path:
