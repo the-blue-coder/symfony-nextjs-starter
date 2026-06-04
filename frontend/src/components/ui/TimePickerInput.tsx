@@ -78,7 +78,7 @@ const TimePickerInput: React.FC<TTimePickerInputProps> = ({
 					<span>{value || placeholder}</span>
 				</button>
 			</PopoverTrigger>
-			<PopoverContent className="w-auto p-1" align="start">
+			<PopoverContent className="w-(--radix-popover-trigger-width) p-1 gap-1" align="start">
 				<button
 					type="button"
 					onClick={handleNow}
@@ -87,7 +87,7 @@ const TimePickerInput: React.FC<TTimePickerInputProps> = ({
 					{nowLabel}
 				</button>
 				<div className="flex gap-1">
-					<div ref={hourRef} className="h-48 w-12 overflow-y-auto scroll-smooth rounded border">
+					<div ref={hourRef} className="h-48 flex-1 overflow-y-auto scroll-smooth rounded border">
 						{HOURS.map((h) => (
 							<button
 								key={h}
@@ -102,7 +102,7 @@ const TimePickerInput: React.FC<TTimePickerInputProps> = ({
 							</button>
 						))}
 					</div>
-					<div ref={minuteRef} className="h-48 w-12 overflow-y-auto scroll-smooth rounded border">
+					<div ref={minuteRef} className="h-48 flex-1 overflow-y-auto scroll-smooth rounded border">
 						{MINUTES.map((m) => (
 							<button
 								key={m}
