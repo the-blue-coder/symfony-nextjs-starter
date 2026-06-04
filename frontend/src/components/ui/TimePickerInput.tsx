@@ -67,7 +67,7 @@ const TimePickerInput: React.FC<TTimePickerInputProps> = ({
 					type="button"
 					disabled={disabled}
 					className={cn(
-						"flex h-7 w-full items-center justify-center gap-1.5 rounded-lg border border-input bg-transparent px-2 text-xs font-mono transition-colors",
+						"flex h-7 w-full items-center justify-center gap-1.5 rounded-lg border border-input bg-transparent px-2 text-xs transition-colors",
 						"hover:bg-accent focus-visible:outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50",
 						"disabled:cursor-not-allowed disabled:opacity-50",
 						!value && "text-muted-foreground",
@@ -94,7 +94,7 @@ const TimePickerInput: React.FC<TTimePickerInputProps> = ({
 								type="button"
 								onClick={() => handleSelect("hour", h)}
 								className={cn(
-									"flex h-8 w-full items-center justify-center text-xs font-mono hover:bg-accent cursor-pointer",
+									"flex h-8 w-full items-center justify-center text-xs hover:bg-accent cursor-pointer",
 									h === selectedHour && "bg-primary text-primary-foreground hover:bg-primary/90",
 								)}
 							>
@@ -109,7 +109,7 @@ const TimePickerInput: React.FC<TTimePickerInputProps> = ({
 								type="button"
 								onClick={() => handleSelect("minute", m)}
 								className={cn(
-									"flex h-8 w-full items-center justify-center text-xs font-mono hover:bg-accent cursor-pointer",
+									"flex h-8 w-full items-center justify-center text-xs hover:bg-accent cursor-pointer",
 									m === selectedMinute && "bg-primary text-primary-foreground hover:bg-primary/90",
 								)}
 							>
