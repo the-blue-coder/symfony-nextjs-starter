@@ -99,7 +99,7 @@ Never use `<Input type="date">` or any raw date input. Always use `<DatePickerIn
 - `onChange(value: string)`: called with `YYYY-MM-DD` on selection, closes the popover automatically
 - `todayLabel`: translated label for the "Today" shortcut button (shown at the bottom of the calendar popover)
 - `placeholder`, `disabled`, `className`: optional
-- Trigger displays the date as `DD MMM YYYY` in monospace; shows `text-muted-foreground` when empty
+- Trigger displays the date as `DD MMM YYYY`; shows `text-muted-foreground` when empty
 - Internally uses `moment` for parsing and formatting
 
 ```tsx
@@ -119,7 +119,7 @@ Never use `<Input type="time">` or any raw time input. Always use `<TimePickerIn
 - `nowLabel`: translated label for the "Now" shortcut button (shown at the top of the popover)
 - `placeholder`, `disabled`, `className`: optional
 - Popover shows scrollable hour (00–23) and minute (00–59) columns; reopening scrolls to the current selection
-- Trigger is monospace; shows `text-muted-foreground` when empty
+- Trigger shows `text-muted-foreground` when empty
 
 ```tsx
 <TimePickerInput
@@ -128,6 +128,10 @@ Never use `<Input type="time">` or any raw time input. Always use `<TimePickerIn
     nowLabel={t("now")}
 />
 ```
+
+### Typography - never use `font-mono` for display values
+
+Never apply `font-mono` to dates, times, durations, amounts, or any user-facing numeric/temporal value. `font-mono` is reserved for actual code snippets or technical tokens (e.g. UUIDs, code blocks).
 
 ---
 

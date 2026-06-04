@@ -54,7 +54,7 @@ const DatePickerInput: React.FC<TDatePickerInputProps> = ({
 					)}
 				>
 					<CalendarIcon size={11} className="shrink-0 text-muted-foreground" />
-					<span className="font-mono">{value ? moment(value, "YYYY-MM-DD").format("DD MMM YYYY") : placeholder}</span>
+					<span>{value ? moment(value, "YYYY-MM-DD").format("DD MMM YYYY") : placeholder}</span>
 				</button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">
