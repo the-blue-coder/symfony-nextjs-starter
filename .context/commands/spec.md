@@ -73,7 +73,7 @@ Once the feature is clear, explore the codebase to ground the spec:
 
 ---
 
-## Phase 3.5 - Web research (silent)
+## Phase 4 - Web research (silent)
 
 Based on the feature and codebase findings, run targeted web searches to inform the spec before writing it.
 
@@ -86,7 +86,7 @@ Use findings to enrich **Implementation Notes**, **Constraints & Edge Cases**, a
 
 ---
 
-## Phase 4 - Write the feature spec
+## Phase 5 - Write the feature spec
 
 Determine the spec file path:
 - List existing files in `.context/feature-specs/`.
@@ -172,7 +172,7 @@ After writing the file, tell the user the path and show a brief summary (goal + 
 
 ---
 
-## Phase 5 - Update project overview (if needed)
+## Phase 6 - Update project overview (if needed)
 
 Read `.context/project-overview.md`.
 
@@ -189,7 +189,7 @@ If no update is needed, skip silently.
 
 ---
 
-## Phase 6 - Update progress tracker
+## Phase 7 - Update progress tracker
 
 Open `.context/progress-tracker.md` and add the new feature under **Next Up** (or **In Progress** if the user confirms they're starting immediately):
 
