@@ -110,6 +110,20 @@ Never use `<Input type="date">` or any raw date input. Always use `<DatePickerIn
 />
 ```
 
+### Select - full-width dropdown
+
+When a `<Select>` sits inside a table cell or a fixed-width container and the dropdown must fill exactly the same width as the trigger, pass `position="popper"` to `<SelectContent>`. Radix then exposes `--radix-select-trigger-width` and the component applies `w-(--radix-select-trigger-width)` automatically.
+
+```tsx
+// ✅ dropdown matches trigger width
+<SelectContent position="popper">…</SelectContent>
+
+// default — dropdown sizes to its content
+<SelectContent>…</SelectContent>
+```
+
+`SelectItem` uses symmetric horizontal padding (`px-2`) and `justify-center` by default. The check icon is absolutely positioned so it never shifts the text.
+
 ### Time inputs - always use `<TimePickerInput>`
 
 Never use `<Input type="time">` or any raw time input. Always use `<TimePickerInput>` from `src/components/ui/TimePickerInput.tsx`.
@@ -118,8 +132,8 @@ Never use `<Input type="time">` or any raw time input. Always use `<TimePickerIn
 - `onChange(value: string)`: called with `HH:MM`; selecting a minute auto-closes the popover
 - `nowLabel`: translated label for the "Now" shortcut button (shown at the top of the popover)
 - `placeholder`, `disabled`, `className`: optional
-- Popover shows scrollable hour (00–23) and minute (00–59) columns; reopening scrolls to the current selection
-- Trigger shows `text-muted-foreground` when empty
+- Popover fills the trigger width (`w-(--radix-popover-trigger-width)`); hour/minute columns each take `flex-1`
+- Reopening scrolls to the current selection; trigger shows `text-muted-foreground` when empty
 
 ```tsx
 <TimePickerInput
@@ -144,3 +158,4 @@ Never apply `font-mono` to dates, times, durations, amounts, or any user-facing 
 | Non-button clickable with async action | `pointer-events-none opacity-40` + `onClick={!isLoading ? handleX : undefined}` |
 | `<Input type="date">` | `<DatePickerInput>` |
 | `<Input type="time">` | `<TimePickerInput>` |
+| SelectContent dropdown width ≠ trigger | Add `position="popper"` to `<SelectContent>` |
