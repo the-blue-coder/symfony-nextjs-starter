@@ -91,6 +91,44 @@ Never use a raw `<Input type="number">`. Always use `<NumberInput>` from `src/co
 - Wire via `Controller` from react-hook-form.
 - Integers only. If decimals are needed, extend the component.
 
+### Date inputs - always use `<DatePickerInput>`
+
+Never use `<Input type="date">` or any raw date input. Always use `<DatePickerInput>` from `src/components/ui/DatePickerInput.tsx`.
+
+- `value`: `YYYY-MM-DD` string (or empty string)
+- `onChange(value: string)`: called with `YYYY-MM-DD` on selection, closes the popover automatically
+- `todayLabel`: translated label for the "Today" shortcut button (shown at the bottom of the calendar popover)
+- `placeholder`, `disabled`, `className`: optional
+- Trigger displays the date as `DD MMM YYYY` in monospace; shows `text-muted-foreground` when empty
+- Internally uses `moment` for parsing and formatting
+
+```tsx
+<DatePickerInput
+    value={values.date ?? ""}
+    onChange={handleDateChange}
+    todayLabel={t("today")}
+/>
+```
+
+### Time inputs - always use `<TimePickerInput>`
+
+Never use `<Input type="time">` or any raw time input. Always use `<TimePickerInput>` from `src/components/ui/TimePickerInput.tsx`.
+
+- `value`: `HH:MM` string (or empty string)
+- `onChange(value: string)`: called with `HH:MM`; selecting a minute auto-closes the popover
+- `nowLabel`: translated label for the "Now" shortcut button (shown at the top of the popover)
+- `placeholder`, `disabled`, `className`: optional
+- Popover shows scrollable hour (00–23) and minute (00–59) columns; reopening scrolls to the current selection
+- Trigger is monospace; shows `text-muted-foreground` when empty
+
+```tsx
+<TimePickerInput
+    value={values.startTime ?? ""}
+    onChange={handleStartTimeChange}
+    nowLabel={t("now")}
+/>
+```
+
 ---
 
 ## Quick Reference
@@ -100,3 +138,5 @@ Never use a raw `<Input type="number">`. Always use `<NumberInput>` from `src/co
 | Build a Button / Dialog / Select from scratch | `pnpm dlx shadcn@latest add <component>` |
 | Inline SVG icon | `import { X } from "lucide-react"` |
 | Non-button clickable with async action | `pointer-events-none opacity-40` + `onClick={!isLoading ? handleX : undefined}` |
+| `<Input type="date">` | `<DatePickerInput>` |
+| `<Input type="time">` | `<TimePickerInput>` |
