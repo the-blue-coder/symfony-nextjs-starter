@@ -87,3 +87,10 @@ After all fixes, output a concise table:
 | ...  | ...             | ✅/❌  |
 
 If nothing was wrong, say so explicitly.
+
+---
+
+## Step 6 - Manual check reminder
+
+Tell the user:
+> Before committing, do a quick manual scan of the diff (`git diff HEAD`) to catch anything automated review may have missed - dead code, stray debug logs, TODO comments, or anything that looks off.
