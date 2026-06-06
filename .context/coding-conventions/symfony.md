@@ -94,7 +94,7 @@ public function list(ProductService $service): Response
 
 ### Service naming
 
-Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions - no `*Client`, `*Manager`, `*Handler`.
+Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions - no `*Client`, `*Manager`, `*Handler`, `*Parser`.
 
 ### Email sending - always via EmailService
 
