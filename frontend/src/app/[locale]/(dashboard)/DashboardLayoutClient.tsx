@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { ChevronLeft, ChevronRight, LayoutDashboard, LogOut, Menu, Settings } from "lucide-react";
 import { Link } from "@/lib/i18n";
-import { Button } from "@/components/ui/button";
 import { APP_NAME } from "@/constants/app";
 import useDashboardLayout from "./hooks/useDashboardLayout";
 
@@ -109,10 +108,13 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 								<Settings size={16} />
 								Settings
 							</Link>
-							<Button variant="ghost" size="sm" className="w-full justify-start gap-3 cursor-pointer" onClick={handleSignOut}>
+							<button
+								onClick={handleSignOut}
+								className="flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors w-full hover:bg-accent hover:text-accent-foreground cursor-pointer"
+							>
 								<LogOut size={16} />
 								Sign out
-							</Button>
+							</button>
 						</>
 					) : (
 						<>
