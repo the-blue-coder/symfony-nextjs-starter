@@ -16,7 +16,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - [project_slug]_network
+      - network
 
   redis:
     image: redis:7-alpine
@@ -26,7 +26,7 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - [project_slug]_network
+      - network
 
   backend:
     build:
@@ -46,11 +46,11 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
       MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
     networks:
-      - [project_slug]_network
+      - network
 
 volumes:
   postgres_data:
 
 networks:
-  [project_slug]_network:
+  network:
     driver: bridge
