@@ -85,6 +85,13 @@ return <ActualContent />;
 - Never put message files in `public/` or `src/`.
 - Always import `Link`, `usePathname`, `useRouter`, `redirect` from `@/i18n/navigation` - never from `next/link` or `next/navigation` in components that need locale awareness.
 
+### Testing
+
+- **Jest + React Testing Library**. Tests colocated with the file they cover, same directory (`*.test.ts(x)`).
+- Unit tests for **hooks**, **utils**, and components with non-trivial logic.
+- ✅ Test: complex hooks, critical business logic. ❌ Skip: UI components without logic, config files.
+- **TDD (test-first)** for critical business logic and bug fixes: write the failing test before the implementation/fix.
+
 ### Third-party libraries
 
 | Library | Role |

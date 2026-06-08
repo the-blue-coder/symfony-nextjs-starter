@@ -24,6 +24,13 @@ If a change cannot be verified end-to-end quickly, the scope is too broad - spli
 
 ---
 
+## Testing Approach
+
+- **TDD (test-first)** for critical business logic and bug fixes: write the failing test before writing the implementation/fix.
+- Everything else (simple CRUD, UI components, config) keeps the existing test-after convention - see `coding-conventions/symfony.md` / `coding-conventions/nextjs.md`.
+
+---
+
 ## Handling Missing Requirements
 
 - Do not invent product behavior.
