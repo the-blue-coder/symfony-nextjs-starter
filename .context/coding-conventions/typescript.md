@@ -181,14 +181,6 @@ return { setValue, value, handleSubmit, isLoading };
 
 ---
 
-## Testing
-
-- **Jest + React Testing Library**. Tests colocated with components (`*.test.tsx`).
-- Unit tests for **hooks**, **utils**, and components with non-trivial logic.
-- ✅ Test: complex hooks, critical business logic. ❌ Skip: UI components without logic, config files.
-
----
-
 ## Quick Reference
 
 | You're about to... | Instead |
