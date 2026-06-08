@@ -131,7 +131,7 @@ After generating a migration with `doctrine:migrations:diff`, always remove the 
 - Unit tests for **services** and **domain logic**.
 - Functional tests for **API endpoints**.
 - ✅ Test: services, complex domain logic. ❌ Skip: simple CRUD, config files.
-- **TDD (test-first)** for critical business logic and bug fixes: write the failing test before the implementation/fix.
+- **TDD (test-first) is MANDATORY** for critical business logic and bug fixes — write the failing test before the implementation/fix, no exceptions.
 
 ---
 

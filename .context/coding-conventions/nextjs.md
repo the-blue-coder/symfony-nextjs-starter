@@ -90,7 +90,7 @@ return <ActualContent />;
 - **Jest + React Testing Library**. Tests colocated with the file they cover, same directory (`*.test.ts(x)`).
 - Unit tests for **hooks**, **utils**, and components with non-trivial logic.
 - ✅ Test: complex hooks, critical business logic. ❌ Skip: UI components without logic, config files.
-- **TDD (test-first)** for critical business logic and bug fixes: write the failing test before the implementation/fix.
+- **TDD (test-first) is MANDATORY** for critical business logic and bug fixes — write the failing test before the implementation/fix, no exceptions.
 
 ### Third-party libraries
 
