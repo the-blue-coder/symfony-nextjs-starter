@@ -26,7 +26,10 @@ If a change cannot be verified end-to-end quickly, the scope is too broad - spli
 
 ## Testing Approach
 
-- **TDD (test-first)** for critical business logic and bug fixes: write the failing test before writing the implementation/fix.
+> ## ⛔ TDD IS MANDATORY FOR CRITICAL BUSINESS LOGIC AND BUG FIXES — NO EXCEPTIONS
+>
+> Write the **failing test FIRST**, before a single line of implementation or fix code. This is non-negotiable for services, domain logic, and regressions — skipping the red step is a process violation, not a shortcut.
+
 - Everything else (simple CRUD, UI components, config) keeps the existing test-after convention - see `coding-conventions/symfony.md` / `coding-conventions/nextjs.md`.
 
 ---
