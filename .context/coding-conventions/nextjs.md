@@ -71,6 +71,43 @@ return <ActualContent />;
 - Never render a page or card with empty/default data while real data is in flight.
 - A single top-level `if (isLoading)` guard is enough - no need for skeleton states in each sub-component.
 
+### Cache invalidation - cross-domain query keys
+
+---
+
+> ## ⛔ A QUERY THAT EMBEDS DATA FROM ANOTHER DOMAIN GOES STALE WHEN THAT DOMAIN MUTATES — INVALIDATE BOTH
+>
+> TanStack Query caches each `queryKey` independently with a non-zero `staleTime` (see `useQueryProvider`). If endpoint A's response embeds a value that actually lives in domain B (a name, a preference, a derived total, a setting...), then mutating B through B's hook does **not** refresh A's cache - the user sees stale data until the TTL lapses or they hard-reload (F5).
+>
+> Typical shape this bug takes: a settings/profile mutation only invalidates its own `queryKey`, while some other aggregate/detail endpoint embeds one of the fields it just changed (a display preference, a denormalized name, a snapshot rate...). The user changes the setting, navigates back to the screen that embeds it, and sees the old value until F5.
+>
+> ```ts
+> // ❌ WRONG — only invalidates this hook's own domain
+> const updateMutation = useMutation({
+>   mutationFn: updateProfile,
+>   onSuccess: () => {
+>     queryClient.invalidateQueries({ queryKey: QUERY_KEY }); // ["profile"]
+>   },
+> });
+>
+> // ✅ CORRECT — also invalidates every cache that embeds this domain's data
+> const updateMutation = useMutation({
+>   mutationFn: updateProfile,
+>   onSuccess: () => {
+>     queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+>     // <Aggregate> embeds profile-derived fields (e.g. display preferences, denormalized names) - it goes stale too
+>     queryClient.invalidateQueries({ queryKey: AGGREGATE_QUERY_KEY_PREFIX }); // prefix match, all ids
+>   },
+> });
+> ```
+>
+> **Before writing or reviewing ANY mutation's `onSuccess`, ask: "which OTHER endpoints' responses embed a field this mutation can change?" Trace it through the backend serializer/service, not just the frontend type — embedding is often invisible from the type alone (a service can reach into a related entity and inline its name/preference into a response without that relation showing up in the DTO). Invalidate every one of them. No exceptions.**
+
+---
+
+- Export a **prefix** alongside every parametrized `queryKey` factory (e.g. `AGGREGATE_QUERY_KEY_PREFIX = ["aggregate"]` next to `aggregateQueryKey = (id) => [...AGGREGATE_QUERY_KEY_PREFIX, id]`) so cross-domain invalidation can target *all* instances with `invalidateQueries({ queryKey: PREFIX })` (TanStack Query prefix-matches by default) without knowing every concrete id.
+- This is **not** limited to settings/profile screens - it applies to renames of denormalized entity names embedded elsewhere, rate/price changes embedded in computed totals, and parent-record edits embedded in derived/aggregate views. Whenever you add a new field to a serialized response by reaching into another entity, you are creating a new cross-domain dependency - update the owning mutation's invalidation list in the same change.
+
 ### i18n - file locations
 
 | File / dir | Purpose |
