@@ -228,6 +228,48 @@ import useFoo, { TFooValues } from "./hooks/useFoo";
 
 ---
 
+### ⚠️ Exported consts and query keys go BELOW the principal const — ORDER IS STRICT
+
+**Any `const` that is not the principal export must sit BELOW the principal `const` — this includes `export const QUERY_KEY = [...]`, format helpers, and any other module-level constant, no matter how short.**
+
+The order of everything that follows the principal `const` is strict and non-negotiable:
+
+```
+principal const   ← hook / component / store
+─────────────────────────────────────────────
+1. helper consts / exported consts  (e.g. export const QUERY_KEY = [...])
+2. type declarations                (type TFoo = ...)
+3. export default                   ← always last line
+```
+
+```ts
+// ❌ WRONG — exported const above the principal hook
+export const USERS_QUERY_KEY = ["users"];
+
+const useUsers = () => {
+    const { data } = useQuery({ queryKey: USERS_QUERY_KEY, ... });
+    return { users: data?.member ?? [] };
+};
+
+export default useUsers;
+
+// ✅ CORRECT — exported const below the hook, before types, before export default
+const useUsers = () => {
+    const { data } = useQuery({ queryKey: USERS_QUERY_KEY, ... });
+    return { users: data?.member ?? [] };
+};
+
+export const USERS_QUERY_KEY = ["users"];
+
+type TUsersHook = { ... };
+
+export default useUsers;
+```
+
+**This applies to every TypeScript file — hooks, components, stores, utilities. No exceptions.**
+
+---
+
 ## Quick Reference
 
 | You're about to... | Instead |
@@ -235,5 +277,5 @@ import useFoo, { TFooValues } from "./hooks/useFoo";
 | TanStack Query in a Server Component | Native `fetch` |
 | Hardcode a user-facing string | Route through `next-intl` |
 | Config values (locales…) in `lib/` | `src/i18n/routing.ts` |
-| Random constant above a server component | Only Next.js framework exports allowed above the component |
+| Any const/helper/query key above the principal const | Move BELOW it — order: helpers → types → `export default` |
 | Pure helper at the bottom of a hook/component file | `src/lib/utils.ts` |
