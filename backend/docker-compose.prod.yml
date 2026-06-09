@@ -19,3 +19,14 @@ services:
       - "[PROD_BACKEND_PORT]:80"
     build:
       target: prod
+    environment:
+      # Override MERCURE_URL to the internal Docker address so the backend can reach Mercure
+      # without going through the host's nginx (Docker doesn't loop back through the host).
+      MERCURE_URL: http://mercure-mercure-1/.well-known/mercure
+    networks:
+      - default
+      - mercure_default
+
+networks:
+  mercure_default:
+    external: true
