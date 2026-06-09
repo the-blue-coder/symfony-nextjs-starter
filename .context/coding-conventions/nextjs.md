@@ -1,4 +1,4 @@
-﻿# Next.js
+# Next.js
 
 ### Server vs Client components - default to server
 
@@ -122,6 +122,123 @@ return <ActualContent />;
 - Never put message files in `public/` or `src/`.
 - Always import `Link`, `usePathname`, `useRouter`, `redirect` from `@/i18n/navigation` - never from `next/link` or `next/navigation` in components that need locale awareness.
 
+### ⚠️ Hook/Component Split - THE MOST CRITICAL RULE
+
+**Every component with logic/state MUST call `use[ComponentName]`.** No exceptions for complex components.
+
+- **Hook** (`use[ComponentName]`) contains **ALL** of:
+  - `useState`, `useRef`, `useRouter`, `usePathname`, `useCallback`, `useMemo`
+  - All handlers (`handleX`, `onX`)
+  - All derived `const` values (e.g. `const isActive = item.status === "active"`)
+  - All local constants and computed values
+- **Component** contains **ONLY**:
+  - `useEffect` calls (stay in the component, NOT the hook)
+  - The JSX `return`
+- **Every `useEffect` MUST have a `//` comment on the line above** explaining its intent. A bare `useEffect` with no comment is a convention violation.
+- **Exception**: simple wrapper components (no state, no handlers, no derived values) can return JSX directly.
+
+**Checklist - before writing/reviewing any component:**
+
+- [ ] Component has state, handlers, or derived values? → Must call `use[ComponentName]`.
+- [ ] Component just wraps JSX with props? → OK to skip hook.
+- [ ] If hook exists: ZERO `const`, `let`, handler definitions in the component body.
+- [ ] Only `useEffect` calls between the hook call and `return`.
+- [ ] Every `useEffect` has a `//` comment above it.
+
+```tsx
+// ❌ WRONG - consts and logic in the component body
+const MyComponent: React.FC<TMyComponentProps> = ({ item }) => {
+    const isActive = item.status === "active";
+    const handleClick = () => doSomething();
+    return <div onClick={handleClick}>{isActive ? "yes" : "no"}</div>;
+};
+
+// ✅ CORRECT - everything in the hook
+const MyComponent: React.FC<TMyComponentProps> = ({ item }) => {
+    const { isActive, handleClick } = useMyComponent({ item });
+    return <div onClick={handleClick}>{isActive ? "yes" : "no"}</div>;
+};
+```
+
+### Derived values belong in the hook, not the component
+
+Any value derived from hook state (filtered lists, counts, booleans, formatted strings) must be computed inside the hook and returned — never derived inline in JSX or repeated across the component.
+
+```ts
+// ❌ wrong - derived inline in JSX, computed twice
+{sidebarPeriods.filter(p => p.status === "sent").length > 0 && (
+    <span>{sidebarPeriods.filter(p => p.status === "sent").length}</span>
+)}
+
+// ✅ correct - computed once in the hook, returned as a named value
+const sentPeriodsCount = sidebarPeriods.filter(p => p.status === "sent").length;
+return { ..., sentPeriodsCount };
+
+// component just reads it
+{sentPeriodsCount > 0 && <span>{sentPeriodsCount}</span>}
+```
+
+### Pure helper functions
+
+Pure functions with no state or hook dependencies do NOT belong in a hook or a component file. Put them in `src/lib/utils.ts`.
+
+- **Reusable across the app** → `src/lib/utils.ts` (exported).
+- **Used only in one file** → still `src/lib/utils.ts` if it has no dependencies; moving it inline adds noise.
+- **Never** define a stateless pure helper inside a hook body or at the bottom of a component file.
+
+```ts
+// ❌ wrong - pure helper inside a hook file
+const useMyHook = () => { ... };
+const formatDate = (d: string) => moment(d).format("MMM D"); // no state, no deps
+
+// ✅ correct - in src/lib/utils.ts
+export const formatDate = (d: string) => moment(d).format("MMM D");
+```
+
+## State Management
+
+| What | Tool | Rule |
+|---|---|---|
+| Server state (client pages) | TanStack Query | Never use in Server Components |
+| Server state (SSR pages) | Native `fetch` in Server Components | No TanStack Query here |
+| Global client state | Zustand stores in `src/store/` | `useAuthStore`, `useUIStore` |
+| Form state | React Hook Form + Zod (`src/schemas/`) | See Forms below |
+| Local UI state | `useState` | Toggles/modals only - never for API data |
+
+- **Never** use `useState` for data that comes from the API.
+- **Never** use `useContext` for state that belongs in Zustand.
+
+## Forms (React Hook Form + Zod)
+
+- Schemas in `src/schemas/` - one file per entity.
+- `useForm<T>({ resolver: zodResolver(schema), defaultValues: {...} })`.
+- Edit pages: `reset()` inside `useCallback` to populate on load.
+- Field arrays: `useFieldArray({ control, name: "..." })`.
+- Spread `{...register("fieldName")}` on inputs.
+- `error={errors.fieldName?.message}` for validation messages.
+- Hooks return `{ submitError, errors, isSubmitting, register, handleSubmit }` - **never expose raw `form` object**.
+
+**Loading state on form submit**
+
+- On success: **never** call `setIsLoading(false)` - keep disabled until navigation completes.
+- On error: set `setSubmitError(...)` in catch - RHF resets `isSubmitting` automatically.
+- Use `isNavigating`: set `true` before `router.push()`, never reset.
+- Combine: `disabled={isSubmitting || isNavigating}`.
+- **Never use `finally`** to reset loading on forms that navigate on success.
+
+### React component rules
+
+- All clickable elements must have `cursor-pointer`.
+- **Never put logic directly in JSX event attributes** - extract to a named handler: `onClick={handleClick}`, never `onClick={() => doX()}`.
+- **Environment variables**: never read `process.env.NEXT_PUBLIC_*` directly in components. Extract to `src/constants/app.ts`.
+
+### File and folder structure
+
+- Pure helpers: `src/lib/utils.ts` - no `utils/` subfolder.
+- Domain types: one file per domain in `src/types/` (`auth.ts`, `order.ts`…) - never a catch-all `index.ts`.
+- App-wide constants: `src/constants/app.ts`. Domain constants in their own file.
+- Config values (locales, etc.): `src/i18n/routing.ts` - i18n config lives in `src/i18n/`.
+
 ### Testing
 
 - **Jest + React Testing Library**. Tests colocated with the file they cover, same directory (`*.test.ts(x)`).
@@ -171,105 +288,6 @@ Inject a **blocking inline** `<script>` in `src/app/layout.tsx` inside `<head>`,
 
 ---
 
-### Derived values belong in the hook, not the component
-
-Any value derived from hook state (filtered lists, counts, booleans, formatted strings) must be computed inside the hook and returned — never derived inline in JSX or repeated across the component.
-
-```ts
-// ❌ wrong - derived inline in JSX, computed twice
-{sidebarPeriods.filter(p => p.status === "sent").length > 0 && (
-    <span>{sidebarPeriods.filter(p => p.status === "sent").length}</span>
-)}
-
-// ✅ correct - computed once in the hook, returned as a named value
-const sentPeriodsCount = sidebarPeriods.filter(p => p.status === "sent").length;
-return { ..., sentPeriodsCount };
-
-// component just reads it
-{sentPeriodsCount > 0 && <span>{sentPeriodsCount}</span>}
-```
-
----
-
-### Pure helper functions
-
-Pure functions with no state or hook dependencies do NOT belong in a hook or a component file. Put them in `src/lib/utils.ts`.
-
-- **Reusable across the app** → `src/lib/utils.ts` (exported).
-- **Used only in one file** → still `src/lib/utils.ts` if it has no dependencies; moving it inline adds noise.
-- **Never** define a stateless pure helper inside a hook body or at the bottom of a component file.
-
-```ts
-// ❌ wrong - pure helper inside a hook file
-const useMyHook = () => { ... };
-const formatDate = (d: string) => moment(d).format("MMM D"); // no state, no deps
-
-// ✅ correct - in src/lib/utils.ts
-export const formatDate = (d: string) => moment(d).format("MMM D");
-```
-
----
-
-### Import grouping
-
-Never split imports from the same module across multiple lines. Always merge them into a single `import` statement — applies to every module, not just `"react"`.
-
-```ts
-// ❌ wrong - same module imported twice
-import { use } from "react";
-import { useEffect } from "react";
-import useFoo from "./hooks/useFoo";
-import { TFooValues } from "./hooks/useFoo";
-
-// ✅ correct - one line per module
-import { use, useEffect } from "react";
-import useFoo, { TFooValues } from "./hooks/useFoo";
-```
-
----
-
-### ⚠️ Exported consts and query keys go BELOW the principal const — ORDER IS STRICT
-
-**Any `const` that is not the principal export must sit BELOW the principal `const` — this includes `export const QUERY_KEY = [...]`, format helpers, and any other module-level constant, no matter how short.**
-
-The order of everything that follows the principal `const` is strict and non-negotiable:
-
-```
-principal const   ← hook / component / store
-─────────────────────────────────────────────
-1. helper consts / exported consts  (e.g. export const QUERY_KEY = [...])
-2. type declarations                (type TFoo = ...)
-3. export default                   ← always last line
-```
-
-```ts
-// ❌ WRONG — exported const above the principal hook
-export const USERS_QUERY_KEY = ["users"];
-
-const useUsers = () => {
-    const { data } = useQuery({ queryKey: USERS_QUERY_KEY, ... });
-    return { users: data?.member ?? [] };
-};
-
-export default useUsers;
-
-// ✅ CORRECT — exported const below the hook, before types, before export default
-const useUsers = () => {
-    const { data } = useQuery({ queryKey: USERS_QUERY_KEY, ... });
-    return { users: data?.member ?? [] };
-};
-
-export const USERS_QUERY_KEY = ["users"];
-
-type TUsersHook = { ... };
-
-export default useUsers;
-```
-
-**This applies to every TypeScript file — hooks, components, stores, utilities. No exceptions.**
-
----
-
 ## Quick Reference
 
 | You're about to... | Instead |
@@ -277,5 +295,13 @@ export default useUsers;
 | TanStack Query in a Server Component | Native `fetch` |
 | Hardcode a user-facing string | Route through `next-intl` |
 | Config values (locales…) in `lib/` | `src/i18n/routing.ts` |
-| Any const/helper/query key above the principal const | Move BELOW it — order: helpers → types → `export default` |
+| Put `const`/handler in component body | Move to `use[ComponentName]` |
+| `onClick={() => doX()}` inline | Named handler in hook → `onClick={handleClick}` |
+| `useState` for API data | TanStack Query (client) or native `fetch` (SSR) |
+| `useContext` for auth/UI state | Zustand store |
+| `setIsLoading(false)` after form success + navigation | Keep disabled; use `isNavigating` combined with `isSubmitting` |
+| `finally { setIsLoading(false) }` on navigating form | Never — let RHF reset `isSubmitting` |
+| `process.env.NEXT_PUBLIC_*` in a component | `src/constants/app.ts` |
 | Pure helper at the bottom of a hook/component file | `src/lib/utils.ts` |
+| Domain types in a single `types.ts` | One file per domain in `src/types/` |
+| App-wide constants scattered in hooks | `src/constants/app.ts` |
