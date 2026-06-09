@@ -17,7 +17,7 @@ const useMercure = <T = unknown>(topic: string): TUseMercureReturn<T> => {
 		const url = new URL(MERCURE_URL);
 		url.searchParams.append("topic", topic);
 
-		const eventSource = new EventSource(url.toString(), { withCredentials: true });
+		const eventSource = new EventSource(url.toString());
 		eventSourceRef.current = eventSource;
 
 		eventSource.onopen = () => setIsConnected(true);
