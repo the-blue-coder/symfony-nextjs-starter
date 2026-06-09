@@ -58,14 +58,17 @@ const MyComponent: React.FC<TMyComponentProps> = ({ item }) => {
 
 ### ⚠️ File structure - ORDER IS STRICT
 
-The `const Component` ALWAYS comes immediately after imports. Types ALWAYS go at the BOTTOM, JUST BEFORE `export default`.
+This rule applies to **every** TypeScript file: components, hooks, stores, schemas, utilities — no exceptions.
 
-The ONLY things allowed **above** `const Component`:
-1. `"use client"` directive (client components only)
+The principal `const` (component, hook, store, …) ALWAYS comes immediately after imports. **All `type` declarations ALWAYS go at the BOTTOM, JUST BEFORE `export default`.**
+
+The ONLY things allowed **above** the principal `const`:
+1. `"use client"` directive (client files only)
 2. Imports
 3. Next.js framework exports on server components: `metadata`, `generateMetadata`, `generateStaticParams`, `revalidate`, `dynamic` - nothing else
 
 ```tsx
+// ✅ component
 "use client";
 
 import { ... } from "...";
@@ -75,18 +78,47 @@ const MyComponent: React.FC<TMyComponentProps> = ({ ... }) => {
     // useEffect + return
 };
 
-// helpers / supporting consts - BELOW the component
+// helpers / supporting consts - BELOW the principal const
 
 type TMyComponentProps = { ... };
 
 export default MyComponent;
 ```
 
+```ts
+// ✅ store
+import { create } from "zustand";
+
+const useMyStore = create<TMyStore>((set) => ({
+    value: null,
+    setValue: (v) => set({ value: v }),
+}));
+
+type TMyStore = {
+    value: string | null;
+    setValue: (v: string) => void;
+};
+
+export default useMyStore;
+```
+
+```ts
+// ✅ hook
+const useMyHook = () => {
+    // ...
+    return { value, handleSubmit };
+};
+
+type TMyHookArgs = { id: string };
+
+export default useMyHook;
+```
+
 **Checklist:**
-- [ ] Nothing between imports and `const Component` except allowed exceptions.
-- [ ] All `type T...` declarations BELOW the component, JUST BEFORE `export default`.
-- [ ] Helper consts/functions BELOW the component.
-- [ ] `export default Component;` is the last line.
+- [ ] Nothing between imports and the principal `const` except allowed exceptions.
+- [ ] All `type T...` declarations BELOW the principal `const`, JUST BEFORE `export default`.
+- [ ] Helper consts/functions BELOW the principal `const`.
+- [ ] `export default ...;` is the last line.
 
 ### Prop type naming - STRICT
 
@@ -197,8 +229,8 @@ return { setValue, value, handleSubmit, isLoading };
 | App-wide constants in `lib/constants.ts` | `src/constants/app.ts` |
 | `interface Foo` | `type TFoo` |
 | `type Props` / `type MyComponentProps` | `type TMyComponentProps` |
-| `type T...` above the component | BOTTOM of file, JUST BEFORE `export default` |
-| Helper const/function above the component | Move BELOW the component |
+| `type T...` above the principal `const` (any file) | BOTTOM of file, JUST BEFORE `export default` |
+| Helper const/function above the principal `const` | Move BELOW it |
 | Named export for a component | `export default` (last line) |
 | Component > 120 lines | Split into sub-components |
 | Return `{ setX, value }` | Variables-first A→Z, functions-last A→Z → `{ value, setX }` |
