@@ -36,6 +36,8 @@ Start here. Read the files below in order before writing any code.
 | --- | --- |
 | `.context/infra.md` | Docker, env vars, nginx, deploy, known gotchas |
 
+**SSH access to prod**: use the `contabo` host alias (`ssh contabo`) - it is already configured in the local `~/.ssh/config` with the right user and identity file. Do not use `ssh root@<ip>` directly.
+
 ---
 
 ## 5. Workflow gates
