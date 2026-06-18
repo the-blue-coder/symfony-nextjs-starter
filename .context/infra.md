@@ -2,13 +2,28 @@
 
 ## Overview
 
+> Two possible topologies - keep only the one this project uses, delete the other.
+
+**Topology A - single instance per service (default):**
+
 - **Server**: Contabo VPS, Ubuntu
 - **Web server**: nginx + certbot (SSL)
 - **Backend**: Docker (PHP-FPM + nginx) - `b.[project].domain.com` on port [XXXX]
 - **Frontend**: Docker (Next.js standalone) - `[project].domain.com` on port [XXXX]
 - **Deploy path**: `/home/www/[project-name]`
 
+**Topology B - rolling zero-downtime deploy (2 instances per service):**
+
+- **Server**: Contabo VPS, Ubuntu
+- **Web server**: nginx + certbot (SSL)
+- **Backend**: Docker (PHP-FPM + nginx) - `b.[project].domain.com`, 2 instances behind nginx: port [XXXX] (`backend_a`) and port [XXXX] (`backend_b`)
+- **Frontend**: Docker (Next.js standalone) - `[project].domain.com`, 2 instances behind nginx: port [XXXX] (`frontend_a`) and port [XXXX] (`frontend_b`)
+- **Deploy path**: `/home/www/[project-name]`
+- nginx load-balances both instances of each service via a static `upstream` block with passive health checks; `infra/deploy.sh` updates one instance at a time with a health check (`GET /api/health`) before moving to the next, so a deploy never interrupts service. See `INIT.md` §A3b for the full setup (kept until `INIT.md` is deleted in §A9 - copy the relevant notes here before that if this topology is in use).
+
 ## Docker (backend + frontend)
+
+**Topology A - single instance:**
 
 - `docker-compose.yml` (root) - shared service definitions for postgres + redis + backend + frontend.
 - `docker-compose.override.yml` (root) - **local only** - ports, bind mounts, hot reload.
@@ -22,6 +37,22 @@
 
 ```bash
 docker compose up    # postgres + redis + backend + frontend - API at http://localhost:8000, app at http://localhost:3000
+```
+
+**Topology B - rolling zero-downtime deploy:**
+
+- `docker-compose.yml` (root) - postgres + redis + `backend_a`/`backend_b` + `frontend_a`/`frontend_b`, defined via `x-backend`/`x-frontend` YAML anchors. Only `backend_a`/`frontend_a` carry a `build:` block - `backend_b`/`frontend_b` just reference the resulting image tag. **Never add `build:` to both instances of a pair** - building the same image tag concurrently races (`failed to solve: image "...:latest": already exists`).
+- `docker-compose.override.yml` (root) - **local only** - ports/bind mounts/hot reload for the `_a` instance only. Local dev doesn't need 2 instances, only prod does.
+- `docker-compose.prod.yml` (root) - **prod only** - production overrides for both instances of both services, via anchors.
+- Backend on ports **[XXXX]**/**[XXXX]** (`_a`/`_b`), frontend on **[XXXX]**/**[XXXX]** (`_a`/`_b`) in prod; locally just **8000**/**3000** (single instance).
+- `vendor/` **must** be in `backend/.dockerignore` - never copy Composer dependencies into the build context.
+- `frontend/Dockerfile` is multi-stage (`dev` / `builder` / `runner`), same as Topology A.
+- `NEXT_PUBLIC_*` vars are **build-time**, same as Topology A.
+
+**Local dev (from the project root) - only the `_a` instances run:**
+
+```bash
+docker compose up postgres redis backend_a frontend_a    # API at http://localhost:8000, app at http://localhost:3000
 ```
 
 **Production** - `infra/deploy.sh` uses both compose files, plus `--env-file` since Compose does not read a service's `env_file` for `${VAR}` interpolation in the prod overrides:
@@ -46,12 +77,14 @@ docker compose --env-file ./backend/.env -f docker-compose.yml -f docker-compose
   - `infra/nginx/[project].domain.com` - frontend
   - `infra/nginx/b.[project].domain.com` - backend
 - Setup script: `infra/nginx/setup.sh` - installs config + runs certbot.
+- **Topology B only (rolling deploy)**: each config defines an `upstream` block listing both instances (`max_fails=1 fail_timeout=5s` per server, `proxy_next_upstream error timeout`, `proxy_connect_timeout 2s`), and `proxy_pass` targets the upstream name instead of `http://localhost:<port>`. Config is static and never reloaded by the deploy script - nginx's passive health checks route around whichever instance is currently down.
 
 ## Deploy Scripts
 
 - `infra/deploy.sh` - triggered via GitHub Actions on push to `main`.
 - `infra/first-deploy.sh` - run **once** on the server to set up the environment (clone repo if not already present, build and start backend + frontend containers); the git clone must be conditional: `[ ! -d ".git" ] && git clone ...`.
-- Deploys are **build-before-swap**: `infra/deploy.sh` builds new images while the old containers keep serving, then `up -d` only recreates the services whose image changed - minimal downtime, and a broken build (`set -e`) never touches the running site.
+- **Topology A (single instance)** - deploys are **build-before-swap**: `infra/deploy.sh` builds new images while the old containers keep serving, then `up -d` only recreates the services whose image changed - minimal downtime, and a broken build (`set -e`) never touches the running site.
+- **Topology B (rolling deploy)** - `infra/deploy.sh` builds once, then rolls `backend_a` → `backend_b` → `frontend_a` → `frontend_b` one at a time: `up -d --no-deps <instance>`, poll that instance's own `/api/health` directly (bypassing nginx) until 200 or `HEALTH_TIMEOUT` (60s), only then move to the next. If an instance never becomes healthy, the script aborts (`exit 1`) and leaves the other, still-serving instance untouched. No separate migration step - `docker/entrypoint.sh` already migrates on every backend container start, and the sequential roll order guarantees the schema is migrated before the second instance serves. `infra/first-deploy.sh` starts all 4 instances directly (`up -d --build --wait`) - nothing is live yet, so no rolling logic is needed.
 
 ## GitHub Actions
 
@@ -90,6 +123,8 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml \
   exec -T -e APP_ENV=test -e APP_SECRET=test-secret backend \
   php bin/phpunit tests/Unit --no-coverage
 ```
+
+> Topology B (rolling deploy): replace `backend` with `backend_a`.
 
 **Frontend** (from `frontend/`):
 

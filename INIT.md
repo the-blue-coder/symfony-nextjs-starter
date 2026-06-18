@@ -36,8 +36,21 @@ Before touching any file, collect:
 5. **Backend domain** - e.g. `b.my-app.example.com`
 6. **GitHub repo** - Create the repo at **https://github.com/new** — use the **project slug in kebab-case** as the repo name (e.g. `my-app`), then paste the HTTPS clone URL (e.g. `https://github.com/the-blue-coder/my-app.git`)
 7. **Ports**:
-   - Local: frontend (default `3000`) & backend (default `8000`)
-   - Prod: frontend & backend
+   - Local: frontend (default `3000`) & backend (default `8000`) - single instance, even if rolling deploy is enabled below (no need to duplicate the dev setup).
+   - **Rolling zero-downtime deploy** - should this project run 2 instances per service (frontend + backend) behind nginx, rolled one at a time with a health check before moving to the next, so deploys never interrupt traffic? (default: **no** - only add this complexity if the project expects significant production traffic)
+     - **No** (default) → Prod: 1 port for frontend, 1 port for backend. Continue with the rest of Path A unchanged.
+     - **Yes** → Prod: 4 ports - frontend `_a` / frontend `_b` / backend `_a` / backend `_b`. Follow §A3b in addition to the steps below.
+   - **Before assigning prod ports** (either case): read the centralized port registry on the server to pick free ports that continue the existing numbering without gaps:
+     ```bash
+     ssh root@207.180.238.155 "cat /home/www/app.ports.txt"
+     ```
+     E.g. if existing backend ports go up to `8007`, the next free one is `8008` - not an arbitrary jump like `8010`.
+   - **After assigning prod ports**, append them to the registry (format: `<port>  <domain>`, one per line):
+     ```bash
+     ssh root@207.180.238.155 "echo '<port>  <domain>' >> /home/www/app.ports.txt"
+     ```
+     - Single instance (default): one line per service, e.g. `3005  my-app.example.com` and `8004  b.my-app.example.com`.
+     - Rolling deploy (if enabled): one line per instance, with the **second** instance's domain suffixed `(2nd)` - e.g. `3010  my-app.example.com (2nd)` and `8008  b.my-app.example.com (2nd)` (a third instance, if ever needed, would use `(3rd)`, then `(4th)`, etc.). The first instance's line has no suffix.
 8. **Search engine indexing** - should the app be publicly indexed? (yes / no - sets `robots` meta tag and `robots.txt`)
 9. **Mercure** - does this project need real-time push features? (default: **yes** - included in the boilerplate)
 10. **Authentication mode** - Clerk is the only option. Choose the registration mode:
@@ -125,6 +138,8 @@ Use the answers from §A1 to replace every placeholder across the repo.
 | `[FRONTEND_PORT]` | Prod frontend port - in `.context/infra.md`, `docker-compose.prod.yml`, `infra/nginx/setup.sh` |
 | `[PROD_BACKEND_PORT]` | Prod backend port - in `.context/infra.md`, `docker-compose.prod.yml`, `infra/nginx/setup.sh`, AND in `infra/nginx/b.<domain>` (`proxy_pass http://localhost:<port>;`) |
 | `[owner]/[repo]` | GitHub repo - in `infra/first-deploy.sh` |
+
+> **If rolling zero-downtime deploy was enabled (§A1.7)**: the two port rows above don't apply - use `[FRONTEND_PORT_A]`/`[FRONTEND_PORT_B]` and `[BACKEND_PORT_A]`/`[BACKEND_PORT_B]` instead, per §A3b. In `infra/nginx/setup.sh`, point the temporary HTTP-only bootstrap configs at the `_a` ports (`FRONTEND_PORT_A` / `BACKEND_PORT_A`) - the final configs installed after certbot (step 4 of §A3b) already load-balance both instances via `upstream`.
 
 **Let's Encrypt email** (already hardcoded in `infra/nginx/setup.sh` as `jd.rakotoarison@gmail.com`): used for SSL renewal notifications. Each domain gets its own certificate - `setup.sh` makes two separate `certbot --nginx` calls (one per domain). Do NOT combine them into a single SAN cert.
 
@@ -238,6 +253,443 @@ Generate a custom icon based on the project's purpose and accent color (§A1.16)
      <span className="font-semibold">{APP_NAME}</span>
    </div>
    ```
+
+---
+
+## A3b. Rolling zero-downtime deploy (only if enabled in §A1.7)
+
+> Skip this entire section if the user answered "no" in §A1.7 - the boilerplate's default single-instance files already work as-is.
+
+This reproduces the pattern validated in production on the `freexcomics` project (`.context/feature-specs/001-rolling-zero-downtime-deploy.md` in that repo): each service runs as 2 instances (`_a` / `_b`) behind nginx, updated one at a time with a health check before moving to the next, so a deploy never interrupts service.
+
+**1. Rewrite `docker-compose.yml`** - split `backend` and `frontend` into `backend_a`/`backend_b` and `frontend_a`/`frontend_b`, sharing config via YAML anchors. Only the `_a` instance carries the `build:` block - if both instances build the same image tag concurrently, it races (`failed to solve: image "...:latest": already exists`); `_b` just references the tag `_a` already built:
+
+```yaml
+name: [project_slug]
+
+x-backend: &backend
+  image: [project_slug]_backend
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  env_file:
+    - ./backend/.env
+  environment: &backend-environment
+    DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
+    MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
+  networks:
+    - network
+
+x-frontend: &frontend
+  image: [project_slug]_frontend
+  networks:
+    - network
+
+services:
+  postgres:
+    # ... unchanged from the single-instance file
+
+  redis:
+    # ... unchanged from the single-instance file
+
+  backend_a:
+    <<: *backend
+    container_name: [project_slug]_backend_a
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+
+  backend_b:
+    <<: *backend
+    container_name: [project_slug]_backend_b
+
+  frontend_a:
+    <<: *frontend
+    container_name: [project_slug]_frontend_a
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+
+  frontend_b:
+    <<: *frontend
+    container_name: [project_slug]_frontend_b
+
+volumes:
+  postgres_data:
+
+networks:
+  network:
+    driver: bridge
+```
+
+**2. Rewrite `docker-compose.override.yml`** (local only) - only configure ports/volumes for the `_a` instance of each service. `_b` stays defined (for image/network parity) but unreachable locally - local dev only ever needs one instance:
+
+```yaml
+name: [project_slug]
+
+services:
+  backend_a:
+    ports:
+      - "8000:80"
+    env_file:
+      - ./backend/.env.local
+    volumes:
+      - ./backend:/var/www/html
+      - /var/www/html/vendor
+
+  frontend_a:
+    ports:
+      - "3000:3000"
+    environment:
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+```
+
+Document in `.context/infra.md` (see step 6 below) that local dev only starts the `_a` instances: `docker compose up postgres redis backend_a frontend_a`.
+
+**3. Rewrite `docker-compose.prod.yml`** - apply prod overrides (restart policy, build target, env) to both instances of each service via anchors, same shape as the single-instance file but doubled:
+
+```yaml
+name: [project_slug]
+
+x-backend-prod: &backend-prod
+  restart: unless-stopped
+
+x-frontend-prod: &frontend-prod
+  restart: unless-stopped
+  env_file:
+    - ./frontend/.env
+
+services:
+  postgres:
+    container_name: [project_slug]_postgres
+    restart: unless-stopped
+    volumes:
+      - /var/data/[project-slug]/postgres:/var/lib/postgresql/data
+
+  redis:
+    container_name: [project_slug]_redis
+    restart: unless-stopped
+
+  backend_a:
+    <<: *backend-prod
+    ports:
+      - "[BACKEND_PORT_A]:80"
+    build:
+      target: prod
+    environment:
+      MERCURE_URL: http://mercure-mercure-1/.well-known/mercure
+    networks:
+      - default
+      - mercure_default
+
+  backend_b:
+    <<: *backend-prod
+    ports:
+      - "[BACKEND_PORT_B]:80"
+    environment:
+      MERCURE_URL: http://mercure-mercure-1/.well-known/mercure
+    networks:
+      - default
+      - mercure_default
+
+  frontend_a:
+    <<: *frontend-prod
+    ports:
+      - "[FRONTEND_PORT_A]:3000"
+    build:
+      target: runner
+
+  frontend_b:
+    <<: *frontend-prod
+    ports:
+      - "[FRONTEND_PORT_B]:3000"
+
+networks:
+  mercure_default:
+    external: true
+```
+
+> Drop the `MERCURE_URL` override / `mercure_default` network from both backend services if Mercure was declined in §A1.9.
+
+**4. Rewrite the nginx configs** - `infra/nginx/<frontend-domain>` and `infra/nginx/b.<backend-domain>` each get an `upstream` block listing both instances, with passive health checks. No dynamic reload is needed - the config is static and nginx routes around whichever member is down:
+
+```nginx
+upstream [project_slug]_frontend {
+    server 127.0.0.1:[FRONTEND_PORT_A] max_fails=1 fail_timeout=5s;
+    server 127.0.0.1:[FRONTEND_PORT_B] max_fails=1 fail_timeout=5s;
+}
+
+server {
+    listen 80;
+    server_name [project].domain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name [project].domain.com;
+
+    ssl_certificate /etc/letsencrypt/live/[project].domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/[project].domain.com/privkey.pem;
+
+    location / {
+        proxy_pass http://[project_slug]_frontend;
+        proxy_connect_timeout 2s;
+        proxy_next_upstream error timeout;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+```nginx
+upstream [project_slug]_backend {
+    server 127.0.0.1:[BACKEND_PORT_A] max_fails=1 fail_timeout=5s;
+    server 127.0.0.1:[BACKEND_PORT_B] max_fails=1 fail_timeout=5s;
+}
+
+server {
+    listen 80;
+    server_name b.[project].domain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name b.[project].domain.com;
+
+    ssl_certificate /etc/letsencrypt/live/b.[project].domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/b.[project].domain.com/privkey.pem;
+
+    client_max_body_size 20M;
+
+    location / {
+        proxy_pass http://[project_slug]_backend;
+        proxy_connect_timeout 2s;
+        proxy_next_upstream error timeout;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+**5. Rewrite `infra/deploy.sh` and `infra/first-deploy.sh`**:
+
+```bash
+#!/bin/bash
+set -e
+
+DEPLOY_PATH="/home/www/[project-name]"
+COMPOSE="docker compose --env-file ./backend/.env -f docker-compose.yml -f docker-compose.prod.yml"
+HEALTH_TIMEOUT=60
+HEALTH_INTERVAL=2
+
+wait_for_health() {
+    local port="$1"
+    local elapsed=0
+
+    until curl -sf "http://localhost:$port/api/health" > /dev/null; do
+        elapsed=$((elapsed + HEALTH_INTERVAL))
+        if [ "$elapsed" -ge "$HEALTH_TIMEOUT" ]; then
+            return 1
+        fi
+        sleep "$HEALTH_INTERVAL"
+    done
+}
+
+roll_instance() {
+    local service="$1"
+    local port="$2"
+
+    echo "==> Rolling $service (port $port)..."
+    $COMPOSE up -d --no-deps "$service"
+
+    if ! wait_for_health "$port"; then
+        echo "==> ERROR: $service did not become healthy within ${HEALTH_TIMEOUT}s. Aborting - the other instance is untouched and still serving."
+        exit 1
+    fi
+
+    echo "==> $service is healthy."
+}
+
+echo "==> Pulling latest code..."
+cd "$DEPLOY_PATH"
+git pull origin main
+
+echo "==> Building new images (current instances keep serving - no downtime)..."
+$COMPOSE build
+
+# Migrations run automatically inside docker/entrypoint.sh on every backend
+# container start (before supervisord launches) - no separate migration step
+# needed here. Rolling backend_a before backend_b already serializes this:
+# backend_a's entrypoint applies pending migrations and only then starts
+# serving, so backend_b never starts against a not-yet-migrated schema.
+
+roll_instance backend_a [BACKEND_PORT_A]
+roll_instance backend_b [BACKEND_PORT_B]
+
+roll_instance frontend_a [FRONTEND_PORT_A]
+roll_instance frontend_b [FRONTEND_PORT_B]
+
+echo "==> Done!"
+```
+
+> **Critical pitfall - do not add a separate migration step.** A one-off container like `docker compose run --rm backend_a php bin/console doctrine:migrations:migrate` does not do what it looks like: the prod image's `ENTRYPOINT` (`backend/docker/entrypoint.sh`) ignores the command passed to `run` and always ends with `exec supervisord`, which never returns - the container never exits, `--rm` never fires, and CI times out. Migrations already run automatically in `entrypoint.sh` on every backend container start; the sequential roll order (`backend_a` healthy before `backend_b` starts) is enough to guarantee they're applied before the second instance serves.
+
+> **Retrofitting an already-deployed single-instance project** (only relevant outside a fresh Path A init): add a one-time `docker rm -f [project_slug]_backend` / `[project_slug]_frontend` immediately before rolling `backend_a` / `frontend_a` respectively (not earlier) - removing the old container right before its replacement claims the port keeps the downtime window to just that one roll, instead of the entire build phase.
+
+```bash
+#!/bin/bash
+# Run once on the server to bootstrap the environment before CI/CD takes over.
+set -e
+
+REPO_URL="https://github.com/[owner]/[repo].git"
+DEPLOY_PATH="/home/www/[project-name]"
+COMPOSE="docker compose --env-file ./backend/.env -f docker-compose.yml -f docker-compose.prod.yml"
+
+echo "==> Setting up deployment directory..."
+mkdir -p "$DEPLOY_PATH"
+cd "$DEPLOY_PATH"
+
+if [ ! -d ".git" ]; then
+    git clone "$REPO_URL" .
+fi
+
+echo "==> Starting both instances of backend and frontend..."
+# Nothing is live yet, so no rolling logic is needed - migrations run
+# automatically inside docker/entrypoint.sh on each backend container start.
+$COMPOSE up -d --build --wait
+
+echo "==> First deploy complete! Run bash infra/nginx/setup.sh from the project root to configure nginx + SSL."
+```
+
+**6. Add health endpoints**:
+
+- **Backend** - `GET /api/health`, no auth, `200 {"status":"ok"}` after a successful DB ping, `503 {"status":"error","message":...}` otherwise. Follow the project's "raw SQL never in services" convention (`.context/coding-conventions/symfony.md`) - the DB ping lives in a repository, not the service:
+
+  `backend/src/Repository/HealthRepository.php`:
+  ```php
+  <?php
+
+  declare(strict_types=1);
+
+  namespace App\Repository;
+
+  use Doctrine\DBAL\Connection;
+  use Throwable;
+
+  class HealthRepository
+  {
+      public function __construct(
+          private Connection $connection,
+      ) {
+      }
+
+      public function pingDatabase(): bool
+      {
+          try {
+              $this->connection->executeQuery('SELECT 1');
+
+              return true;
+          } catch (Throwable) {
+              return false;
+          }
+      }
+  }
+  ```
+
+  `backend/src/Service/HealthService.php`:
+  ```php
+  <?php
+
+  declare(strict_types=1);
+
+  namespace App\Service;
+
+  use App\Repository\HealthRepository;
+
+  class HealthService
+  {
+      public function __construct(
+          private HealthRepository $healthRepository,
+      ) {
+      }
+
+      public function isDatabaseHealthy(): bool
+      {
+          return $this->healthRepository->pingDatabase();
+      }
+  }
+  ```
+
+  `backend/src/Controller/HealthController.php`:
+  ```php
+  <?php
+
+  declare(strict_types=1);
+
+  namespace App\Controller;
+
+  use App\Service\HealthService;
+  use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+  use Symfony\Component\HttpFoundation\JsonResponse;
+  use Symfony\Component\HttpFoundation\Response;
+  use Symfony\Component\Routing\Attribute\Route;
+
+  #[Route('/api/health')]
+  class HealthController extends AbstractController
+  {
+      public function __construct(
+          private HealthService $healthService,
+      ) {
+      }
+
+      #[Route('', methods: ['GET'])]
+      public function check(): JsonResponse
+      {
+          if (!$this->healthService->isDatabaseHealthy()) {
+              return $this->json([
+                  'status' => 'error',
+                  'message' => 'Database connection failed.',
+              ], Response::HTTP_SERVICE_UNAVAILABLE);
+          }
+
+          return $this->json(['status' => 'ok']);
+      }
+  }
+  ```
+
+  If the project has (or later adds) a global request listener that guards a route prefix (e.g. an admin-secret check on `/api/admin/*`), verify it does **not** match `/api/health` - the deploy script and nginx must be able to call it unauthenticated.
+
+- **Frontend** - `GET /api/health`, always `200 {"status":"ok"}` once the process is up (liveness only, no upstream dependency to check):
+
+  `frontend/src/app/api/health/route.ts`:
+  ```ts
+  import { NextResponse } from "next/server";
+
+  export async function GET() {
+    return NextResponse.json({ status: "ok" });
+  }
+  ```
+
+**7. Update `.context/infra.md`** with the dual-instance topology, ports, and rolling deploy mechanics - see the "Rolling zero-downtime deploy" variant already documented in the template (delete the single-instance variant instead).
 
 ---
 
