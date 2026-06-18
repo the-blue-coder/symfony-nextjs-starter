@@ -19,9 +19,12 @@
 
 ```
 /
-├── backend/     - Symfony + API Platform (Docker)
-├── frontend/    - Next.js 16 + pnpm (runs locally)
-├── infra/       - deploy script + nginx configs
+├── backend/                  - Symfony + API Platform
+├── frontend/                 - Next.js 16 + pnpm
+├── infra/                    - deploy scripts + nginx configs
+├── docker-compose.yml        - shared service definitions (backend + frontend, both Docker)
+├── docker-compose.override.yml - local overrides (ports, bind mounts, hot reload)
+├── docker-compose.prod.yml   - prod overrides (env, restart policies, build targets)
 └── CHANGELOG.md
 ```
 

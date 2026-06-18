@@ -117,13 +117,13 @@ Use the answers from §A1 to replace every placeholder across the repo.
 |---|---|
 | `[Project Name]` | Display name - in `.context/project-overview.md` (title + `App Name`), `frontend/src/app/layout.tsx`, `frontend/src/app/page.tsx`, `frontend/src/app/(dashboard)/layout.tsx` |
 | `[project-name]` | Slug - in `.context/infra.md` (deploy path), `.github/workflows/deploy.yml`, `infra/deploy.sh`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
-| `[project_slug]` | Slug - in `.context/infra.md` (PM2 process name), `backend/docker-compose.yml` and `backend/docker-compose.prod.yml` (`name:` field) |
+| `[project_slug]` | Slug - in `.context/infra.md`, `docker-compose.yml`, `docker-compose.override.yml` and `docker-compose.prod.yml` (`name:` and container names) |
 
 > **Docker network naming**: the internal network is always called `network` in compose files. Docker Compose automatically prefixes it with the project name (`name:` field), producing `[project_slug]_network`. Never name the network `[project_slug]_network` directly — that produces a double-prefix like `[project_slug]_[project_slug]_network`.
 | `[project].domain.com` | Frontend domain - in `.context/infra.md`, `backend/.env`, `backend/.env.example`, `infra/nginx/setup.sh` |
 | `b.[project].domain.com` | Backend domain - same files as above |
-| `[FRONTEND_PORT]` | Prod frontend port - in `.context/infra.md`, `infra/first-deploy.sh`, `infra/nginx/setup.sh` |
-| `[PROD_BACKEND_PORT]` | Prod backend port - in `.context/infra.md`, `backend/docker-compose.prod.yml`, `infra/nginx/setup.sh`, AND in `infra/nginx/b.<domain>` (`proxy_pass http://localhost:<port>;`) |
+| `[FRONTEND_PORT]` | Prod frontend port - in `.context/infra.md`, `docker-compose.prod.yml`, `infra/nginx/setup.sh` |
+| `[PROD_BACKEND_PORT]` | Prod backend port - in `.context/infra.md`, `docker-compose.prod.yml`, `infra/nginx/setup.sh`, AND in `infra/nginx/b.<domain>` (`proxy_pass http://localhost:<port>;`) |
 | `[owner]/[repo]` | GitHub repo - in `infra/first-deploy.sh` |
 
 **Let's Encrypt email** (already hardcoded in `infra/nginx/setup.sh` as `jd.rakotoarison@gmail.com`): used for SSL renewal notifications. Each domain gets its own certificate - `setup.sh` makes two separate `certbot --nginx` calls (one per domain). Do NOT combine them into a single SAN cert.
@@ -287,13 +287,13 @@ The user must:
 Run these commands automatically - do not ask the user:
 
 ```bash
-# Backend
-cd backend
+# Backend + frontend (from the project root)
 docker compose up -d
 docker compose exec backend composer install
 docker compose exec backend php bin/console doctrine:migrations:migrate --no-interaction
 
-# Frontend
+# Frontend - local node_modules for editor tooling (lint, type-check, IDE autocomplete);
+# the app itself runs inside the frontend container, not via this install
 cd frontend
 pnpm install
 ```
@@ -357,7 +357,7 @@ bash infra/first-deploy.sh
 bash infra/nginx/setup.sh
 ```
 
-`first-deploy.sh` clones the repo, installs dependencies, builds the frontend, and starts PM2.
+`first-deploy.sh` clones the repo and builds + starts the backend and frontend containers via Docker Compose.
 `nginx/setup.sh` installs nginx configs and runs certbot for SSL.
 
 **Step 3 - Verify**
@@ -472,7 +472,7 @@ For each file below, check if it already exists and has real content. If it does
 - Verify or update the stack table, folder structure, and invariants to match what's actually in the repo.
 
 **`.context/infra.md`**
-- Fill in real domains, ports, deploy path, PM2 process name - from existing scripts or §B2 answers.
+- Fill in real domains, ports, deploy path - from existing scripts or §B2 answers.
 
 **`.context/ui-context.md`**
 - Fill in theme, typography, layout patterns - from existing styles or §B2.14. Design context only - no color token tables here.

@@ -1,0 +1,23 @@
+name: [project_slug]
+
+services:
+  backend:
+    ports:
+      - "8000:80"
+    env_file:
+      - ./backend/.env.local
+    volumes:
+      - ./backend:/var/www/html
+      - /var/www/html/vendor
+
+  frontend:
+    ports:
+      - "3000:3000"
+    environment:
+      # Hot reload under Windows/macOS - host file events don't propagate into the
+      # container through a bind mount, so the filesystem must be polled instead.
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next

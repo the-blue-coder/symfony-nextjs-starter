@@ -2,21 +2,19 @@
 set -e
 
 DEPLOY_PATH="/home/www/[project-name]"
+COMPOSE="docker compose --env-file ./backend/.env -f docker-compose.yml -f docker-compose.prod.yml"
 
 echo "==> Pulling latest code..."
 cd "$DEPLOY_PATH"
 git pull origin main
 
-echo "==> Deploying backend..."
-cd "$DEPLOY_PATH/backend"
-docker compose -f docker-compose.yml -f docker-compose.prod.yml down
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --wait --remove-orphans
-docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
+echo "==> Building new images (current containers keep serving - no downtime)..."
+$COMPOSE build
 
-echo "==> Deploying frontend..."
-cd "$DEPLOY_PATH/frontend"
-pnpm install --frozen-lockfile
-pnpm build
-pm2 reload [project-name]-frontend --update-env 2>/dev/null || pm2 start pnpm --name "[project-name]-frontend" -- start
+echo "==> Recreating only the services whose image changed..."
+$COMPOSE up -d --wait --remove-orphans
+
+echo "==> Running database migrations..."
+$COMPOSE exec -T backend php bin/console doctrine:migrations:migrate --no-interaction
 
 echo "==> Done!"

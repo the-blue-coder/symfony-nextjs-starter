@@ -27,6 +27,17 @@ services:
       - default
       - mercure_default
 
+  frontend:
+    image: [project_slug]_frontend
+    container_name: [project_slug]_frontend
+    restart: unless-stopped
+    ports:
+      - "[FRONTEND_PORT]:3000"
+    build:
+      target: runner
+    env_file:
+      - ./frontend/.env
+
 networks:
   mercure_default:
     external: true
