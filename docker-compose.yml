@@ -30,7 +30,7 @@ services:
 
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
       target: dev
     image: [project_slug]_backend
@@ -41,10 +41,20 @@ services:
       redis:
         condition: service_healthy
     env_file:
-      - .env
+      - ./backend/.env
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-app}@postgres:5432/${POSTGRES_DB:-app}?serverVersion=16&charset=utf8
       MESSENGER_TRANSPORT_DSN: redis://redis:6379/messages
+    networks:
+      - network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    image: [project_slug]_frontend
+    container_name: [project_slug]_frontend
     networks:
       - network
 

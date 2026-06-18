@@ -26,7 +26,7 @@
 
 ## Project-wide
 
-- **Env**: never hardcode values. `.env` committed (prod values), `.env.local` gitignored (local override). Keep `.env.example` current at all times. Backend vars go in both `backend/.env` AND `backend/docker-compose.prod.yml`.
+- **Env**: never hardcode values. `.env` committed (prod values), `.env.local` gitignored (local override). Keep `.env.example` current at all times. Backend vars go in both `backend/.env` AND `docker-compose.prod.yml` (root).
 - **CHANGELOG.md** at project root (Keep a Changelog + SemVer). Every feature, fix, and breaking change must be logged.
 
 ---

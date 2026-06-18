@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+#### Infrastructure
+- Dockerized the frontend: `frontend/Dockerfile` (multi-stage `dev` / `builder` / `runner`), `frontend/.dockerignore`, `next.config.ts` `output: "standalone"`, `package.json` pinned `packageManager`.
+- Moved `docker-compose.yml`, `docker-compose.override.yml`, `docker-compose.prod.yml` from `backend/` to the project root; they now orchestrate backend + frontend together.
+- Rewrote `infra/deploy.sh` (build-before-swap, `--env-file ./backend/.env`, zero downtime) and `infra/first-deploy.sh` to deploy the frontend via Docker instead of PM2.
+- Updated `.context/infra.md`, `.context/architecture.md`, `.context/coding-conventions/global.md`, `README.md`, `INIT.md` to reflect the Docker-only frontend setup.
+
 ## [0.1.0] - 2026-04-08
 
 ### Added

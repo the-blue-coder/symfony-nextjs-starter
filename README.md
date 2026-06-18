@@ -13,7 +13,7 @@ Symfony 7 + API Platform backend, Next.js 16 frontend, full auth, Docker, CI/CD.
 
 - **Backend**: Symfony 7, API Platform 3, PostgreSQL, Redis, Symfony Messenger, AWS SES, Mercure
 - **Frontend**: Next.js 16, Clerk, next-intl, TanStack Query v5, Zustand, React Hook Form + Zod, Tailwind v4, shadcn/ui
-- **Infra**: Docker (backend), PM2 (frontend), nginx + certbot, GitHub Actions
+- **Infra**: Docker (backend + frontend), nginx + certbot, GitHub Actions
 
 ## What's included
 
@@ -47,8 +47,9 @@ Symfony 7 + API Platform backend, Next.js 16 frontend, full auth, Docker, CI/CD.
 - UI patterns (DeleteModal, pending rows)
 
 ### Infrastructure
-- Docker split setup: `docker-compose.yml` (local) + `docker-compose.prod.yml` (prod overrides)
-- `infra/deploy.sh` + `infra/first-deploy.sh`
+- Docker for both backend and frontend: root `docker-compose.yml` (shared) + `docker-compose.override.yml` (local) + `docker-compose.prod.yml` (prod overrides)
+- Frontend `Dockerfile` is multi-stage (`dev` / `builder` / `runner`) - hot reload locally, Next.js standalone build in prod
+- `infra/deploy.sh` (build-before-swap, zero-downtime) + `infra/first-deploy.sh`
 - nginx configs + certbot setup script
 - GitHub Actions: `ci.yml` (PHPUnit + typecheck + Jest) + `deploy.yml` (SSH deploy on push to main)
 - Dependabot (npm, composer, actions)
@@ -66,22 +67,18 @@ See [NEW_PROJECT_GUIDELINES.md](./NEW_PROJECT_GUIDELINES.md) for the full checkl
 ### Prerequisites
 
 - Docker
-- Node.js + pnpm
+- Node.js + pnpm (for editor tooling - lint, type-check, autocomplete; the app itself runs in Docker)
 
-### Backend
+### Run everything
 
 ```bash
-cd backend
-docker compose up -d    # starts postgres + redis + backend - API at http://localhost:8000
+docker compose up    # postgres + redis + backend + frontend - API at http://localhost:8000, app at http://localhost:3000
 ```
-
-### Frontend
 
 ```bash
 cd frontend
 cp .env .env.local      # override values for local dev
-pnpm install
-pnpm dev                # http://localhost:3000
+pnpm install             # local node_modules for the editor
 ```
 
 ## AI Development

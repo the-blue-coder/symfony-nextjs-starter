@@ -5,35 +5,38 @@
 - **Server**: Contabo VPS, Ubuntu
 - **Web server**: nginx + certbot (SSL)
 - **Backend**: Docker (PHP-FPM + nginx) - `b.[project].domain.com` on port [XXXX]
-- **Frontend**: PM2, Next.js - `[project].domain.com` on port [XXXX]; PM2 process name: `[project_slug]_frontend`
+- **Frontend**: Docker (Next.js standalone) - `[project].domain.com` on port [XXXX]
 - **Deploy path**: `/home/www/[project-name]`
 
-## Docker (backend only)
+## Docker (backend + frontend)
 
-- `backend/docker-compose.yml` - **local only** - postgres + redis + backend (PHP-FPM + nginx).
-- `backend/docker-compose.prod.yml` - **prod only** - production overrides (env, volumes, restart policies).
-- Backend API exposed on **port 8000** locally (http://localhost:8000).
+- `docker-compose.yml` (root) - shared service definitions for postgres + redis + backend + frontend.
+- `docker-compose.override.yml` (root) - **local only** - ports, bind mounts, hot reload.
+- `docker-compose.prod.yml` (root) - **prod only** - production overrides (env, volumes, restart policies, build targets).
+- Backend API exposed on **port 8000** locally (http://localhost:8000); frontend on **port 3000** (http://localhost:3000).
 - `vendor/` **must** be in `backend/.dockerignore` - never copy Composer dependencies into the build context.
-- Frontend runs locally with `pnpm dev` (no Docker).
+- `frontend/Dockerfile` is multi-stage (`dev` / `builder` / `runner`): local dev runs the `dev` target with the source bind-mounted (hot reload); prod builds the Next.js **standalone** output (`output: "standalone"` in `next.config.ts`) and runs it from the minimal `runner` stage.
+- `NEXT_PUBLIC_*` vars are **build-time**: `next build` bakes them in from the committed `frontend/.env`. `frontend/.env.local` is excluded via `.dockerignore` so prod builds never bake in local dev values.
 
-**Local dev:**
-
-```bash
-cd backend
-docker compose up    # postgres + redis + backend - API at http://localhost:8000
-```
-
-**Production** - `infra/deploy.sh` uses both compose files:
+**Local dev (single command, from the project root):**
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml
+docker compose up    # postgres + redis + backend + frontend - API at http://localhost:8000, app at http://localhost:3000
 ```
+
+**Production** - `infra/deploy.sh` uses both compose files, plus `--env-file` since Compose does not read a service's `env_file` for `${VAR}` interpolation in the prod overrides:
+
+```bash
+docker compose --env-file ./backend/.env -f docker-compose.yml -f docker-compose.prod.yml
+```
+
+> nginx on the **host** (not dockerized) proxies each domain to the port published by its container (frontend / backend). Run `infra/first-deploy.sh` once before `infra/nginx/setup.sh` so the containers are up and listening on those ports first.
 
 ## Env Variables
 
 - `.env` files are **committed** and hold production values.
 - `.env.local` files are **gitignored** and override values for local dev.
-- Backend env vars must be declared in **both** `backend/.env` AND `backend/docker-compose.prod.yml`'s `environment:` section (as `${VAR}`).
+- Backend env vars must be declared in **both** `backend/.env` AND `docker-compose.prod.yml`'s (root) `environment:` section (as `${VAR}`).
 - After adding a new backend env var → recreate: `docker compose up -d --force-recreate backend`.
 - `.env.example` must always be up to date.
 
@@ -47,7 +50,8 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml
 ## Deploy Scripts
 
 - `infra/deploy.sh` - triggered via GitHub Actions on push to `main`.
-- `infra/first-deploy.sh` - run **once** on the server to set up the environment (clone repo if not already present, install deps, configure PM2, etc.); the git clone must be conditional: `[ ! -d ".git" ] && git clone ...`.
+- `infra/first-deploy.sh` - run **once** on the server to set up the environment (clone repo if not already present, build and start backend + frontend containers); the git clone must be conditional: `[ ! -d ".git" ] && git clone ...`.
+- Deploys are **build-before-swap**: `infra/deploy.sh` builds new images while the old containers keep serving, then `up -d` only recreates the services whose image changed - minimal downtime, and a broken build (`set -e`) never touches the running site.
 
 ## GitHub Actions
 
@@ -82,7 +86,7 @@ Consequence: `X-Forwarded-For` missing → `$request->getClientIp()` returns the
 **Backend:**
 
 ```bash
-docker compose -f backend/docker-compose.yml -f backend/docker-compose.prod.yml \
+docker compose -f docker-compose.yml -f docker-compose.prod.yml \
   exec -T -e APP_ENV=test -e APP_SECRET=test-secret backend \
   php bin/phpunit tests/Unit --no-coverage
 ```
