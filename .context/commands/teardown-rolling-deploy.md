@@ -120,36 +120,36 @@ The `/api/health` endpoints (backend `HealthController`/`HealthService`/`HealthR
 
 ## Step 11 - Remove the freed ports from the server's port registry
 
-List exactly which lines will be removed (port + domain + suffix, e.g. `8008  b.<backend-domain> (2nd)`) and confirm with the user before touching the server.
+List exactly which lines will be removed (port + domain + suffix, e.g. `8008  b.<backend-domain> (2nd)`) and confirm with the user which lines those are before touching the server - this is the only confirmation needed; once confirmed, **you (the agent) run the ssh commands yourself via `ssh contabo`** (host alias already configured locally, do not use `ssh root@<ip>`). Editing this shared coordination file is a normal part of this command's workflow, not a remote/destructive action requiring a separate permission gate.
 
 ```bash
-ssh root@207.180.238.155 "cat /home/www/app.ports.txt"
+ssh contabo "cat /home/www/app.ports.txt"
 ```
 
 Remove the matching line(s):
 
 ```bash
-ssh root@207.180.238.155 "sed -i '/<port>  <domain>.*/d' /home/www/app.ports.txt"
+ssh contabo "sed -i '/<port>  <domain>.*/d' /home/www/app.ports.txt"
 ```
 
 If other instances remain (partial removal) and their ordinal suffixes are now wrong (e.g. removing the `(2nd)` instance while a `(3rd)` survives), renumber the survivors' suffixes so they stay consecutive (the surviving instance that was `(3rd)` becomes `(2nd)`, etc.) - edit those lines too.
 
-Confirm the resulting file:
+Confirm the resulting file with the user (for their awareness, not as a permission gate):
 
 ```bash
-ssh root@207.180.238.155 "cat /home/www/app.ports.txt"
+ssh contabo "cat /home/www/app.ports.txt"
 ```
 
 ---
 
 ## Step 12 - Deploy
 
-Tell the user the exact sequence (do not run the destructive/remote steps yourself without confirmation):
+Tell the user the exact sequence (do not run the push / prod-deploy / nginx-reload steps below yourself without confirmation - unlike the port registry edit in Step 11, these touch the live site and its git history):
 
 1. Commit and push the changes to `main` - `infra/deploy.sh` will recreate the changed instances and, on full revert, `--remove-orphans` stops and removes the now-undeclared `_b`/`_c` containers.
 2. **One-time manual nginx update**:
    ```bash
-   ssh root@207.180.238.155
+   ssh contabo
    cd /home/www/<project-slug>
    cp infra/nginx/<frontend-domain> /etc/nginx/sites-available/<frontend-domain>
    cp infra/nginx/b.<backend-domain> /etc/nginx/sites-available/b.<backend-domain>

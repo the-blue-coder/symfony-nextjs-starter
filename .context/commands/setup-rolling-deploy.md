@@ -39,10 +39,10 @@ Assign suffixes for the new instances in order, continuing the existing letter s
 
 ## Step 3 - Pick ports for the new instances
 
-Read the centralized port registry on the server:
+Read the centralized port registry on the server. **You (the agent) run this yourself via `ssh contabo`** (host alias already configured locally, do not use `ssh root@<ip>`) - this is a read-only lookup, not a deploy action, so no separate user confirmation is needed before reading it:
 
 ```bash
-ssh root@207.180.238.155 "cat /home/www/app.ports.txt"
+ssh contabo "cat /home/www/app.ports.txt"
 ```
 
 For each new instance, propose the next free port that continues the existing numbering without gaps - e.g. if backend ports go up to `8007`, the next is `8008`, not an arbitrary jump like `8010` (frontend and backend ports are tracked in separate sequences in the registry, under `FRONTENDS` and `BACKENDS`). Confirm the proposed ports with the user before proceeding.
@@ -316,14 +316,16 @@ export async function GET() {
 
 Append one line per new instance (format: `<port>  <domain>`), keeping each section (`FRONTENDS` / `BACKENDS`) sorted ascending by port. The suffix reflects the instance's position for that domain - first instance has no suffix, second is `(2nd)`, third `(3rd)`, fourth `(4th)`, etc. (the registry already has examples, e.g. `3010  freexcomics.com (2nd)`).
 
+**You (the agent) run this yourself via `ssh contabo`** - editing this shared coordination file is a normal part of this command's workflow, not a remote/destructive action requiring a separate confirmation gate. You already confirmed the port numbers with the user in Step 3; just write them now, no extra round-trip needed.
+
 ```bash
-ssh root@207.180.238.155 "sed -i '/^<previous-highest-port-line>/a <new-port>  <domain> (<ordinal>)' /home/www/app.ports.txt"
+ssh contabo "sed -i '/^<previous-highest-port-line>/a <new-port>  <domain> (<ordinal>)' /home/www/app.ports.txt"
 ```
 
-Confirm the resulting file with the user before moving on:
+Confirm the resulting file with the user (for their awareness, not as a permission gate):
 
 ```bash
-ssh root@207.180.238.155 "cat /home/www/app.ports.txt"
+ssh contabo "cat /home/www/app.ports.txt"
 ```
 
 ---
@@ -336,12 +338,12 @@ Document the new instance count and ports. If this project's `infra.md` still de
 
 ## Step 13 - Deploy
 
-Tell the user the exact sequence (do not run the destructive/remote steps yourself without confirmation):
+Tell the user the exact sequence (do not run the push / prod-deploy / nginx-reload steps below yourself without confirmation - unlike the port registry edit in Step 11, these touch the live site and its git history):
 
 1. Commit and push the changes to `main` - this triggers `infra/deploy.sh` via GitHub Actions, which performs the rolling swap described in Step 8 (including the one-time `docker rm -f` if this was the first activation).
 2. **One-time manual nginx update** (not handled by `deploy.sh`): SSH to the server and install the new nginx configs, then reload:
    ```bash
-   ssh root@207.180.238.155
+   ssh contabo
    cd /home/www/<project-slug>
    cp infra/nginx/<frontend-domain> /etc/nginx/sites-available/<frontend-domain>
    cp infra/nginx/b.<backend-domain> /etc/nginx/sites-available/b.<backend-domain>
