@@ -40,14 +40,14 @@ Before touching any file, collect:
    - **Rolling zero-downtime deploy** - should this project run 2 instances per service (frontend + backend) behind nginx, rolled one at a time with a health check before moving to the next, so deploys never interrupt traffic? (default: **no** - only add this complexity if the project expects significant production traffic)
      - **No** (default) → Prod: 1 port for frontend, 1 port for backend. Continue with the rest of Path A unchanged.
      - **Yes** → Prod: 4 ports - frontend `_a` / frontend `_b` / backend `_a` / backend `_b`. Follow §A3b in addition to the steps below.
-   - **Before assigning prod ports** (either case): read the centralized port registry on the server to pick free ports that continue the existing numbering without gaps:
+   - **Before assigning prod ports** (either case): read the centralized port registry on the server to pick free ports that continue the existing numbering without gaps. **You (the agent) run this yourself via `ssh contabo`** (host alias already configured locally) - this is a read-only lookup, not a deploy action, so no separate user confirmation is needed before reading it:
      ```bash
-     ssh root@207.180.238.155 "cat /home/www/app.ports.txt"
+     ssh contabo "cat /home/www/app.ports.txt"
      ```
      E.g. if existing backend ports go up to `8007`, the next free one is `8008` - not an arbitrary jump like `8010`.
-   - **After assigning prod ports**, append them to the registry (format: `<port>  <domain>`, one per line):
+   - **After assigning prod ports**, append them to the registry (format: `<port>  <domain>`, one per line). **You run this yourself too** - editing this shared coordination file is a normal part of this step, not a remote/destructive action requiring a confirmation gate (confirm the chosen ports with the user first if there's any ambiguity, then just write them):
      ```bash
-     ssh root@207.180.238.155 "echo '<port>  <domain>' >> /home/www/app.ports.txt"
+     ssh contabo "echo '<port>  <domain>' >> /home/www/app.ports.txt"
      ```
      - Single instance (default): one line per service, e.g. `3005  my-app.example.com` and `8004  b.my-app.example.com`.
      - Rolling deploy (if enabled): one line per instance, with the **second** instance's domain suffixed `(2nd)` - e.g. `3010  my-app.example.com (2nd)` and `8008  b.my-app.example.com (2nd)` (a third instance, if ever needed, would use `(3rd)`, then `(4th)`, etc.). The first instance's line has no suffix.
@@ -113,7 +113,7 @@ Then add secrets at **https://github.com/the-blue-coder/[project-slug]/settings/
 **How to get `CONTABO_SSH_PRIVATE_KEY`:**
 
 ```bash
-ssh root@207.180.238.155 "cat ~/.ssh/id_rsa"
+ssh contabo "cat ~/.ssh/id_rsa"
 ```
 
 Copy the full output (including `-----BEGIN ... PRIVATE KEY-----` / `-----END ... PRIVATE KEY-----`) and paste it as the secret value.
@@ -802,7 +802,7 @@ git push origin main
 **Step 2 - Bootstrap the server (run once via SSH)**
 
 ```bash
-ssh root@207.180.238.155
+ssh contabo
 git clone https://github.com/<owner>/<project-slug>.git /home/www/<project-slug>
 cd /home/www/<project-slug>
 bash infra/first-deploy.sh
@@ -957,7 +957,7 @@ If wrong or missing: `git remote set-url origin https://github.com/<owner>/<slug
 |---|---|
 | `CONTABO_HOST` | `207.180.238.155` |
 | `CONTABO_USER` | `root` |
-| `CONTABO_SSH_PRIVATE_KEY` | `ssh root@207.180.238.155 "cat ~/.ssh/id_rsa"` |
+| `CONTABO_SSH_PRIVATE_KEY` | `ssh contabo "cat ~/.ssh/id_rsa"` |
 
 **Secrets in `.env` files** - check if these are already set. Generate and fill any that are missing:
 ```bash
