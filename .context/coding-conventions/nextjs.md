@@ -171,6 +171,23 @@ const MyComponent: React.FC<TMyComponentProps> = ({ item }) => {
 };
 ```
 
+### Page-header-title hook call order
+
+The page-header-title hook (e.g. `usePageHeaderTitle(t("title"), isPageLoading)`) must be called **immediately after** the component's main data/state hook destructuring - nothing in between.
+
+```tsx
+// ✅ correct
+const { isPageLoading, stats, t, ... } = useDashboardStats();
+usePageHeaderTitle(t("title"), isPageLoading);
+
+// ❌ wrong - other code sits between the two hook calls
+const { isPageLoading, stats, t, ... } = useDashboardStats();
+useEffect(() => { ... }, []);
+usePageHeaderTitle(t("title"), isPageLoading);
+```
+
+This keeps the title-setting call visually anchored to the `t`/`isPageLoading` values it depends on, regardless of how many `useEffect`s or early returns follow.
+
 ### Derived values belong in the hook, not the component
 
 Any value derived from hook state (filtered lists, counts, booleans, formatted strings) must be computed inside the hook and returned — never derived inline in JSX or repeated across the component.
