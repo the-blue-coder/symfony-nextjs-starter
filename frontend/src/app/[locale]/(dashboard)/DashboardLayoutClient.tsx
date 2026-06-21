@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ChevronLeft, ChevronRight, LayoutDashboard, LogOut, Menu, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, Menu, Settings } from "lucide-react";
 import { Link } from "@/lib/i18n";
 import { APP_NAME } from "@/constants/app";
 import useDashboardLayout from "./hooks/useDashboardLayout";
@@ -10,6 +10,8 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 	const {
 		isMobileOpen,
 		isSidebarCollapsed,
+		navItems,
+		settingsLabel,
 		pathname,
 		showExpanded,
 		handleSignOut,
@@ -106,7 +108,7 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 								}`}
 							>
 								<Settings size={16} />
-								Settings
+								{settingsLabel}
 							</Link>
 							<button
 								onClick={handleSignOut}
@@ -120,7 +122,7 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 						<>
 							<Link
 								href="/settings"
-								title="Settings"
+								title={settingsLabel}
 								className={`flex items-center justify-center w-9 h-9 rounded-lg cursor-pointer transition-colors ${
 									isNavActive("/settings") ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent"
 								}`}
@@ -159,10 +161,6 @@ const DashboardLayoutClient: React.FC<TDashboardLayoutClientProps> = ({ initialC
 		</div>
 	);
 };
-
-const navItems = [
-	{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-];
 
 type TDashboardLayoutClientProps = {
 	initialCollapsed: boolean;

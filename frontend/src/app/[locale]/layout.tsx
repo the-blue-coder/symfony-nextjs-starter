@@ -3,7 +3,7 @@ import "../globals.css";
 import QueryProvider from "@/components/providers/QueryProvider";
 import GoogleAnalytics from "@/components/tracking/GoogleAnalytics";
 import MicrosoftClarity from "@/components/tracking/MicrosoftClarity";
-import { GA_MEASUREMENT_ID, CLARITY_PROJECT_ID } from "@/constants/app";
+import { APP_NAME, GA_MEASUREMENT_ID, CLARITY_PROJECT_ID } from "@/constants/app";
 import { ClerkProvider } from "@clerk/nextjs";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-	title: "[Project Name]",
+	title: { default: APP_NAME, template: `%s - ${APP_NAME}` },
 	description: "[Project description]",
 	manifest: "/manifest.webmanifest",
 	themeColor: "#6366f1",

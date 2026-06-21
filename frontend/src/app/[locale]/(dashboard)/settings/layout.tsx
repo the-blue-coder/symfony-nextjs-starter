@@ -1,33 +1,13 @@
-"use client";
+import { getTranslations } from "next-intl/server";
+import SettingsLayoutClient from "./SettingsLayoutClient";
 
-import { Link } from "@/lib/i18n";
-import useSettingsLayout from "./hooks/useSettingsLayout";
+export const generateMetadata = async () => {
+	const t = await getTranslations("nav");
+	return { title: t("settings") };
+};
 
 const SettingsLayout: React.FC<TSettingsLayoutProps> = ({ children }) => {
-	const { isNavActive, navItems } = useSettingsLayout();
-
-	return (
-		<div className="flex gap-6">
-			<aside className="w-48 shrink-0">
-				<nav className="space-y-1">
-					{navItems.map(({ href, label }) => (
-						<Link
-							key={href}
-							href={href}
-							className={`block rounded-md px-3 py-2 text-sm transition-colors ${
-								isNavActive(href)
-									? "bg-accent text-accent-foreground font-medium"
-									: "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-							}`}
-						>
-							{label}
-						</Link>
-					))}
-				</nav>
-			</aside>
-			<div className="flex-1">{children}</div>
-		</div>
-	);
+	return <SettingsLayoutClient>{children}</SettingsLayoutClient>;
 };
 
 type TSettingsLayoutProps = {

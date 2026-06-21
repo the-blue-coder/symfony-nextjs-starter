@@ -26,6 +26,17 @@ Never add `"use client"` preemptively. Start server-side; only opt into client w
 - Auth guard lives in `src/middleware.ts` - Clerk middleware protects routes and handles redirects.
 - **Clerk** handles auth, JWT, and OAuth providers - never implement custom auth flows.
 
+### Page titles - section-level metadata
+
+**Every section must show `{Section} - {APP_NAME}` in the browser tab, never just `{APP_NAME}`.**
+
+- The root layout sets a title **template**, not a static string: `` metadata.title = { default: APP_NAME, template: `%s - ${APP_NAME}` } ``. Never hardcode the app name as a plain string here - import `APP_NAME` from its constants file.
+- Each top-level section under the dashboard route group (e.g. `dashboard/`, `settings/`, ...) that needs its own tab title gets a **thin Server Component `layout.tsx`** exporting `generateMetadata` - nothing else changes about how that section renders.
+- **Reuse the existing sidebar nav translation key** for the title - never introduce a separate string. This keeps the tab title and the sidebar label in permanent sync and keeps the title localized for free.
+- `generateMetadata` only works in a **Server Component**. If the section's layout currently does interactive work and is `"use client"`, split it: keep the interactive JSX in a sibling `*LayoutClient.tsx` client component, and reduce `layout.tsx` itself to a server wrapper that exports `generateMetadata` and renders `<XLayoutClient>{children}</XLayoutClient>`. This mirrors the existing `(dashboard)/layout.tsx` + `DashboardLayoutClient.tsx` split, one level deeper.
+- Leaf pages inside a titled section need **no metadata of their own** - they inherit the section's title via the template.
+- Transient pages with no real UI (e.g. a redirect-only page) do not need a section layout.
+
 ### Loading gates - prevent content flash
 
 **Screens must never render content until all async dependencies are fully resolved.** Rendering with partial/empty data causes a visible flash followed by a loading state, which is worse than showing a spinner from the start.
