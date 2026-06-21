@@ -5,6 +5,7 @@
 - Always use **shadcn/ui** for UI primitives (Button, Input, Dialog, Select, etc.) - never build them from scratch.
 - Add via CLI: `pnpm dlx shadcn@latest add <component>`.
 - shadcn/ui components live in `src/components/ui/` - committed to the repo, edit freely to match the design.
+- After `pnpm dlx shadcn@latest add <component>`, reformat the generated file to the project's conventions: convert 2-space indentation to tabs, and convert `function ComponentName(...) {...}` declarations to `const ComponentName = (...) => {...}`. Keep the file's named multi-export structure as-is (`export { Foo, Bar, ... }`) - never force a single `export default` or split the file, since shadcn intentionally bundles several related sub-components per file.
 
 ### Icons - lucide-react
 
