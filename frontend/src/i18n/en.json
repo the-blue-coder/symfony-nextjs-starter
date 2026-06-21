@@ -1,5 +1,7 @@
 {
 	"nav": {
+		"dashboard": "Dashboard",
+		"settings": "Settings",
 		"language": "Language"
 	},
 	"settings": {

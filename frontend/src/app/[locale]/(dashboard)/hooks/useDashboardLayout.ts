@@ -2,11 +2,14 @@
 
 import { usePathname } from "@/lib/i18n";
 import { useClerk } from "@clerk/nextjs";
+import { LayoutDashboard } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 
 const useDashboardLayout = (initialCollapsed: boolean) => {
 	const pathname = usePathname();
 	const { signOut } = useClerk();
+	const t = useTranslations("nav");
 
 	const [isSidebarCollapsed, setIsSidebarCollapsedLocal] = useState(initialCollapsed);
 	const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -47,6 +50,8 @@ const useDashboardLayout = (initialCollapsed: boolean) => {
 	return {
 		isMobileOpen,
 		isSidebarCollapsed,
+		navItems: [{ href: "/dashboard", label: t("dashboard"), icon: LayoutDashboard }],
+		settingsLabel: t("settings"),
 		pathname,
 		showExpanded,
 		handleSignOut,

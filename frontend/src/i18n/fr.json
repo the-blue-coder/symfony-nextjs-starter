@@ -1,5 +1,7 @@
 {
 	"nav": {
+		"dashboard": "Tableau de bord",
+		"settings": "Paramètres",
 		"language": "Langue"
 	},
 	"settings": {
