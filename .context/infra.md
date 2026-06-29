@@ -93,6 +93,24 @@ docker compose --env-file ./backend/.env -f docker-compose.yml -f docker-compose
 
 ## Known Gotchas
 
+### Docker nginx - DNS caching after backend container recreation
+
+Applies only when nginx runs in its **own container** (separate from the PHP-FPM backend, with `fastcgi_pass backend:9000`). Nginx resolves the `backend` hostname at startup and caches the IP. When the backend container is recreated on deploy it gets a new Docker-assigned IP, and nginx keeps the stale one → 502 until nginx itself is restarted.
+
+Fix: use Docker's internal resolver with a short TTL **and** a variable upstream (the variable is what forces re-resolution at request time — a literal hostname in `fastcgi_pass` ignores the resolver):
+
+```nginx
+resolver 127.0.0.11 valid=5s ipv6=off;
+
+location ~ ^/index\.php(/|$) {
+    set $upstream backend:9000;
+    fastcgi_pass $upstream;
+    ...
+}
+```
+
+Does **not** apply to the single-container setup (`fastcgi_pass 127.0.0.1:9000`) used by the boilerplate's default architecture.
+
 ### Nginx + Certbot - proxy headers stripped on renewal
 
 The certbot renewal config uses `installer = nginx`, which rewrites the `location /` block on every `certbot renew` and strips all `proxy_set_header` directives.
