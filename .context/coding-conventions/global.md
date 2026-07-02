@@ -16,6 +16,14 @@
 
 ---
 
+## Library Usage
+
+- Prefer a well-maintained library over a from-scratch implementation - libraries are more battle-tested and robust than custom code.
+- Vet any new dependency for security before adding it: check maintenance activity, known CVEs, and adoption/trust level.
+- Never add a new library on your own initiative - always propose it and get the user's explicit validation first.
+
+---
+
 ## Formatting
 
 - **Indentation**: tabs only, no spaces - tab width = 4 spaces. Applies to all files (PHP, Twig, JS, TS, CSS, etc.).
