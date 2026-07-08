@@ -47,7 +47,7 @@ If a change cannot be verified end-to-end quickly, the scope is too broad - spli
 Do not modify unless explicitly instructed:
 
 - `src/components/ui/*` - shadcn/ui primitives (edit only to match design system)
-- `src/middleware.ts` - auth guard (Clerk) + i18n routing
+- `src/proxy.ts` - auth guard (Clerk) + i18n routing
 - `src/lib/api.ts` - fetch wrapper
 
 ---

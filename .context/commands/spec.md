@@ -70,7 +70,7 @@ Launch a subagent specialized for research (agent type: `codebase-researcher`, i
 1. Find the closest existing feature as an analog - read its entity, repository, service, API resource, page, and hook.
 2. Identify which existing files will be modified vs. which new files are needed.
 3. Check existing Zod schemas, Zustand stores, and API contracts that are relevant.
-4. Note any invariants from `architecture.md` that apply (UUID IDs, `middleware.ts` Clerk auth guard, API Platform conventions, etc.).
+4. Note any invariants from `architecture.md` that apply (UUID IDs, `proxy.ts` Clerk auth guard, API Platform conventions, etc.).
 
 **Web research:**
 1. **Best practices & patterns** — how similar features are typically designed (UX flows, data models, API design)

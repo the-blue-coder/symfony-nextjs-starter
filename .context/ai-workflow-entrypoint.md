@@ -2,6 +2,8 @@
 
 Start here. Read the files below in order before writing any code.
 
+> **Project not initialized yet?** If `project-overview.md` or `ui-context.md` still contain `[bracketed]` placeholders, stop and run `/init-project` before proceeding.
+
 ---
 
 ## 1. Mandatory read - every session, before any code
@@ -12,6 +14,7 @@ Start here. Read the files below in order before writing any code.
 | `.context/architecture.md` | Stack, folder structure, invariants, system boundaries |
 | `.context/coding-conventions/global.md` | Golden rules, cross-cutting concerns - **non-negotiable** |
 | `.context/progress-tracker.md` | Current phase, completed work, open questions |
+| `.context/ai-workflow-rules.md` | Scoping rules, TDD mandate, protected files, doc-sync policy |
 
 ## 2. Mandatory read - only when touching the frontend (`frontend/`)
 

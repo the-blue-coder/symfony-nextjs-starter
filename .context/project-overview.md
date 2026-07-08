@@ -3,7 +3,7 @@
 ## Project Identity
 
 - **App Name**: [Project Name] - replace with the actual display name when creating a new project from this boilerplate.
-- **Frontend**: `NEXT_PUBLIC_APP_NAME` in `frontend/.env` → `APP_NAME` constant exported from `src/lib/constants.ts`. Import and use everywhere - never hardcode the app name in source files.
+- **Frontend**: `NEXT_PUBLIC_APP_NAME` in `frontend/.env` → `APP_NAME` constant exported from `src/constants/app.ts`. Import and use everywhere - never hardcode the app name in source files.
 - **Backend**: `APP_NAME` in `backend/.env` → `app.name` parameter in `config/services.yaml` → injected as `$appName` into services that need it.
 
 ## Overview

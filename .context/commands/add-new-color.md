@@ -1,20 +1,20 @@
 ---
-description: "Add a new brand color token to the project (globals.css + @theme inline + tailwind.md documentation)"
+description: "Add a new design token to the project (globals.css + @theme inline + tailwind.md documentation)"
 argument-hint: "<token-name> <hex>"
 ---
 
-Add a new brand color token. Args (optional): `$ARGS` (e.g. `brand-purple #7C3AED`)
+Add a new design token. Args (optional): `$ARGS` (e.g. `accent-secondary #7C3AED`)
 
 ---
 
 ## Step 1 - Resolve inputs
 
 **If `$ARGS` is provided**, parse:
-- `token-name` = first word (e.g. `brand-purple`) — must follow the `brand-*` naming convention
+- `token-name` = first word (e.g. `accent-secondary`) - should follow the existing semantic-role naming already used in `tailwind.md`'s Brand tokens table (`bg-*`, `text-*`, `accent-*`, `border-*`, `state-*`), not a `brand-*` prefix
 - `hex` = second word (e.g. `#7C3AED`)
 
 **Otherwise**, ask:
-1. Token name? (e.g. `brand-purple`) — must be `brand-*`
+1. Token name? (e.g. `accent-secondary`) - should follow the existing semantic-role naming already used in `tailwind.md`'s Brand tokens table (`bg-*`, `text-*`, `accent-*`, `border-*`, `state-*`), not a `brand-*` prefix
 2. Hex value? (e.g. `#7C3AED`)
 
 Wait for answers before proceeding.
@@ -27,12 +27,12 @@ Normalize the hex to **lowercase** before proceeding (e.g. `#E12929` → `#e1292
 
 In `frontend/src/app/globals.css`:
 
-1. Under `:root { ... }`, add after the last `--brand-*` line:
+1. Under `:root { ... }`, add the new variable:
    ```css
    --<token-name>: <hex>;
    ```
 
-2. Under `@theme inline { ... }`, add after the last `--color-brand-*` line:
+2. Under `@theme inline { ... }`, add the new variable:
    ```css
    --color-<token-name>: var(--<token-name>);
    ```
@@ -43,10 +43,10 @@ This makes `bg-<token-name>`, `text-<token-name>`, `border-<token-name>` etc. av
 
 ## Step 3 - Document in tailwind.md
 
-In `.context/coding-conventions/tailwind.md`, find the **Brand colors** table and add a new row:
+In `.context/coding-conventions/tailwind.md`, find the **Brand tokens** table and add a new row:
 
 ```
-| <Label>   | `--<token-name>`   | `bg-<token-name>` / `text-<token-name>`   | `<hex>` |
+| <Role label> | `--<token-name>` | `<hex>` |
 ```
 
 ---

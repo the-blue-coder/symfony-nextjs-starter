@@ -24,7 +24,7 @@ Read:
 List all files in `.context/feature-specs/` and read the `status:` frontmatter field from each.
 
 **If the directory is empty or no files have `status: todo` or `status: in-progress`:**
-> No specs to implement. Run `/plan` first to define a feature, then come back.
+> No specs to implement. Run `/spec` first to define a feature, then come back.
 Stop.
 
 **If `$ARGS` is provided**, find the matching spec (by numeric prefix or name fragment, case-insensitive) and jump to Step 4.
@@ -69,7 +69,7 @@ Also update `.context/progress-tracker.md`: move the feature from **Next Up** to
 
 If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 5.
 
-Otherwise, launch a subagent specialized for implementation work (agent type: `implementer`, if your tool supports named subagent types - otherwise a general coding subagent) to execute Steps 5 through 8 below. Give it the spec file path and the scope. Wait for its report (files created/modified, deviations, open questions), then continue to Step 9.
+Otherwise, launch a subagent specialized for implementation work (agent type: `implementer`, if your tool supports named subagent types - otherwise a general coding subagent). Since the subagent starts with a fresh context and does not inherit what you already read in Step 1, instruct it to first read `.context/project-overview.md`, `.context/architecture.md`, and `.context/coding-conventions/global.md`, then to execute Steps 5 through 8 below. Give it the spec file path and the scope. Wait for its report (files created/modified, deviations, open questions), then continue to Step 9.
 
 ---
 

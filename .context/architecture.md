@@ -4,8 +4,9 @@
 
 | Layer          | Technology                        | Role                              |
 | -------------- | --------------------------------- | --------------------------------- |
-| Backend        | Symfony 7 + API Platform 3        | REST API (JSON-LD)                |
+| Backend        | Symfony 8 + API Platform 4        | REST API (JSON-LD)                |
 | Database       | PostgreSQL + Doctrine ORM         | Persistence                       |
+| Cache          | Redis                              | Provisioned via Docker Compose, not yet wired into Symfony cache (see `backend/config/packages/cache.yaml`) |
 | Async          | Symfony Messenger                 | Background jobs                   |
 | Frontend       | Next.js 16 (App Router)           | UI - SSR + client                 |
 | Styling        | Tailwind CSS v4 + shadcn/ui       | Design system                     |

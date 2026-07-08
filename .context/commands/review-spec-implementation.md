@@ -21,6 +21,14 @@ Read the full spec file.
 
 ---
 
+## Step 1.5 - Delegate verification to a specialized subagent
+
+If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 2.
+
+Otherwise, launch a subagent specialized for spec verification (agent type: `spec-verifier`, if your tool supports named subagent types - otherwise a general coding subagent) to execute Steps 2 through 6 below against the spec file. Wait for its structured report, then continue to Step 7.
+
+---
+
 ## Step 2 - Load context (silent)
 
 Read:
@@ -28,14 +36,6 @@ Read:
 - `.context/coding-conventions/global.md`
 - If the spec touches `frontend/` → `.context/coding-conventions/typescript.md`, `.context/coding-conventions/nextjs.md`, `.context/coding-conventions/tailwind.md`, `.context/coding-conventions/ui.md`
 - If the spec touches `backend/` → `.context/coding-conventions/php.md`, `.context/coding-conventions/symfony.md`
-
----
-
-## Step 2.5 - Delegate verification to a specialized subagent
-
-If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 3.
-
-Otherwise, launch a subagent specialized for spec verification (agent type: `spec-verifier`, if your tool supports named subagent types - otherwise a general coding subagent) to execute Steps 3 through 6 below against the spec file. Wait for its structured report, then continue to Step 7.
 
 ---
 
@@ -65,7 +65,7 @@ For each entity and field listed in the spec's **Data Model** table:
 
 - Find the Doctrine entity class in `backend/src/Entity/`.
 - Check that each field exists with the correct type, constraints (nullable, length, etc.), and lifecycle hooks.
-- Check that the corresponding TypeScript type in `frontend/src/lib/types.ts` matches.
+- Check that the corresponding TypeScript type in `frontend/src/types/[domain].ts` matches.
 
 Verdict: ✅ / ⚠️ / ❌ per entity.
 

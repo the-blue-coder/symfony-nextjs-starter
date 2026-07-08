@@ -23,7 +23,7 @@ Never add `"use client"` preemptively. Start server-side; only opt into client w
 
 ### Authentication
 
-- Auth guard lives in `src/middleware.ts` - Clerk middleware protects routes and handles redirects.
+- Auth guard lives in `src/proxy.ts` - Clerk middleware protects routes and handles redirects.
 - **Clerk** handles auth, JWT, and OAuth providers - never implement custom auth flows.
 
 ### Page titles - section-level metadata
@@ -123,15 +123,13 @@ return <ActualContent />;
 
 | File / dir | Purpose |
 | --- | --- |
-| `src/i18n/routing.ts` | `defineRouting` - locales list, defaultLocale |
-| `src/i18n/request.ts` | `getRequestConfig` - server-side locale + message loading |
-| `src/i18n/navigation.ts` | `createNavigation` - exports locale-aware `Link`, `usePathname`, `useRouter`, `redirect` |
-| `messages/` | Translation files at project root - one JSON per locale: `en.json`, `fr.json` |
+| `src/lib/i18n.ts` | next-intl config in one file - `defineRouting` (locales, defaultLocale), `createNavigation` (exports `Link`, `redirect`, `usePathname`, `useRouter`), and `getRequestConfig` (server-side locale + message loading) |
+| `src/i18n/en.json`, `src/i18n/fr.json` | Translation files, one per locale |
 
-- `next.config.ts` points the next-intl plugin at `./src/i18n/request.ts`.
-- Dynamic import path: `` `../../messages/${locale}.json` `` (from `src/i18n/request.ts`).
-- Never put message files in `public/` or `src/`.
-- Always import `Link`, `usePathname`, `useRouter`, `redirect` from `@/i18n/navigation` - never from `next/link` or `next/navigation` in components that need locale awareness.
+- `next.config.ts` points the next-intl plugin at `./src/lib/i18n.ts`.
+- Dynamic import path: `` `../i18n/${locale}.json` `` (relative from `src/lib/i18n.ts`).
+- Never put message files in `public/` or outside `src/i18n/`.
+- Always import `Link`, `usePathname`, `useRouter`, `redirect` from `@/lib/i18n` - never from `next/link` or `next/navigation` in components that need locale awareness.
 
 ### ⚠️ Hook/Component Split - THE MOST CRITICAL RULE
 
@@ -265,7 +263,7 @@ export const formatDate = (d: string) => moment(d).format("MMM D");
 - Pure helpers: `src/lib/utils.ts` - no `utils/` subfolder.
 - Domain types: one file per domain in `src/types/` (`auth.ts`, `order.ts`…) - never a catch-all `index.ts`.
 - App-wide constants: `src/constants/app.ts`. Domain constants in their own file.
-- Config values (locales, etc.): `src/i18n/routing.ts` - i18n config lives in `src/i18n/`.
+- Config values (locales, etc.): `src/lib/i18n.ts` - translation files live in `src/i18n/`.
 
 ### Testing
 

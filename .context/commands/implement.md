@@ -52,22 +52,28 @@ Set `iteration = 1` and `pending_fixes = none`.
 
 Launch a subagent (foreground - you need its result before reviewing) with this prompt:
 
-> Read `.context/commands/dev.md` and execute Steps 5 through 8 (load layer-specific context, implement, verify, update CHANGELOG.md) for the spec at `<spec file path>`. Do not do Steps 1-4 (spec selection, confirmation, marking in-progress) - that has already been done.
+> Read `.context/commands/dev.md`. Since you start with a fresh context, first read its Step 1 files yourself (`.context/ai-workflow-entrypoint.md`, `.context/project-overview.md`, `.context/architecture.md`, `.context/coding-conventions/global.md`), then execute Steps 5 through 8 (load layer-specific context, implement, verify, update CHANGELOG.md) for the spec at `<spec file path>`. Do not do Steps 1-4 (spec selection, confirmation, marking in-progress) - that has already been done.
 > [If `pending_fixes` is not `none`:] The previous review pass found these gaps - fix them specifically, then re-run the Step 7 sanity check: `<pending_fixes>`.
 > Report back: files created/modified, any deviations from the spec and why, and any open questions.
 
-### 4b - Spawn the reviewer subagent
+### 4b - Spawn the verification subagent
 
-Launch a subagent (foreground) with this prompt:
+Launch a subagent (foreground - agent type: `spec-verifier` if your tool supports named subagent types, otherwise a general subagent) with this prompt:
 
-> Read `.context/commands/review-spec-implementation.md` and execute Steps 1 through 7 (verify acceptance criteria, data model, API contract, and run the convention review) for the spec at `<spec file path>`. Do NOT do Step 8 (fix/flag - the caller handles that) or Step 9 (commit/push - out of scope). Return the structured report (verdicts + evidence) exactly as specified in Step 6, plus any convention violations found in Step 7.
+> Read `.context/commands/review-spec-implementation.md` and execute Steps 1 through 6 (find the spec, load context, verify acceptance criteria, data model, and API contract) for the spec at `<spec file path>`. Do NOT do Step 7 (convention review), Step 8 (fix/flag), or Step 9 (commit/push) - the caller handles those. Return the structured report (verdicts + evidence) exactly as specified in Step 6.
 
-### 4c - Evaluate the report
+### 4b bis - Spawn the convention-review subagent
+
+Launch a subagent (foreground - agent type: `convention-reviewer` if your tool supports named subagent types, otherwise a general coding subagent) with this prompt:
+
+> Read `.context/commands/review-changes.md` and follow its instructions (scope: whatever this spec touches - frontend, backend, or all) to check and fix convention violations in the files changed by this feature. Report back the summary table.
+
+### 4c - Evaluate the reports
 
 - **If overall verdict is ✅ COMPLETE and no convention violations remain:** go to Step 5.
 - **If any criterion/entity/route is ⚠️ or ❌, or convention violations remain:**
   - If `iteration == 5`: go to Step 6 (cap reached).
-  - Otherwise: set `pending_fixes` to the concrete list of gaps and violations from the report, increment `iteration`, and go back to 4a.
+  - Otherwise: set `pending_fixes` to the concrete list of gaps and violations from the reports, increment `iteration`, and go back to 4a.
 
 ---
 
@@ -87,8 +93,8 @@ Stop.
 
 Do NOT mark the spec as done. Do NOT commit or push anything.
 
-Show the user the latest reviewer report in full, then ask, per remaining gap: **Do you want me to fix this now, or log it as an open question in the spec?**
-- Fix now → implement inline, then re-run only the reviewer subagent (Step 7's convention check + the specific criterion) to confirm.
+Show the user the latest verification and convention-review reports in full, then ask, per remaining gap: **Do you want me to fix this now, or log it as an open question in the spec?**
+- Fix now → implement inline, then re-run only the relevant subagent to confirm (the convention-reviewer for a Step 7 convention violation, the spec-verifier for a specific criterion).
 - Log it → add to the spec's **Open Questions** section: `- [ ] [criterion text] - not yet implemented after 5 dev/review iterations`.
 
 Once resolved, update `status` in the spec (`done` only if every criterion ended up ✅; otherwise leave `in-progress` and rely on the logged open questions).

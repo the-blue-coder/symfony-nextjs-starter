@@ -52,18 +52,7 @@
 
 ## No duplicated expressions in JSX
 
-Never compute the same derived value more than once in a template. Extract it to a variable before the return.
-
-```tsx
-// ❌ wrong - filter().length computed twice
-{items.filter(x => x.active).length > 0 && (
-    <span>{items.filter(x => x.active).length}</span>
-)}
-
-// ✅ correct - computed once
-const activeCount = items.filter(x => x.active).length;
-{activeCount > 0 && <span>{activeCount}</span>}
-```
+Never compute the same derived value more than once in a template - extract it to a variable before the return. See `nextjs.md` -> "Derived values belong in the hook" for the full pattern and example.
 
 ---
 
