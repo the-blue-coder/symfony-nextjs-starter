@@ -31,6 +31,14 @@ Read:
 
 ---
 
+## Step 2.5 - Delegate verification to a specialized subagent
+
+If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 3.
+
+Otherwise, launch a subagent specialized for spec verification (agent type: `spec-verifier`, if your tool supports named subagent types - otherwise a general coding subagent) to execute Steps 3 through 6 below against the spec file. Wait for its structured report, then continue to Step 7.
+
+---
+
 ## Step 3 - Verify each acceptance criterion
 
 For each `- [x] criterion` (checked) and `- [ ] criterion` (unchecked) in the spec, find the code that satisfies it.

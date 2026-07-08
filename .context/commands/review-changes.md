@@ -22,6 +22,14 @@ Read the convention files that apply to the declared scope:
 - If scope includes `frontend` → also read `.context/coding-conventions/typescript.md`, `.context/coding-conventions/nextjs.md`, `.context/coding-conventions/tailwind.md`, `.context/coding-conventions/ui.md`
 - If scope includes `backend` → also read `.context/coding-conventions/php.md`, `.context/coding-conventions/symfony.md`
 
+## Step 1.5 - Delegate the review to a specialized subagent
+
+If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 2.
+
+Otherwise, launch a subagent specialized for convention review (agent type: `convention-reviewer`, if your tool supports named subagent types - otherwise a general coding subagent) to execute Steps 2 through 5 below with the declared scope. Wait for its summary table, then continue to Step 6.
+
+---
+
 ## Step 2 - Collect changed files
 
 Run all three commands and union the results:

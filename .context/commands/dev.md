@@ -65,6 +65,14 @@ Also update `.context/progress-tracker.md`: move the feature from **Next Up** to
 
 ---
 
+## Step 4.5 - Delegate implementation to a specialized subagent
+
+If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 5.
+
+Otherwise, launch a subagent specialized for implementation work (agent type: `implementer`, if your tool supports named subagent types - otherwise a general coding subagent) to execute Steps 5 through 8 below. Give it the spec file path and the scope. Wait for its report (files created/modified, deviations, open questions), then continue to Step 9.
+
+---
+
 ## Step 5 - Load layer-specific context (silent)
 
 Based on the spec's scope:

@@ -62,27 +62,22 @@ Wait for the user's answers before continuing.
 
 ---
 
-## Phase 3 - Codebase exploration (silent)
+## Phases 3-4 - Codebase exploration and web research (silent, delegated)
 
-Once the feature is clear, explore the codebase to ground the spec:
+Launch a subagent specialized for research (agent type: `codebase-researcher`, if your tool supports named subagent types - otherwise a general research subagent) with the feature description and both tasks below. Wait for its findings before continuing to Phase 5.
 
+**Codebase exploration:**
 1. Find the closest existing feature as an analog - read its entity, repository, service, API resource, page, and hook.
 2. Identify which existing files will be modified vs. which new files are needed.
 3. Check existing Zod schemas, Zustand stores, and API contracts that are relevant.
 4. Note any invariants from `architecture.md` that apply (UUID IDs, `middleware.ts` Clerk auth guard, API Platform conventions, etc.).
 
----
-
-## Phase 4 - Web research (silent)
-
-Based on the feature and codebase findings, run targeted web searches to inform the spec before writing it.
-
-Search for:
+**Web research:**
 1. **Best practices & patterns** — how similar features are typically designed (UX flows, data models, API design)
 2. **Libraries & tools** — any existing packages that could simplify implementation; compare their trade-offs briefly
 3. **Known pitfalls** — common edge cases, security concerns, or performance issues with this type of feature
 
-Use findings to enrich **Implementation Notes**, **Constraints & Edge Cases**, and any library recommendations in the spec. Do not surface raw search results to the user — silently fold insights into the spec.
+Use the returned findings to enrich **Implementation Notes**, **Constraints & Edge Cases**, **Analog in Codebase**, and any library recommendations in the spec. Do not surface raw findings to the user — silently fold insights into the spec.
 
 ---
 

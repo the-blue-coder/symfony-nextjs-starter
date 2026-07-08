@@ -8,6 +8,7 @@ allowed-tools:
   - Bash
   - Glob
   - Grep
+  - Agent
 ---
 
 Argument: `$ARGUMENTS`

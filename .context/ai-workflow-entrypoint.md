@@ -84,7 +84,7 @@ See `.context/ai-workflow-rules.md` - scoping rules, protected files, doc sync p
 
 ---
 
-## 7. Maintaining commands and hooks
+## 7. Maintaining commands, hooks, and subagents
 
 **All commands and hooks must be agent-agnostic**: the logic lives in `.context/` and is mirrored to every tool directory. Never add logic only to one tool's folder.
 
@@ -92,28 +92,23 @@ Command logic lives in `.context/commands/` - that is the single source of truth
 
 Each tool has thin wrapper files that delegate to the shared source:
 
-| Tool | Commands | Hooks / Rules |
-| --- | --- | --- |
-| Claude Code | `.claude/commands/` | `.claude/settings.json` + `.claude/hooks/` |
-| opencode | `.opencode/commands/` | - |
-| Antigravity | `.agent/skills/` | `.agent/rules/` |
-
-Hook equivalents across tools:
-
-| Logic | Claude Code | Antigravity |
-| --- | --- | --- |
-| Spec pipeline gate | `.claude/hooks/enforce-spec-pipeline.sh` | `.agent/rules/workflow-pipeline.md` |
-| Request scope reminder | `.claude/hooks/check-request-scope.sh` | `.agent/rules/request-scope.md` |
+| Tool | Commands | Hooks / Rules | Specialized subagents |
+| --- | --- | --- | --- |
+| Claude Code | `.claude/commands/` | `.claude/settings.json` + `.claude/hooks/` | `.claude/agents/` |
+| opencode | `.opencode/commands/` | - | `.opencode/agents/` |
 
 **When the user asks you to modify a command**, you MUST propagate the change to all tool directories in the same operation:
 
 - Edit the source in `.context/commands/` first
 - Mirror to `.claude/commands/` (add `allowed-tools` frontmatter if needed)
 - Mirror to `.opencode/commands/`
-- Mirror to `.agent/skills/`
 
-**When the user asks you to modify a hook**, propagate to all equivalents:
+**Specialized subagents have no shared `.context/` source** - each tool defines them natively (`.claude/agents/*.md` with `tools:` frontmatter, `.opencode/agents/*.md` with `mode: subagent` + `permission:` frontmatter). The delegation instructions that reference them (e.g. "launch a subagent specialized for implementation work, agent type: `implementer`") live in `.context/commands/` and stay tool-agnostic - they name the agent generically and fall back to a general subagent if the tool doesn't support named types.
 
-- Update `.claude/hooks/<hook>.sh` (Claude Code)
-- Update the corresponding `.agent/rules/<rule>.md` (Antigravity)
-- If the hook is new: create both files and add a row to the table above
+**When the user asks you to add or modify a specialized subagent**, propagate to every tool's native format in the same operation, keeping the persona, rules, and tool/permission restrictions equivalent across formats:
+
+- Create/update `.claude/agents/<name>.md`
+- Create/update `.opencode/agents/<name>.md`
+- If new, add its name to the relevant delegation step(s) in `.context/commands/`
+
+**When the user asks you to modify a hook**, update `.claude/hooks/<hook>.sh` (Claude Code). If the hook is new, create the file.
