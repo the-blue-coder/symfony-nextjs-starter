@@ -119,6 +119,38 @@ After generating a migration with `doctrine:migrations:diff`, always remove the 
 - The `/** Auto-generated Migration: Please modify to your needs! */` docblock on the class
 - The `// this up() migration is auto-generated, please modify it to your needs` inline comments in `up()` and `down()`
 
+### Idempotent endpoints - payment and order mutations
+
+Any endpoint that triggers a **non-repeatable side effect** (charging a card, creating an order, sending a payment to a PSP) **MUST be idempotent**. A retried request (double-click, network timeout, client auto-retry) must produce the same result as the first request - never a second charge, a second order, a second email.
+
+- The client sends an **idempotency key** (UUID generated once per user action, e.g. on button click) in a header (`Idempotency-Key`).
+- The server checks the key **before** processing: if it has already been seen, return the stored result of the original request instead of re-executing the side effect.
+- Store the key alongside the operation's result (dedicated table or column), scoped to the resource/user, with a reasonable expiry.
+- **Never rely on the frontend disabling the button as the only protection** - it helps UX, but the guarantee must live server-side, since a slow network, a retry, or a direct API call bypasses it.
+
+```php
+// ❌ wrong - no idempotency check, every call charges the card
+#[Route('/payment', methods: ['POST'])]
+public function pay(Request $request, PaymentService $paymentService): Response
+{
+    $result = $paymentService->charge($request->toArray());
+    return $this->json($result);
+}
+
+// ✅ correct - idempotency key checked before the side effect
+#[Route('/payment', methods: ['POST'])]
+public function pay(Request $request, PaymentService $paymentService): Response
+{
+    $idempotencyKey = $request->headers->get('Idempotency-Key');
+    if (!$idempotencyKey) {
+        throw new BadRequestHttpException('Missing Idempotency-Key header.');
+    }
+
+    $result = $paymentService->chargeIdempotent($idempotencyKey, $request->toArray());
+    return $this->json($result);
+}
+```
+
 ### Twig Templates
 
 - **Indentation**: use tabs, not spaces.
