@@ -119,6 +119,35 @@ After generating a migration with `doctrine:migrations:diff`, always remove the 
 - The `/** Auto-generated Migration: Please modify to your needs! */` docblock on the class
 - The `// this up() migration is auto-generated, please modify it to your needs` inline comments in `up()` and `down()`
 
+### API Platform - routes MUST use kebab-case, never underscores
+
+**Every API route/URI segment MUST use kebab-case (`-`). Underscores in a URI path are a hard error, no exceptions.** This applies to `uriTemplate`, custom operation paths, and any `#[Route]` used for an API endpoint.
+
+- ✅ `/order-items`, `/payment-methods`, `/api/webhook-backup`
+- ❌ `/order_items`, `/payment_methods`, `/api/webhook_backup`
+
+This is independent from PHP/property naming (`snake_case` properties are fine per the Entity conventions above) - only the **URI itself** is affected. Property/field names in the request or response body follow the project's serialization convention, not this rule.
+
+```php
+// ❌ wrong - underscore in the URI
+#[ApiResource(
+    operations: [
+        new GetCollection(uriTemplate: '/order_items'),
+    ],
+)]
+class OrderItem {}
+
+// ✅ correct - kebab-case URI
+#[ApiResource(
+    operations: [
+        new GetCollection(uriTemplate: '/order-items'),
+    ],
+)]
+class OrderItem {}
+```
+
+**Before adding or editing any `#[ApiResource]` operation or `#[Route]` on an API controller, check the URI for underscores.** A reviewer must reject the PR on sight if one is found - this is not a style nitpick, it's a project-wide contract with the frontend and any external consumer of the API.
+
 ### Idempotent endpoints - payment and order mutations
 
 Any endpoint that triggers a **non-repeatable side effect** (charging a card, creating an order, sending a payment to a PSP) **MUST be idempotent**. A retried request (double-click, network timeout, client auto-retry) must produce the same result as the first request - never a second charge, a second order, a second email.
