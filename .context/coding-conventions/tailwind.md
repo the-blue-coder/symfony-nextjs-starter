@@ -1,5 +1,28 @@
 ﻿# Tailwind
 
+### Class order — matters
+
+Classes (and CSS properties) must follow this order, always:
+
+1. **Position** — `position`, `top`, `right`, `bottom`, `left`, `inset-*`
+2. **Display** — `block`, `inline-block`, `flex` (with `flex-direction`, `items-*`, `justify-*`, `gap-*`, etc.)
+3. **Margin / Padding** — `m-*`, `p-*`
+4. **Text-align** — `text-left` / `text-center` / `text-right`
+5. **Font-size** — `text-sm`, `text-lg`, `text-xl`, ...
+6. **Line-height** — `leading-*`
+7. **Font-family** — `font-sans`, `font-serif`, `font-mono`, ...
+8. *(everything else — colors, borders, shadows, opacity, etc. — in a logical order)*
+9. **Animations / transitions** — `transition-*`, `animate-*`, `duration-*`, `ease-*`
+10. **z-index** — always last, no exceptions
+
+```html
+<!-- ✅ correct -->
+<div class="absolute top-0 left-0 flex flex-col gap-2 m-4 p-2 text-center text-sm leading-tight font-sans bg-surface border rounded-md transition-colors z-10">
+
+<!-- ❌ wrong: z-index not last, display before position -->
+<div class="flex z-10 absolute top-0 left-0 font-sans text-sm">
+```
+
 ### v4 - CSS variable syntax
 
 Use the shorthand `(--var-name)` instead of `[var(--var-name)]`:
