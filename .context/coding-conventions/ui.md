@@ -11,7 +11,7 @@
 
 - Always use **lucide-react** - never inline SVGs or other icon libraries.
 - Import individually: `import { Home, Settings } from "lucide-react"`.
-- Size/color via props or Tailwind - never hardcode style attributes.
+- Size/color via props or Tailwind (e.g. `size={16}`, `className="text-primary"`) - never inline `style={{...}}`.
 
 ### Animations - framer-motion
 
@@ -42,7 +42,7 @@ input, textarea {
 
 ### Pending state on list/grid rows
 
-- Any row with an in-progress API call: `opacity-40 pointer-events-none`.
+- Any row with an in-progress API call: `pointer-events-none opacity-40`.
 - Track with `Set<string>` state (`pendingIds`) - add before call, remove in `finally`.
 - For add actions: boolean `isAdding`, disable the trigger button.
 
@@ -61,6 +61,8 @@ Form submit buttons must **never render a spinner** while submitting. Disabled s
     Save
 </Button>
 ```
+
+`isNavigating` is true while a post-submit redirect is in flight (e.g. `router.push` called after a successful submit). Include it in the disabled condition only for forms that navigate on success; omit it otherwise.
 
 ### Loading state on non-form interactive elements
 

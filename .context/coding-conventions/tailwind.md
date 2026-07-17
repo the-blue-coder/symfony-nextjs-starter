@@ -6,18 +6,23 @@ Classes (and CSS properties) must follow this order, always:
 
 1. **Position** — `position`, `top`, `right`, `bottom`, `left`, `inset-*`
 2. **Display** — `block`, `inline-block`, `flex` (with `flex-direction`, `items-*`, `justify-*`, `gap-*`, etc.)
-3. **Margin / Padding** — `m-*`, `p-*`
-4. **Text-align** — `text-left` / `text-center` / `text-right`
-5. **Font-size** — `text-sm`, `text-lg`, `text-xl`, ...
-6. **Line-height** — `leading-*`
-7. **Font-family** — `font-sans`, `font-serif`, `font-mono`, ...
-8. *(everything else — colors, borders, shadows, opacity, etc. — in a logical order)*
-9. **Animations / transitions** — `transition-*`, `animate-*`, `duration-*`, `ease-*`
-10. **z-index** — always last, no exceptions
+3. **Sizing** — `w-*`, `h-*`, `max-w-*`, `min-w-*`, `aspect-*`
+4. **Margin / Padding** — `m-*`, `p-*`
+5. **Text-align** — `text-left` / `text-center` / `text-right`
+6. **Font-size** — `text-sm`, `text-lg`, `text-xl`, ...
+7. **Line-height** — `leading-*`
+8. **Font-family** — `font-sans`, `font-serif`, `font-mono`, ...
+9. **Colors** — `bg-*`, text color, gradients (`from-*` / `via-*` / `to-*`)
+10. **Borders** — `border-*`, `rounded-*`, `divide-*`
+11. **Effects** — `shadow-*`, `opacity-*`, `blur-*`, etc.
+12. **Animations / transitions** — `transition-*`, `animate-*`, `duration-*`, `ease-*`
+13. **z-index** — always last, no exceptions
+
+Responsive (`md:`, `lg:`, ...) and state (`hover:`, `focus:`, `disabled:`, ...) variants attach immediately after the base utility they modify — never grouped separately at the end.
 
 ```html
 <!-- ✅ correct -->
-<div class="absolute top-0 left-0 flex flex-col gap-2 m-4 p-2 text-center text-sm leading-tight font-sans bg-surface border rounded-md transition-colors z-10">
+<div class="absolute top-0 left-0 flex flex-col gap-2 w-full m-4 p-2 text-center text-sm leading-tight font-sans bg-surface border rounded-md transition-colors z-10">
 
 <!-- ❌ wrong: z-index not last, display before position -->
 <div class="flex z-10 absolute top-0 left-0 font-sans text-sm">
@@ -33,6 +38,8 @@ Use the shorthand `(--var-name)` instead of `[var(--var-name)]`:
 ```
 
 Always use the v4 shorthand - the `[var(...)]` form triggers a deprecation warning.
+
+Prefer the mapped Tailwind utility (e.g. `bg-surface`) when the token is registered as a theme color. Use the `(--var-name)` arbitrary-value shorthand only for tokens without a dedicated utility class.
 
 ### Hex colors — always lowercase
 
