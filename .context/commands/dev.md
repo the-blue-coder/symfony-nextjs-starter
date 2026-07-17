@@ -88,6 +88,8 @@ Then explore the codebase silently:
 
 ## Step 6 - Implement
 
+**TDD checkpoint - mandatory for critical business logic and bug fixes, no exceptions:** before writing a single line of implementation/fix code for a service, domain logic, or regression, write the failing test first, run it, and confirm it fails for the right reason. State this explicitly to the user (e.g. "Red: wrote failing test for X, confirmed failing") before moving on to the implementation. Skipping this step is a process violation, not a shortcut - see `.context/ai-workflow-rules.md`. Simple CRUD, UI components, and config keep the existing test-after convention.
+
 The spec's **API Contract** table is a strict contract - implement exactly what's specified: method, route, request body fields (names, types, constraints), success status code, response shape, error responses, and auth. Do not add, remove, or rename fields.
 
 Work through the spec systematically, in dependency order:
