@@ -13,7 +13,7 @@ BACKEND_DOMAIN="b.[project].domain.com"
 FRONTEND_PORT="[FRONTEND_PORT]"
 PROD_BACKEND_PORT="[PROD_BACKEND_PORT]"
 PROJECT_NAME="[project-name]"
-LE_EMAIL="jd.rakotoarison@gmail.com"
+LE_EMAIL="[LETSENCRYPT_EMAIL]"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "==> Installing HTTP-only bootstrap configs..."

@@ -34,7 +34,7 @@ Before touching any file, collect:
 3. **Objective** - one or two sentences describing what the app does and who it's for
 4. **Frontend domain** - e.g. `my-app.example.com`
 5. **Backend domain** - e.g. `b.my-app.example.com`
-6. **GitHub repo** - Create the repo at **https://github.com/new** — use the **project slug in kebab-case** as the repo name (e.g. `my-app`), then paste the HTTPS clone URL (e.g. `https://github.com/the-blue-coder/my-app.git`)
+6. **GitHub repo** - Create the repo at **https://github.com/new** — use the **project slug in kebab-case** as the repo name (e.g. `my-app`), then paste the HTTPS clone URL (e.g. `https://github.com/<owner>/my-app.git`)
 7. **Ports**:
    - Local: frontend (default `3000`) & backend (default `8000`) - single instance, even if rolling deploy is enabled below (no need to duplicate the dev setup).
    - **Rolling zero-downtime deploy** - should this project run 2 instances per service (frontend + backend) behind nginx, rolled one at a time with a health check before moving to the next, so deploys never interrupt traffic? (default: **no** - only add this complexity if the project expects significant production traffic)
@@ -78,9 +78,9 @@ Before touching any file, collect:
     >
     > | Name | Type | Value | TTL |
     > |---|---|---|---|
-    > | `mail.[project_slug]` | A | `91.204.209.49` | 3603 |
+    > | `mail.[project_slug]` | A | `<mail-server-ip>` (ask the user) | 3603 |
     > | `[project_slug]` | MX | `mail.[project_slug].madainsight.com` | 3603 |
-    > | `[project_slug]` | TXT | `v=spf1 a mx ip4:91.204.209.49 ~all` | 3603 |
+    > | `[project_slug]` | TXT | `v=spf1 a mx ip4:<mail-server-ip> ~all` | 3603 |
     >
     > **Step 3 — AWS SES**
     > - Go to [SES Identities](https://us-east-2.console.aws.amazon.com/ses/home?region=us-east-2#/identities) → **Create identity** → Email address → enter `[project_slug]@madainsight.com` → click **Create identity**.
@@ -102,12 +102,12 @@ Wire up the remote:
 git remote set-url origin https://github.com/<owner>/<project-slug>.git
 ```
 
-Then add secrets at **https://github.com/the-blue-coder/[project-slug]/settings/secrets/actions/new**:
+Then add secrets at **https://github.com/`<owner>`/[project-slug]/settings/secrets/actions/new**:
 
 | Secret | Value |
 |---|---|
-| `CONTABO_HOST` | `207.180.238.155` |
-| `CONTABO_USER` | `root` |
+| `CONTABO_HOST` | ask the user for their VPS IP |
+| `CONTABO_USER` | ask the user for their SSH user |
 | `CONTABO_SSH_PRIVATE_KEY` | see below |
 
 **How to get `CONTABO_SSH_PRIVATE_KEY`:**
@@ -138,10 +138,11 @@ Use the answers from §A1 to replace every placeholder across the repo.
 | `[FRONTEND_PORT]` | Prod frontend port - in `.context/infra.md`, `docker-compose.prod.yml`, `infra/nginx/setup.sh` |
 | `[PROD_BACKEND_PORT]` | Prod backend port - in `.context/infra.md`, `docker-compose.prod.yml`, `infra/nginx/setup.sh`, AND in `infra/nginx/b.<domain>` (`proxy_pass http://localhost:<port>;`) |
 | `[owner]/[repo]` | GitHub repo - in `infra/first-deploy.sh` |
+| `[LETSENCRYPT_EMAIL]` | Let's Encrypt notification email (ask the user) - in `infra/nginx/setup.sh` |
 
 > **If rolling zero-downtime deploy was enabled (§A1.7)**: the two port rows above don't apply - use `[FRONTEND_PORT_A]`/`[FRONTEND_PORT_B]` and `[BACKEND_PORT_A]`/`[BACKEND_PORT_B]` instead, per §A3b. In `infra/nginx/setup.sh`, point the temporary HTTP-only bootstrap configs at the `_a` ports (`FRONTEND_PORT_A` / `BACKEND_PORT_A`) - the final configs installed after certbot (step 4 of §A3b) already load-balance both instances via `upstream`.
 
-**Let's Encrypt email** (already hardcoded in `infra/nginx/setup.sh` as `jd.rakotoarison@gmail.com`): used for SSL renewal notifications. Each domain gets its own certificate - `setup.sh` makes two separate `certbot --nginx` calls (one per domain). Do NOT combine them into a single SAN cert.
+**Let's Encrypt email**: used for SSL renewal notifications. Ask the user for their email and set it as `LE_EMAIL` in `infra/nginx/setup.sh` (placeholder `[LETSENCRYPT_EMAIL]`). Each domain gets its own certificate - `setup.sh` makes two separate `certbot --nginx` calls (one per domain). Do NOT combine them into a single SAN cert.
 
 **Fill in `.context/project-overview.md`**:
 - Replace `[Project Name]` with the display name.
@@ -260,7 +261,7 @@ Generate a custom icon based on the project's purpose and accent color (§A1.16)
 
 > Skip this entire section if the user answered "no" in §A1.7 - the boilerplate's default single-instance files already work as-is.
 
-This reproduces the pattern validated in production on the `freexcomics` project (`.context/feature-specs/001-rolling-zero-downtime-deploy.md` in that repo): each service runs as 2 instances (`_a` / `_b`) behind nginx, updated one at a time with a health check before moving to the next, so a deploy never interrupts service.
+This reproduces a pattern already validated in production on another project built from this boilerplate (see that project's `.context/feature-specs/001-rolling-zero-downtime-deploy.md` for a reference implementation): each service runs as 2 instances (`_a` / `_b`) behind nginx, updated one at a time with a health check before moving to the next, so a deploy never interrupts service.
 
 **1. Rewrite `docker-compose.yml`** - split `backend` and `frontend` into `backend_a`/`backend_b` and `frontend_a`/`frontend_b`, sharing config via YAML anchors. Only the `_a` instance carries the `build:` block - if both instances build the same image tag concurrently, it races (`failed to solve: image "...:latest": already exists`); `_b` just references the tag `_a` already built:
 
@@ -714,8 +715,6 @@ These files are gitignored and override their respective `.env` for local develo
 
 The user must:
 
-> **Note (production):** For API keys, JWKS URL, webhook configuration, and DNS domain setup, refer to the **Cashpoint** project as a reference — it is already fully configured in production.
-
 1. Create a Clerk application at **https://dashboard.clerk.com** → "Add application".
 2. **Switch to the Production instance** before copying any keys - in the Clerk dashboard, use the environment toggle to switch from Development to Production. Using development keys (`pk_test_`) shows a "Development mode" badge on the sign-in page.
 3. Copy **production** keys into `frontend/.env`:
@@ -763,7 +762,7 @@ Create both IAM users at **https://us-east-1.console.aws.amazon.com/iam/home?reg
 1. **S3 backup user** (`s3__[project_slug]`):
    - Create user → add to group **s3_group**.
    - Security credentials → Create access key → description: `S3 - [Project name]`.
-   - Ask for the full S3 URI of the backup folder (e.g. `s3://bizinfo/backups/db/<project-slug>/`). Do not guess - it must already exist in AWS.
+   - Ask for the full S3 URI of the backup folder (e.g. `s3://your-bucket/backups/db/<project-slug>/`). Do not guess - it must already exist in AWS.
    - Parse: bucket = everything between `s3://` and the first `/`; prefix = the rest.
    - Fill `backend/.env`: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_S3_BACKUP_BUCKET` (format: `bucket/prefix`).
 2. **SES mailer user** (`ses__[project_slug]`):
@@ -833,7 +832,7 @@ Commit and push so the secret is deployed to the server.
 
 **Step 2 - Configure the backup workflow on n8n**
 
-Go to **https://n8n.madainsight.com/workflow/PWe4ZS7OlR3KzoDa** and duplicate the workflow, then:
+Go to your backup automation tool (e.g. n8n) and duplicate the existing backup workflow, then:
 
 1. Tag it with the app name (e.g. `MyApp`).
 2. Move it into the folder `Personal > [AppName]`.
@@ -951,12 +950,12 @@ git remote -v
 ```
 If wrong or missing: `git remote set-url origin https://github.com/<owner>/<slug>.git`
 
-**GitHub Actions secrets** - verify at **https://github.com/the-blue-coder/[project-slug]/settings/secrets/actions/new**:
+**GitHub Actions secrets** - verify at **https://github.com/`<owner>`/[project-slug]/settings/secrets/actions/new**:
 
 | Secret | Value |
 |---|---|
-| `CONTABO_HOST` | `207.180.238.155` |
-| `CONTABO_USER` | `root` |
+| `CONTABO_HOST` | ask the user for their VPS IP |
+| `CONTABO_USER` | ask the user for their SSH user |
 | `CONTABO_SSH_PRIVATE_KEY` | `ssh contabo "cat ~/.ssh/id_rsa"` |
 
 **Secrets in `.env` files** - check if these are already set. Generate and fill any that are missing:
@@ -1000,7 +999,7 @@ Commit and push so the secret is deployed to the server.
 
 **Step 2 - Configure the backup workflow on n8n**
 
-Go to **https://n8n.madainsight.com/workflow/PWe4ZS7OlR3KzoDa** and duplicate the workflow, then:
+Go to your backup automation tool (e.g. n8n) and duplicate the existing backup workflow, then:
 
 1. Tag it with the app name (e.g. `MyApp`).
 2. Move it into the folder `Personal > [AppName]`.

@@ -2,7 +2,7 @@
 description: "Add (or scale up) rolling zero-downtime deploy on a project already in production - multiple instances per service behind nginx, rolled one at a time with health checks"
 ---
 
-Set up rolling zero-downtime deploy on a project that is **already live in production** with a single instance per service - or add more instances to a project that already has rolling deploy enabled. Reference implementation: `freexcomics`'s `.context/feature-specs/001-rolling-zero-downtime-deploy.md` and `INIT.md` §A3b in this boilerplate.
+Set up rolling zero-downtime deploy on a project that is **already live in production** with a single instance per service - or add more instances to a project that already has rolling deploy enabled. Reference implementation: `INIT.md` §A3b in this boilerplate (originally validated in production on another project using this same pattern).
 
 This command never invents project-specific values (domains, env vars, slugs) - it reads them from the project's own files and extends them.
 
@@ -314,7 +314,7 @@ export async function GET() {
 
 ## Step 11 - Update the port registry on the server
 
-Append one line per new instance (format: `<port>  <domain>`), keeping each section (`FRONTENDS` / `BACKENDS`) sorted ascending by port. The suffix reflects the instance's position for that domain - first instance has no suffix, second is `(2nd)`, third `(3rd)`, fourth `(4th)`, etc. (the registry already has examples, e.g. `3010  freexcomics.com (2nd)`).
+Append one line per new instance (format: `<port>  <domain>`), keeping each section (`FRONTENDS` / `BACKENDS`) sorted ascending by port. The suffix reflects the instance's position for that domain - first instance has no suffix, second is `(2nd)`, third `(3rd)`, fourth `(4th)`, etc. (the registry already has examples, e.g. `3010  example.com (2nd)`).
 
 **You (the agent) run this yourself via `ssh contabo`** - editing this shared coordination file is a normal part of this command's workflow, not a remote/destructive action requiring a separate confirmation gate. You already confirmed the port numbers with the user in Step 3; just write them now, no extra round-trip needed.
 
