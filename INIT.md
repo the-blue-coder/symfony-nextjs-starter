@@ -778,9 +778,12 @@ Create both IAM users at **https://us-east-1.console.aws.amazon.com/iam/home?reg
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` - from §A4b (Clerk setup)
 
 **Mercure (§A1.9)**:
-> Shared hub at `mercure.madainsight.com` (port 4000). JWT secret already in `.env` - do not regenerate.
+> Shared hub at `mercure.madainsight.com` (port 4000). Every project on this hub authenticates with the same `MERCURE_JWT_SECRET` - it must never be hardcoded in the boilerplate or committed to a public repo. Retrieve the real value from your password manager and set it directly in `backend/.env` and `frontend/.env` (never in `.env.example`, which stays blank).
+>
+> - **If you are Jean**: the value is stored in your **LastPass Vault**, entry `MERCURE_JWT_SECRET`.
+> - **If you are another user of this boilerplate**: store your own hub's JWT secret in whatever password manager or secure notes system you use, then paste it into `.env` locally - do not commit the real value anywhere in the repo.
 
-- **Yes** → leave `MERCURE_*` values as-is.
+- **Yes** → fetch `MERCURE_JWT_SECRET` from your password manager and fill it into `backend/.env` and `frontend/.env`.
 - **No** → remove all `MERCURE_*` vars from `backend/.env`, `backend/.env.example`, `frontend/.env`, `frontend/.env.example`.
 
 ---
