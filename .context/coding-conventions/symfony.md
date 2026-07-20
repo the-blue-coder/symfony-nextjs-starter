@@ -209,7 +209,9 @@ public function pay(Request $request, PaymentService $paymentService): Response
 
 ### Data isolation — CurrentUserExtension
 
-**Every user-owned resource MUST be listed in `CurrentUserExtension::OWNED_RESOURCES` (or equivalent).** This is a security invariant, not a convenience.
+**Every user-owned resource MUST be listed in `CurrentUserExtension::OWNED_RESOURCES`.** This is a security invariant, not a convenience.
+
+The extension ships at `src/ApiPlatform/CurrentUserExtension.php`, already wired in and unit-tested. Adding a user-owned entity means adding one class-string to that array - do not re-implement the class. The code below explains *why* it throws; it is not a template to copy.
 
 The extension scopes all collection and item queries to the current user. When the resource is in the protected list and no authenticated user is found, **throw `AccessDeniedException` — never `return` silently.** A silent return means an unauthenticated request hitting a future public route returns every row for every user with no error.
 

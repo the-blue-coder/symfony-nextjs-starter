@@ -35,6 +35,7 @@ Before asking anything, read:
 - `.context/project-overview.md`
 - `.context/architecture.md`
 - `.context/coding-conventions/global.md`
+- `.context/coding-conventions/security.md`
 - `.context/progress-tracker.md`
 
 Also check `.context/feature-specs/` (list files if the directory exists) to understand what features have already been specced and pick the next sequential number.

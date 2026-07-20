@@ -52,7 +52,7 @@ Set `iteration = 1` and `pending_fixes = none`.
 
 Launch a subagent (foreground - you need its result before reviewing) with this prompt:
 
-> Read `.context/commands/dev.md`. Since you start with a fresh context, first read its Step 1 files yourself (`.context/ai-workflow-entrypoint.md`, `.context/project-overview.md`, `.context/architecture.md`, `.context/coding-conventions/global.md`), then execute Steps 5 through 8 (load layer-specific context, implement, verify, update CHANGELOG.md) for the spec at `<spec file path>`. Do not do Steps 1-4 (spec selection, confirmation, marking in-progress) - that has already been done.
+> Read `.context/commands/dev.md`. Since you start with a fresh context, first read its Step 1 files yourself (`.context/ai-workflow-entrypoint.md`, `.context/project-overview.md`, `.context/architecture.md`, `.context/coding-conventions/global.md`, `.context/coding-conventions/security.md`), then execute Steps 5 through 8 (load layer-specific context, implement, verify, update CHANGELOG.md) for the spec at `<spec file path>`. Do not do Steps 1-4 (spec selection, confirmation, marking in-progress) - that has already been done.
 > [If `pending_fixes` is not `none`:] The previous review pass found these gaps - fix them specifically, then re-run the Step 7 sanity check: `<pending_fixes>`.
 > Report back: files created/modified, any deviations from the spec and why, and any open questions.
 

@@ -26,7 +26,7 @@ Otherwise, launch a subagent specialized for convention review (agent type: `con
 
 Read the convention files that apply to the declared scope:
 
-- Always read `.context/coding-conventions/global.md` (cross-cutting rules)
+- Always read `.context/coding-conventions/global.md` (cross-cutting rules) and `.context/coding-conventions/security.md` (trust boundaries, auth, webhooks, secrets, CORS)
 - If scope includes `frontend` → also read `.context/coding-conventions/typescript.md`, `.context/coding-conventions/nextjs.md`, `.context/coding-conventions/tailwind.md`, `.context/coding-conventions/ui.md`
 - If scope includes `backend` → also read `.context/coding-conventions/php.md`, `.context/coding-conventions/symfony.md`
 

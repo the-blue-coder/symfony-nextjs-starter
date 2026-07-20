@@ -11,6 +11,16 @@ server {
     ssl_certificate /etc/letsencrypt/live/[project].domain.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/[project].domain.com/privkey.pem;
 
+    # Security headers - declared at server level so they survive certbot's
+    # rewrite of the `location /` block on renewal. Raise HSTS to
+    # max-age=31536000 once the domain is confirmed HTTPS-only for good;
+    # add includeSubDomains only if every subdomain is HTTPS too.
+    add_header Strict-Transport-Security "max-age=2592000" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    server_tokens off;
+
     location / {
         proxy_pass http://localhost:[FRONTEND_PORT];
         proxy_http_version 1.1;

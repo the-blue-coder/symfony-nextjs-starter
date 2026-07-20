@@ -4,9 +4,61 @@
 
 ---
 
+## ⛔ Absolute Directive - the foundation everything else must already agree with
+
+> Sources: [Andrej Karpathy's observations on common LLM coding failure modes](https://github.com/multica-ai/andrej-karpathy-skills) and [ponytail - lazy senior dev mode](https://github.com/DietrichGebert/ponytail). This is not a tiebreaker rule that "wins" a conflict - it is the root philosophy every other rule in this repository (including "Code Philosophy" below), every skill, every command, and every spec is expected to already embody. If you ever spot an instruction that actually contradicts it, that instruction is the bug: stop, flag it to the user, and get it fixed at the source instead of picking a side in the moment.
+
+**1. Think before coding**
+- State your assumptions explicitly before writing code.
+- If the request is ambiguous, present the possible interpretations and ask - do not silently pick one.
+- If you do not have enough understanding to proceed correctly, stop and ask instead of guessing.
+
+**2. Simplicity first - stop at the first rung that holds**
+
+The best code is the code you never wrote. Before writing any code, climb this ladder and stop at the first rung that answers the need:
+
+1. Does this need to be built at all? (YAGNI)
+2. Does it already exist in this codebase? Reuse the helper, hook, service, or pattern that is already here - never re-write it.
+3. Does the standard library already do this? Use it.
+4. Does a native platform feature cover it? Use it.
+5. Does an already-installed dependency solve it? Use it. (Adding a **new** one is a separate decision - see "Library Usage" below.)
+6. Can this be one line? Make it one line.
+7. Only then: write the minimum code that works.
+
+- **The ladder runs after you understand the problem, not instead of it.** A small diff you do not understand is not efficiency, it is a second bug.
+- Never add speculative abstractions, config options, or generality for hypothetical future needs. No abstraction that was not explicitly requested.
+- Within the change you are making: deletion over addition, boring over clever.
+- Question complex requests - "do you actually need X, or does Y already cover it?" Ask before building X.
+- Simple means less code, never a flimsier algorithm. When two approaches are the same size, pick the one that is correct on edge cases.
+- Mark a deliberate simplification that cuts a real corner with a known ceiling (global lock, O(n^2) scan, naive heuristic) with a `shortcut:` comment naming both the ceiling and the upgrade path. This is not a `TODO` to clean up later - it is a documented, accepted trade-off.
+
+> This rung ladder governs the **content** of a file, never the project's structure. The layering conventions (hook/component split, repository vs service, one type file per domain, helpers in `lib/utils.ts`, thin controllers) are deliberate and stay non-negotiable - "fewer files" is never a valid reason to skip a layer.
+
+**3. Surgical changes only**
+- Touch only what the task strictly requires.
+- Match the existing style of the surrounding code, even if you'd personally do it differently.
+- Do not "clean up", refactor, or delete pre-existing code that is unrelated to the task, even if it looks dead or wrong - flag it instead.
+- **A bug fix targets the root cause, not the symptom.** A report names a symptom. Before fixing, grep every caller of the function you are about to touch and fix the shared function once - one guard in the shared function is a smaller diff than one guard per caller, and patching only the path the report names leaves a sibling caller still broken.
+
+**4. Goal-directed execution**
+- Before starting, define a verifiable success criterion for the task.
+- Treat the task as a verify-then-iterate loop: implement, check against the criterion, adjust - not a one-shot guess.
+- Prefer changes that can be independently verified (tests, build, a runnable check) over changes that only "look right".
+
+**Never simplify away** - none of these are rungs on the ladder:
+- Understanding the problem - read the task fully and trace the real flow end to end before picking a rung.
+- Input validation at trust boundaries.
+- Error handling that prevents data loss.
+- Security and data isolation.
+- Accessibility.
+- Anything the user explicitly asked for.
+- Tests where they are mandated: the TDD mandate and the project's Jest / PHPUnit conventions are the floor, never a rung to skip - see `.context/ai-workflow-rules.md`. For non-trivial logic that falls outside that mandate, still leave behind one runnable check that fails if the logic breaks.
+
+---
+
 ## Code Philosophy
 
-> **These are the highest-priority rules. They override everything else.**
+> **These are the concrete expression of the Absolute Directive above** - the everyday form it takes in real code. Anything that contradicts them contradicts the Directive too.
 
 - **KEEP CODE SIMPLE, ELEGANT, READABLE, AND BEAUTIFUL.** Concretely: prefer short functions with a single clear purpose, name things so the code reads like prose, avoid deeply nested conditions (early return instead), and never leave dead code, commented-out blocks, or redundant logic in place.
 - **DRY** - every piece of knowledge must have a single, unambiguous representation. No duplication, ever.
@@ -18,7 +70,11 @@
 
 ## Library Usage
 
-- Prefer a well-maintained library over a from-scratch implementation - libraries are more battle-tested and robust than custom code.
+> Rungs 3-5 of the ladder come first - standard library, then native platform feature, then an already-installed dependency. This section only governs the remaining case: nothing on hand covers the need and a **new** dependency is on the table.
+
+- **Arbitrate by size and by risk domain:**
+  - Trivial and self-contained (roughly under 20 lines, no edge case worth naming) → write it yourself, do not add a dependency for it.
+  - Anything in a pitfall-heavy domain - dates and timezones, crypto, parsing, i18n, money, encoding → use a well-maintained library whatever the line count. Hand-rolled code in these domains is wrong in ways that only surface in production.
 - Vet any new dependency for security before adding it: check maintenance activity, known CVEs, and adoption/trust level.
 - Never add a new library on your own initiative - always propose it and get the user's explicit validation first.
 

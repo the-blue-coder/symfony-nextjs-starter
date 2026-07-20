@@ -16,6 +16,7 @@ Read:
 - `.context/project-overview.md`
 - `.context/architecture.md`
 - `.context/coding-conventions/global.md`
+- `.context/coding-conventions/security.md`
 
 ---
 
@@ -69,7 +70,7 @@ Also update `.context/progress-tracker.md`: move the feature from **Next Up** to
 
 If you were spawned by another command to execute only a subset of these steps, skip this delegation and go straight to Step 5.
 
-Otherwise, launch a subagent specialized for implementation work (agent type: `implementer`, if your tool supports named subagent types - otherwise a general coding subagent). Since the subagent starts with a fresh context and does not inherit what you already read in Step 1, instruct it to first read `.context/project-overview.md`, `.context/architecture.md`, and `.context/coding-conventions/global.md`, then to execute Steps 5 through 8 below. Give it the spec file path and the scope. Wait for its report (files created/modified, deviations, open questions), then continue to Step 9.
+Otherwise, launch a subagent specialized for implementation work (agent type: `implementer`, if your tool supports named subagent types - otherwise a general coding subagent). Since the subagent starts with a fresh context and does not inherit what you already read in Step 1, instruct it to first read `.context/project-overview.md`, `.context/architecture.md`, `.context/coding-conventions/global.md`, and `.context/coding-conventions/security.md`, then to execute Steps 5 through 8 below. Give it the spec file path and the scope. Wait for its report (files created/modified, deviations, open questions), then continue to Step 9.
 
 ---
 

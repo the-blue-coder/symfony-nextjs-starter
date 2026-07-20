@@ -34,6 +34,7 @@ Otherwise, launch a subagent specialized for spec verification (agent type: `spe
 Read:
 - `.context/architecture.md`
 - `.context/coding-conventions/global.md`
+- `.context/coding-conventions/security.md`
 - If the spec touches `frontend/` → `.context/coding-conventions/typescript.md`, `.context/coding-conventions/nextjs.md`, `.context/coding-conventions/tailwind.md`, `.context/coding-conventions/ui.md`
 - If the spec touches `backend/` → `.context/coding-conventions/php.md`, `.context/coding-conventions/symfony.md`
 

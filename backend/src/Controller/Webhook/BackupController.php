@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller\Webhook;
 
 use App\Service\BackupService;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +17,7 @@ class BackupController
 {
 	public function __construct(
 		private readonly BackupService $backupService,
+		private readonly LoggerInterface $logger,
 		#[Autowire(env: 'AWS_S3_BACKUP_WEBHOOK_SECRET')]
 		private readonly string $webhookSecret,
 	) {
@@ -33,8 +35,14 @@ class BackupController
 		try {
 			$result = $this->backupService->run();
 		} catch (Throwable $e) {
+			// The detail stays server-side: a pg_dump or S3 failure message can
+			// carry the database host, the database user, or the bucket path.
+			$this->logger->error('Backup failed.', [
+				'exception' => $e,
+			]);
+
 			return new JsonResponse([
-				'message' => $e->getMessage(),
+				'message' => 'Backup failed.',
 			], Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
