@@ -67,7 +67,7 @@ Just write the fix. No spec required.
 ### Feature path - anything consequent
 
 ```
-/spec → /dev → /review-spec-implementation
+/spec → /dev → /review-spec-implementation → /review-security
 ```
 
 | Rule | Detail |
@@ -75,6 +75,7 @@ Just write the fix. No spec required.
 | No code without a spec | Never write feature code without a spec in `.context/feature-specs/` with `status: todo` or `status: in-progress`. Run `/spec` first. |
 | No `/dev` with pending `/review-spec-implementation` | Before starting `/dev` on any spec, check `.context/feature-specs/` for specs with `status: in-progress` that have unchecked acceptance criteria (`- [ ]`). If any exist, run `/review-spec-implementation` on them first. |
 | `/review-spec-implementation` owns `done` | Only `/review-spec-implementation` may set `status: done` on a spec. `/dev` never marks a spec done. |
+| Always finish with `/review-security` | Run `/review-security` after `/review-spec-implementation` on any change touching auth, user input, secrets, an API endpoint, a webhook, or payment - and by default on every feature. `/implement` runs it automatically at the end of its loop. |
 | `/spec` is always allowed | You may run `/spec` at any time regardless of pipeline state. |
 
 **Before writing feature code**, check the current pipeline state:
