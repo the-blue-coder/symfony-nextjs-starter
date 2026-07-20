@@ -48,7 +48,7 @@ Start here. Read the files below in order before writing any code.
 
 ## 5. Workflow gates
 
-Two paths depending on scope:
+Three paths depending on scope:
 
 ### Quick path - small fixes, bugs, debug, typos
 
@@ -63,6 +63,16 @@ Qualifies as quick if **all** of the following are true:
 - **No spec is currently `status: in-progress`** - if one exists, run `/review-spec-implementation` first
 
 Just write the fix. No spec required.
+
+### Quick-code path - small-to-medium changes that don't warrant a spec
+
+```
+/quick-code <request>
+```
+
+For anything past the "quick path" thresholds above but not big enough to justify a full spec (e.g. a small feature, a multi-file refactor, a fix touching auth/secrets/an endpoint). Implements the request directly, then automatically runs convention review and security review before handoff - unlike writing code directly, it never skips those checks. Never creates or touches a spec.
+
+If a plain free-form prompt is used instead of `/quick-code` for this kind of change, convention and security review are **not** run automatically - only `/quick-code` and `/implement` guarantee that.
 
 ### Feature path - anything consequent
 
