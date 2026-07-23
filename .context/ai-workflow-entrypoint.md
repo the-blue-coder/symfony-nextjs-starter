@@ -18,6 +18,9 @@ Start here. Read the files below in order before writing any code.
 | `.context/coding-conventions/security.md` | Trust boundaries, auth, webhooks, secrets, CORS - **non-negotiable** |
 | `.context/progress-tracker.md` | Current phase, completed work, open questions |
 | `.context/ai-workflow-rules.md` | Scoping rules, TDD mandate, protected files, doc-sync policy |
+| `.context/adr/README.md` | What the ADR/context memory system is and how to use it |
+
+**Before making a structural call** (architecture, process, tooling, convention) in an area you haven't touched yet this session: check `.context/adr/context/<Subject>.md` if it exists, and check `.context/adr/decisions/` for anything relevant. Never contradict a `status: accepted` decision without flagging it to the user first. Full read/write protocol - automatic, no command - in `.context/adr/README.md`.
 
 ## 2. Mandatory read - only when touching the frontend (`frontend/`)
 
@@ -48,7 +51,7 @@ Start here. Read the files below in order before writing any code.
 
 ## 5. Workflow gates
 
-Three paths depending on scope:
+Two paths depending on scope:
 
 ### Quick path - small fixes, bugs, debug, typos
 
@@ -64,15 +67,9 @@ Qualifies as quick if **all** of the following are true:
 
 Just write the fix. No spec required.
 
-### Quick-code path - small-to-medium changes that don't warrant a spec
+**This path has no command, so no scaffolding enforces anything on it - the Absolute Directive in `.context/coding-conventions/global.md` (think before coding, simplicity ladder, surgical changes, goal-directed execution, ponytail lazy-senior-dev-mode) is the *only* thing governing it, and it is non-negotiable regardless.** Nothing else runs automatically on this path: no `/review-changes`, no `/review-security`. If the change touches auth, user input, secrets, an API endpoint, a webhook, or payment - or otherwise warrants review - run `/review-changes` and/or `/review-security` yourself afterwards, or ask the user first.
 
-```
-/quick-code <request>
-```
-
-For anything past the "quick path" thresholds above but not big enough to justify a full spec (e.g. a small feature, a multi-file refactor, a fix touching auth/secrets/an endpoint). Implements the request directly, then automatically runs convention review and security review before handoff - unlike writing code directly, it never skips those checks. Never creates or touches a spec.
-
-If a plain free-form prompt is used instead of `/quick-code` for this kind of change, convention and security review are **not** run automatically - only `/quick-code` and `/implement` guarantee that.
+Anything past the thresholds above (more files, a new feature, an API contract change, a DB migration) is not "quick" - go through the feature path below instead, even for something that doesn't feel big enough for a full spec.
 
 ### Feature path - anything consequent
 

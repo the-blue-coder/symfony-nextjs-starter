@@ -29,8 +29,9 @@ change.
 
 ## Architecture Decisions
 
-- [Decisions made that affect the system design or
-  data model - include why the decision was made]
+- Structural decisions (architecture, process, tooling, convention) are recorded
+  automatically in `.context/adr/decisions/` - see `.context/adr/README.md`. This
+  section only needs a one-line pointer to the relevant decision file, not the full rationale.
 
 ## Session Notes
 

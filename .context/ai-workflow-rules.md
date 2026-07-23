@@ -60,6 +60,17 @@ Update the relevant `.context/` file whenever implementation changes:
 - Infrastructure, env vars, deploy config → `infra.md`
 - Feature scope or status → `progress-tracker.md`
 - Design tokens, layout, UI decisions → `ui-context.md`
+- A structural decision with rejected alternatives (architecture, process, tooling, convention) → `.context/adr/decisions/`, not inline prose in another file
+
+---
+
+## Recording Decisions (ADR)
+
+This is automatic, not a command - see `.context/adr/README.md` for the full read/write protocol.
+
+- As soon as a structural choice is settled - and especially when alternatives were considered and rejected - write it down yourself in `.context/adr/decisions/` as `proposed`. Only the user can move it to `accepted`.
+- Before proposing an approach in a domain, check `.context/adr/decisions/` and `.context/adr/context/` first - do not re-propose something already rejected in an `accepted` decision.
+- Never edit an `accepted` decision file. If it changes, supersede it - see the write protocol.
 
 ---
 

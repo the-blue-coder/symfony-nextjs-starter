@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Infrastructure
 - Security headers on both nginx configs - HSTS (30 days), `X-Content-Type-Options`, `Referrer-Policy`, `server_tokens off`, plus `X-Frame-Options` on the frontend only. Declared at server level so a certbot renewal cannot strip them.
 
+#### Conventions
+- `.context/adr/` - persistent decision/context memory for agents (Architecture Decision Records + living context notes), adapted in English from the `adr-context-kit`. `decisions/` is immutable (`proposed` → `accepted` → `superseded`), `context/` is living. No slash command - the read/write protocol in `.context/adr/README.md` runs automatically as part of the mandatory read order. Wired into `ai-workflow-entrypoint.md` (read-before-acting) and `ai-workflow-rules.md` (doc-sync + when to record a decision); `progress-tracker.md`'s "Architecture Decisions" section now points here instead of holding inline prose.
+- Closed a pre-existing `.opencode/commands/` mirroring gap: `add-new-color.md` and `review-security.md` existed in `.context/commands/` but had no `.opencode/` wrapper (`add-new-color.md` was also missing its `.claude/commands/` wrapper).
+
 ### Changed
 
 #### Conventions
@@ -36,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Backend
 - `phpunit.xml.dist` - dead config. PHPUnit 12 reads `phpunit.dist.xml`, which was already the one in effect and is stricter (`failOnDeprecation`, `failOnNotice`, `failOnWarning`).
+
+#### Conventions
+- `/quick-code` command and its `.claude`/`.opencode` wrappers. The middle "quick-code path" it covered is dropped from `ai-workflow-entrypoint.md`: work now goes through the quick path (no command, no automatic review) or the feature path (`/spec` → `/dev` → review) - nothing in between.
 
 ### Fixed
 
