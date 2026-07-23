@@ -28,7 +28,7 @@ Before proposing an approach in an area you haven't touched yet this session:
 As soon as a structural choice is settled during a session - architecture, process, tooling, or convention, especially one where alternatives were considered and rejected - write it down yourself, without waiting to be asked:
 
 1. Derive today's date (`YYYY-MM-DD`).
-2. Create `.context/adr/decisions/<date> - <short title>.md` from `decisions/TEMPLATE.md`.
+2. Create `.context/adr/decisions/<date> - <short title>.md` following the format below.
 3. Fill in `tags:` and draft `## Context`, `## Decision`, `## Why not something else`, `## Consequences` from the work just done. Always fill both "Why not something else" and "Consequences" - if either is missing, ask the user rather than inventing it.
 4. Fill `affects:` with any spec (`.context/feature-specs/`) or subject the decision impacts.
 5. Leave `status: proposed`. **Never write `accepted` yourself** - tell the user a decision was drafted and needs their explicit sign-off before other agents may treat it as binding. Once they confirm, flip `status:` to `accepted` yourself - do not touch anything else in the file.
@@ -41,16 +41,32 @@ To supersede an existing decision instead of writing a fresh one:
 
 To create or update a living context note for a subject:
 
-1. If `.context/adr/context/<Subject>.md` doesn't exist, create it from `context/TEMPLATE.md`.
+1. If `.context/adr/context/<Subject>.md` doesn't exist, create it following the format below.
 2. If it exists, edit it in place - context files are living, not immutable.
 3. Always bump `updated:` to today's date on any change.
 4. Keep it short and factual. Never write secrets or credentials into it (it's committed to git).
 
 ## The ADR format
 
-Every decision follows the same structure: **Context -> Decision -> Why not something else -> Consequences**. See `decisions/TEMPLATE.md` and `decisions/EXAMPLE.md`.
+Every decision follows the same structure. Frontmatter:
 
-The field that matters most: **"Why not something else"** (the options that were rejected, and why). It is the one piece of information the code will never contain on its own, and it's what stops an agent from re-proposing a dead end.
+```yaml
+---
+type: decision
+status: proposed        # proposed | accepted | superseded
+date: YYYY-MM-DD
+tags: [domain]
+supersedes:             # [[superseded decision]] (optional)
+affects:                # [[impacted spec / subject]] (optional) - closes the loop
+---
+```
+
+Sections, in order:
+
+- **`## Context`** - the problem, the situation, the constraints at the time. Enough for someone to understand *why* a call had to be made.
+- **`## Decision`** - what was settled. One clear sentence, present tense.
+- **`## Why not something else`** - the options that were considered and **rejected**, with the reason for each (e.g. `- **Option A**: ... why rejected.`). The field that matters most: it is the one piece of information the code will never contain on its own, and it's what stops an agent from re-proposing a dead end.
+- **`## Consequences`** - what this implies: trade-offs, positive and negative effects, and what becomes work to do (e.g. `- Positive: ...`, `- Negative / risk: ...`, `- Generates: ...`).
 
 ### Statuses (the human <-> agent loop)
 
@@ -63,6 +79,24 @@ The agent **proposes**, the user **accepts**. An `accepted` decision is never ed
 ### The `affects:` link
 
 A structural decision often changes downstream specs or user stories, rarely the product overview. The `affects:` frontmatter field lists what the decision impacts. When a decision moves to `superseded`, those linked items need to be revisited - that link is exactly what an agent loses without a written trace.
+
+### The context format
+
+Frontmatter:
+
+```yaml
+---
+type: context
+updated: YYYY-MM-DD
+tags: [domain]
+---
+```
+
+Sections, in order:
+
+- **`## Current state`** - where this subject stands today.
+- **`## Constraints`** - what must be respected (technical, product, business, ...).
+- **`## Good to know`** - pitfalls, short history, useful links, related decisions (`[[...]]`).
 
 ## Ground rules
 

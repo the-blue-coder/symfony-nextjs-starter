@@ -88,6 +88,20 @@ Error messages go directly after the input — no `mt-*` needed since the gap is
 </div>
 ```
 
+### Arbitrary pixel values — convert to the spacing scale
+
+Never write a pixel arbitrary value (`top-[105px]`, `w-[240px]`, ...) when it maps cleanly onto Tailwind's spacing scale (`1` unit = `4px`). Divide the pixel value by 4 and use the scale utility instead.
+
+```html
+<!-- ❌ wrong -->
+<div class="lg:top-[105px]">
+
+<!-- ✅ correct: 105px / 4 = 26.25 -->
+<div class="lg:top-26.25">
+```
+
+Only fall back to an arbitrary value (`[Npx]`) when the value doesn't land on a clean scale step.
+
 ### Responsive — CRITICAL
 
 **Always build mobile-first.** This is non-negotiable.
