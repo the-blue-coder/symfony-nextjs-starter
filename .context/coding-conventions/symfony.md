@@ -92,6 +92,40 @@ public function list(ProductService $service): Response
 }
 ```
 
+### Controllers — never use `private` methods
+
+**Controller classes must never declare `private` methods.** A controller action must stay a single public method that only calls into injectable classes (service, repository, normalizer, ...). If an action needs a helper step, that step is logic that belongs in a dedicated, injectable class — not a private method on the controller.
+
+- ❌ No `private function` (or `protected function`, for the same reason) anywhere in a controller class.
+- ✅ Extract the logic to whichever dedicated class fits it — a **service** for business/transformation logic, a **repository** for queries, a **normalizer**/DTO for response shaping — and inject it into the action.
+
+```php
+// ❌ wrong — private helper method in the controller
+class OrderController extends AbstractController
+{
+    #[Route('/orders/{id}/summary', methods: ['GET'])]
+    public function summary(Order $order): Response
+    {
+        return $this->json($this->buildSummary($order));
+    }
+
+    private function buildSummary(Order $order): array
+    {
+        // ... transformation logic ...
+    }
+}
+
+// ✅ correct — helper logic moved to a dedicated injectable class
+class OrderController extends AbstractController
+{
+    #[Route('/orders/{id}/summary', methods: ['GET'])]
+    public function summary(Order $order, OrderService $orderService): Response
+    {
+        return $this->json($orderService->buildSummary($order));
+    }
+}
+```
+
 ### Service naming
 
 Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions - no `*Client`, `*Manager`, `*Handler`, `*Parser`.
@@ -203,6 +237,7 @@ public function pay(Request $request, PaymentService $paymentService): Response
 | Query the DB from a service | Put the query in the repository |
 | `$this->em->getRepository(Foo::class)` | Inject the repository via constructor |
 | Name a class `*Client` or `*Manager` in `src/Service/` | Rename to `*Service` |
+| Add a `private`/`protected` method to a controller | Move the logic to a service, repository, or normalizer |
 | Add a new user-owned resource without updating `CurrentUserExtension` | Add it to `OWNED_RESOURCES` and throw `AccessDeniedException` if no user |
 
 ---
