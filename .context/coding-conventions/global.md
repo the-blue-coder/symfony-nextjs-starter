@@ -69,6 +69,20 @@ The best code is the code you never wrote. Before writing any code, climb this l
 
 ---
 
+## Self-Documenting Code & Comments
+
+> Applies to you as much as to any dev reading this later - do not skip this in your own output.
+
+- **Code must be self-documenting first.** Names carry the meaning: variables, functions, and classes are named after what they represent or do (`remainingSeats`, not `n`; `isUserEligibleForDiscount`, not `check`). If a comment would only restate what a rename already makes obvious, rename instead of commenting.
+- **Write a comment only when the code alone cannot carry the information** - when leaving it out would risk confusing the next dev, or yourself in six months. That means:
+  - The **why**, never the **what**: a non-obvious business constraint, a workaround for an external bug (link the issue if there is one), a deliberate trade-off (see the `shortcut:` convention above).
+  - A pitfall that isn't visible in the code itself - e.g. "must run before X or the API returns stale data."
+  - Anything a reader could not deduce by reading the code, however carefully.
+- **Before writing a comment, ask: would renaming or restructuring the code make it unnecessary?** If yes, do that instead. If the information genuinely lives outside the code (external constraint, business rule, history), the comment earns its place.
+- A comment that just repeats the line below it (`// increment the counter` above `count++`) is noise - remove it. It also rots: code changes, comments don't always follow, and a stale comment misleads more than no comment at all.
+
+---
+
 ## Library Usage
 
 > Rungs 3-5 of the ladder come first - standard library, then native platform feature, then an already-installed dependency. This section only governs the remaining case: nothing on hand covers the need and a **new** dependency is on the table.
