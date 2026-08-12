@@ -117,6 +117,31 @@ $email = (new Email())
     ->subject('Hello');
 ```
 
+### A file's primary class comes first, a supporting enum goes below it
+
+When a file defines one main class/DTO plus a small enum that only exists to serve it (e.g. an action/status enum returned by that class's factory methods), put the class first and the enum last in the same file - not the other way round, and not split into two files. PHP hoists all top-level declarations at compile time, so declaration order never affects execution (unlike JS's `const`/`let` TDZ) - this is a readability convention, not a functional requirement. A reader opens the file for the class; the enum is supporting detail they only need once they've seen how it's used.
+
+```php
+// ✅ correct
+class BookReaderPageResolution
+{
+    private function __construct(
+        public readonly BookReaderPageAction $action,
+        public readonly int $page,
+    ) {}
+
+    public static function render(int $page): self
+    {
+        return new self(BookReaderPageAction::Render, $page);
+    }
+}
+
+enum BookReaderPageAction: string
+{
+    case Render = 'render';
+}
+```
+
 ### Constructor arguments - always one per line
 
 Always write constructor arguments in multiline format - one argument per line, even with a single argument. The empty body uses `{}` with no space.
@@ -151,3 +176,4 @@ public function __construct(
 | `if (!x) return;` one-liner | Always braces: `if (!x) { return; }` |
 | Pad `=` / `=>` to align multiple lines | Never - write at natural width |
 | Single-argument constructor on one line | Always multiline - one arg per line |
+| A supporting enum above its class | Class first, enum below - hoisting makes order execution-irrelevant, this is for the reader |
