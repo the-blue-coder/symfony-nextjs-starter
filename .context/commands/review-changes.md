@@ -26,7 +26,7 @@ Otherwise, launch a subagent specialized for convention review (agent type: `con
 
 Read the convention files that apply to the declared scope:
 
-- Always read `.context/coding-conventions/global.md` (cross-cutting rules) and `.context/coding-conventions/security.md` (trust boundaries, auth, webhooks, secrets, CORS)
+- Always read `.context/coding-conventions/global.md` (cross-cutting rules), `.context/coding-conventions/security.md` (trust boundaries, auth, webhooks, secrets, CORS), and `.context/architecture.md` (file/module placement rules can live here rather than in a coding-convention file, and are just as much a rule as anything in those files)
 - If scope includes `frontend` → also read `.context/coding-conventions/typescript.md`, `.context/coding-conventions/nextjs.md`, `.context/coding-conventions/tailwind.md`, `.context/coding-conventions/ui.md`
 - If scope includes `backend` → also read `.context/coding-conventions/php.md`, `.context/coding-conventions/symfony.md`
 
@@ -47,6 +47,8 @@ If there are no files at all in scope, report "No changes in scope" and stop.
 ## Step 3 - Analyze violations
 
 For each changed file in scope, read the full file and check it against every rule in the convention files you loaded in Step 1 - read them in full, don't rely solely on their "Quick Reference" tables, which are abbreviated indexes, not complete rule sets. Do not maintain a separate checklist here that duplicates their content - if you need a reminder of what to check, re-open the relevant convention file rather than trusting a paraphrase that can silently drift out of sync with it.
+
+Placement rules (e.g. `nextjs.md`'s "pure helper functions belong in `src/lib/utils.ts`, even if only one file uses it today") need an active check, not a passive one: reading a file top to bottom for style issues will not surface "this function is in the wrong file" unless you specifically ask that question of every function definition you pass. Ask it.
 
 ## Step 4 - Fix violations
 
