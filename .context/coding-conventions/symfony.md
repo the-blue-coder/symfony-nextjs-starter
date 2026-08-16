@@ -126,6 +126,43 @@ class OrderController extends AbstractController
 }
 ```
 
+### Commands — thin, same principle as controllers
+
+Console commands follow the same rule as controllers: business/reusable logic belongs in a service, not in the command. Unlike controllers, a command is not required to shrink to zero private methods or a single public entrypoint - option/argument parsing, `SymfonyStyle` output formatting, and picking the exit code are CLI-only orchestration inherent to the command class and are fine to keep inline. The line is what the logic *is*: if it's business logic (would still make sense called from a controller or another command), it goes in a service; if it only exists to talk to the terminal, it stays in the command.
+
+```php
+// ❌ wrong — parsing, batching, and persistence all live in the command
+class ImportProductsCommand extends Command
+{
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $rows = array_map('str_getcsv', file((string) $input->getArgument('csv-path')));
+        foreach ($rows as $row) {
+            $product = new Product();
+            // ... mapping, validation, persist ...
+        }
+        $this->em->flush();
+    }
+}
+
+// ✅ correct — command only maps CLI input to the service and renders progress
+class ImportProductsCommand extends Command
+{
+    public function __construct(private readonly ProductImportService $productImportService)
+    {
+        parent::__construct();
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $io = new SymfonyStyle($input, $output);
+        $stats = $this->productImportService->importFromCsv((string) $input->getArgument('csv-path'));
+        $io->success(sprintf('%d imported, %d errors', $stats['imported'], $stats['errors']));
+        return $stats['errors'] > 0 ? Command::FAILURE : Command::SUCCESS;
+    }
+}
+```
+
 ### Service naming
 
 Every class in `src/Service/` MUST be named `*Service` and its file `*Service.php`. No exceptions - no `*Client`, `*Manager`, `*Handler`, `*Parser`.
