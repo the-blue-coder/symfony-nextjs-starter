@@ -60,6 +60,22 @@ Always use brand token classes - no raw hex values in templates or CSS.
 | Error | `--state-error` | `#[hex]` |
 | Success | `--state-success` | `#[hex]` |
 
+### Component-specific CSS — colocate, never in `globals.css`
+
+`src/app/globals.css` holds only global concerns: the Tailwind import, theme tokens (`@theme inline`, `:root`, `.dark`), `@layer base` resets. A keyframe animation or class tied to one component never lives inline there, no matter how small.
+
+Most of the time this doesn't come up — Tailwind utilities (or `tailwindcss-animate` / `framer-motion`) cover it. When a component genuinely needs custom CSS Tailwind can't express (a bespoke `@keyframes`, a pseudo-element trick), colocate a `<Component>.module.css` next to the component file and import it there directly:
+
+```
+// ❌ wrong - component animation buried in globals.css
+@keyframes card-ping { ... }
+.card-spinner { ... }
+
+// ✅ correct - src/components/book-card/BookCard.module.css, imported only by BookCard.tsx
+import styles from "./BookCard.module.css";
+<div className={styles.spinner} />
+```
+
 ### Form fields — label + input spacing
 
 Always wrap a label and its input in `flex flex-col gap-1.5` — never rely on default browser spacing or `mt-*` on the input.
