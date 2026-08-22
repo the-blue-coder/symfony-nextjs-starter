@@ -76,6 +76,8 @@ import styles from "./BookCard.module.css";
 <div className={styles.spinner} />
 ```
 
+**This rule gets violated in practice** - a one-line, single-component selector feels harmless enough to drop straight into `globals.css` "just this once." It isn't - before adding any selector, keyframe, or class to `globals.css`, name the single component or domain it belongs to. If you can name one, it does not belong in `globals.css`, no matter how small. Consider adding a banner comment at the top of `globals.css` itself pointing back at this rule, so it stays visible to whoever edits the file next, not just to whoever reads this doc.
+
 ### Form fields — label + input spacing
 
 Always wrap a label and its input in `flex flex-col gap-1.5` — never rely on default browser spacing or `mt-*` on the input.
