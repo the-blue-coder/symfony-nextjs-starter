@@ -111,6 +111,17 @@ src/
 | Reusable service (multiple pages)           | `src/services/[domain].ts`                            |
 | Service specific to one page               | `src/app/.../services/[section].ts`                   |
 
+## Scripts That Must Run Before First Paint
+
+For the rare case where something has to happen before the browser paints
+(e.g. a dark-mode class on `<html>` to avoid a flash of the wrong theme, or
+scrolling to an anchor on a direct link) - a regular Client Component's
+`useEffect` is too late: it only runs after React hydrates, well after first
+paint. Use `next/script` with `strategy="beforeInteractive"` in the root
+`layout.tsx` instead - it injects and blocks like a classic `<script>`, ahead
+of hydration. Reserve it for this specific problem; everything else that can
+afford to run after first paint stays a normal Client Component/hook.
+
 ## Key Invariants
 
 - The `<main>` landmark lives **only** in route group layouts - never in individual pages or client components.
