@@ -122,6 +122,13 @@ paint. Use `next/script` with `strategy="beforeInteractive"` in the root
 of hydration. Reserve it for this specific problem; everything else that can
 afford to run after first paint stays a normal Client Component/hook.
 
+Where the script is *declared* in JSX doesn't affect when it runs - Next.js
+always hoists `beforeInteractive` scripts into the initial response ahead of
+`<body>`. What does matter: any DOM element the script touches (e.g. an id it
+scrolls to) must already be in the server-rendered HTML the script ships
+with, not something a Client Component renders in after hydration - the
+script runs before that exists.
+
 ## Key Invariants
 
 - The `<main>` landmark lives **only** in route group layouts - never in individual pages or client components.
