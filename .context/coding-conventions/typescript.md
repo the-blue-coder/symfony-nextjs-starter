@@ -143,6 +143,25 @@ return { setValue, value, handleSubmit, isLoading };
 - **Variables** (first, A → Z): state, derived values, refs, router, props.
 - **Functions** (last, A → Z): setters (`setX`), handlers (`handleX`, `onX`).
 
+### Handlers - named consts in the hook body, never inline in the return
+
+Every handler is its own named `const` in the hook's body, even a one-liner. The return statement only ever lists names - never defines a function inline.
+
+```ts
+// ❌ wrong - handler defined inline in the return object
+return {
+    title,
+    handleTitleChange: (event: React.ChangeEvent<HTMLInputElement>) => setTitle(event.target.value),
+};
+
+// ✅ correct - named const above, return just lists it
+const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => setTitle(event.target.value);
+
+return { title, handleTitleChange };
+```
+
+This keeps the return statement a flat, scannable list of names (per the alphabetical rule above) and keeps every handler independently readable/testable, regardless of how trivial it looks.
+
 ### Style rules
 
 - **Max 120 lines per component** - beyond that, split into sub-components.
@@ -171,6 +190,7 @@ return { setValue, value, handleSubmit, isLoading };
 | Named export for a component | `export default` (last line) |
 | Component > 120 lines | Split into sub-components |
 | Return `{ setX, value }` | Variables-first A→Z, functions-last A→Z → `{ value, setX }` |
+| `handleX: (e) => setX(e.target.value)` inline in the return | Named `const handleX = (e) => ...` in the hook body, return just `handleX` |
 | `{count} items` hardcoded plural | `{count} {count === 1 ? "item" : "items"}` |
 | `new Date()` for display | Moment.js |
 | `if (!x) return;` one-liner | Always braces: `if (!x) { return; }` |
