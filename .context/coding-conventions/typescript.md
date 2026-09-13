@@ -140,8 +140,28 @@ return { value, isLoading, derived, setValue, handleSubmit };
 return { setValue, value, handleSubmit, isLoading };
 ```
 
-- **Variables** (first, A → Z): state, derived values, refs, router, props.
-- **Functions** (last, A → Z): setters (`setX`), handlers (`handleX`, `onX`).
+- **Variables** (first, A → Z): state, derived values, refs, router, props, **and module-level `const` constants** (e.g. `NAV_ENTRIES`, `STATUS_LABELS`) - a constant is a variable, not a function.
+- **Functions** (last, A → Z): setters (`setX`), handlers (`handleX`, `onX`), and any other exported function.
+
+This applies just as much to a module's trailing `export { ... }` list as it does to a hook's return statement or a destructuring assignment - constants and other non-function exports go first (A → Z), functions go last (A → Z), never one flat alphabetical list mixing the two.
+
+```ts
+// ❌ wrong - one flat alphabetical list mixes constants and functions
+export {
+	ERROR_MESSAGES,
+	formatLabel,
+	MAX_ITEMS,
+	parseResponse,
+};
+
+// ✅ correct - constants (variables) first, functions last, alphabetical within each group
+export {
+	ERROR_MESSAGES,
+	MAX_ITEMS,
+	formatLabel,
+	parseResponse,
+};
+```
 
 ### Handlers - named consts in the hook body, never inline in the return
 
