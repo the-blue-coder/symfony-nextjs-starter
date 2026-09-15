@@ -261,7 +261,7 @@ export const formatDate = (d: string) => moment(d).format("MMM D");
 ### File and folder structure
 
 - Pure helpers: `src/lib/utils.ts` - no `utils/` subfolder.
-- Domain types: one file per domain in `src/types/` (`auth.ts`, `order.ts`…) - never a catch-all `index.ts`.
+- Domain types: one file per domain in `src/types/` (`auth.ts`, `order.ts`…) - never a catch-all `index.ts`. `src/types/` is for domain/data-model types only - a component's own props type (`TMyComponentProps`) and a hook's own return type stay in that component's/hook's own file, exported from there. Never derive a hook's return type in a separate shared file by importing the hook (`ReturnType<typeof useFoo>` written outside `useFoo.ts`) - that inverts the dependency, making the "types" file depend on the hook instead of the other way round.
 - App-wide constants: `src/constants/app.ts`. Domain constants in their own file.
 - Config values (locales, etc.): `src/lib/i18n.ts` - translation files live in `src/i18n/`.
 

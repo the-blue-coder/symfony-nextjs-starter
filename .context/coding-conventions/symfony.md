@@ -126,6 +126,10 @@ class OrderController extends AbstractController
 }
 ```
 
+### DTOs and value types - colocate with their owner, never a reverse dependency
+
+A DTO/normalizer output type describing what one service or one class returns is defined in that service's/class's own file (or a file named after it), not centralized in a shared `Dto`/`Type`-style file that then has to `use` the service/class it describes to shape itself. That inverts the dependency: the shared file is meant to be a leaf other classes depend on, not something that itself depends on the service it types. A shared DTO folder is fine for types genuinely used by several unrelated services (e.g. a generic paginated-list wrapper) - not for a type that only ever describes one service's output.
+
 ### Commands — thin, same principle as controllers
 
 Console commands follow the same rule as controllers: business/reusable logic belongs in a service, not in the command. Unlike controllers, a command is not required to shrink to zero private methods or a single public entrypoint - option/argument parsing, `SymfonyStyle` output formatting, and picking the exit code are CLI-only orchestration inherent to the command class and are fine to keep inline. The line is what the logic *is*: if it's business logic (would still make sense called from a controller or another command), it goes in a service; if it only exists to talk to the terminal, it stays in the command.
