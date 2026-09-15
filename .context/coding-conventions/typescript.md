@@ -205,6 +205,7 @@ This keeps the return statement a flat, scannable list of names (per the alphabe
 | `type Props` / `type MyComponentProps` | `type TMyComponentProps` |
 | `type T...` above the principal `const` (any file) | BOTTOM of file, JUST BEFORE `export default` |
 | Helper const/function above the principal `const` | Move BELOW it — order: helpers → types → `export default` |
+| `generateMetadata`/`metadata`/`dynamic`/`revalidate`/`generateStaticParams` placement | Above the principal `const`, alongside imports — Next.js's own special exports, not component logic |
 | Same module imported twice | Merge into one `import` line |
 | `function foo()` in `src/lib/` | Arrow function: `export const foo = () => ...` |
 | Named export for a component | `export default` (last line) |
